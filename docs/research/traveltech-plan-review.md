@@ -1,6 +1,6 @@
 # TravelTech plan review — independent, planning-only
 
-> **Historical review — scope superseded.** This reviews the former Waypoint briefing-only plan. Its GO/NO-GO findings are not approval of the final role-based map/report/model/notification product. Read [current requirements](../product-requirements.md) and [Tovrilo plan](../winning-strategy.md) for active contracts and pending tests.
+> **Historical review — scope superseded.** This reviews the former GudTour briefing-only plan. Its GO/NO-GO findings are not approval of the final role-based map/report/model/notification product. Read [current requirements](../product-requirements.md) and [GudTour plan](../winning-strategy.md) for active contracts and pending tests.
 
 **Reviewer:** independent subagent (own review). **Date:** 2026-10-09.
 **Reviewed:** `winning-strategy.md` (controlling), `hackathon-brief.md`, `research/expo-ios-delivery.md`, plus reconciliation headers of `research/expo-platforms.md` and `research/traveltech-expo-mvp.md`, `README.md`, `agent-execution-policy.md`, `judging-evidence.md`.

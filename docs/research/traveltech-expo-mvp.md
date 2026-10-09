@@ -1,6 +1,6 @@
 # TravelTech on Expo — Strict 24-Hour MVP Plan
 
-> **Historical MVP proposal — scope superseded.** The final user request now requires role-based login, a live map, tourist/authority reporting, evidence/model escalation, targeted notifications and shelter/contact maintenance. Old exclusions below do not control implementation. See [final requirements](../product-requirements.md) and [Tovrilo plan](../winning-strategy.md).
+> **Historical MVP proposal — scope superseded.** The final user request now requires role-based login, a live map, tourist/authority reporting, evidence/model escalation, targeted notifications and shelter/contact maintenance. Old exclusions below do not control implementation. See [final requirements](../product-requirements.md) and [GudTour plan](../winning-strategy.md).
 
 > **Orchestrator reconciliation:** Exploratory, not the build assignment. `../winning-strategy.md` controls: Android+iOS, web landing only; one destination, two distinct reviewed languages; no generated emergency guidance or confidence badge. Live adapter becomes mandatory if organizers reject labeled exercise delivery. Implement the controlling exact-identity graph, durable pending refs/tombstones and merge-before-commit cache contract, not older illustrative tables. Provider quotas/language counts are unverified. All schedules below are superseded; start both mobile artifacts early and deploy only after authorization.
 

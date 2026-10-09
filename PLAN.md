@@ -1,5 +1,7 @@
 # PLAN — India Tourist Crisis Communication Mobile App
 
+> **2026-10-10 scope update:** Read [tech-stack.md](tech-stack.md) and [TODO.md](TODO.md) with this plan. [TECHNICAL_IMPLEMENTATION_PLAN.md](TECHNICAL_IMPLEMENTATION_PLAN.md) provides the full engineering design. The user selected Expo, Convex, Google OAuth, Apple Maps on iOS/Google Maps on Android, AccuWeather, SACHET, Jev 1.13 through OpenCode Zen and Google Cloud Translation. OpenCode Jev access passed a synthetic connectivity test; app integration and accuracy remain pending. News is removed. Online-first operation supersedes downloaded basemaps and comprehensive offline workflows below; cached public content and explicit unsent drafts remain degraded-mode support. These latest decisions override conflicting older documentation.
+
 Status: implementation-ready product behavior specification  
 Date: 9 October 2026  
 Scope: mobile app behavior only. No technology stack, service architecture, database schema, or implementation framework is prescribed.

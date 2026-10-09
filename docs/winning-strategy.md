@@ -1,8 +1,10 @@
-# Tovrilo — final TravelTech implementation plan
+# GudTour — final TravelTech implementation plan
 
-**Working name:** Tovrilo (*toh-VREE-loh*). **Tagline:** Local alerts. Your language.
+> **Latest scope:** [PLAN.md](../PLAN.md), [tech-stack.md](../tech-stack.md) and [TODO.md](../TODO.md) supersede conflicting behavior/stack assignments below. In particular: India-only mandatory foreground location, six languages, automatic typed Jev decisions, Convex, no news, five tourist destinations, and online-first operation. Earlier branding is historical.
 
-**Status:** documentation only. No app, backend, model integration, notification, build or deployment is implemented or tested. Final scope comes from [the user's product requirements](product-requirements.md); organizer eligibility, deliverables and scoring come from [the unchanged organizer brief](hackathon-brief.md). This plan supersedes the old Waypoint briefing-first/no-login strategy.
+**Working name:** GudTour. **Tagline:** Local alerts. Your language.
+
+**Status:** documentation only. No app, backend, model integration, notification, build or deployment is implemented or tested. Final scope comes from [the user's product requirements](product-requirements.md); organizer eligibility, deliverables and scoring come from [the unchanged organizer brief](hackathon-brief.md). This plan supersedes the old GudTour briefing-first/no-login strategy.
 
 ## 1. Product promise and locked scope
 
@@ -193,8 +195,8 @@ The official rubric is innovation 20, technical 35, feasibility 20, video 15, de
 
 ## 13. Name and remaining decisions
 
-Tovrilo replaces Waypoint as the working brand. An exact-name web search on 2026-10-09 surfaced unrelated similar-spelling results, not an obvious exact-name app/company. **Non-existence, domain availability and trademark clearance are not proven.** No domain or account has been registered. Release owner screens exact store/domain names at T1 and records results by T22; formal trademark clearance remains required before commercial launch. The hackathon name stays knowingly provisional, without a legal-clearance claim.
+GudTour is the user-selected project name. Brand availability, domain availability and trademark clearance have not been verified. No domain or account has been registered by this planning work; do not claim legal clearance.
 
 Open: actual “Jev”/decision provider; weather/news coverage; language catalog; radius/report-window/shelter freshness settings; verified real agency onboarding; location retention; organizer replay acceptance/timezone; judge iOS access. Prototype policy numbers are not public-safety validation.
 
-Historical research remains input only. [iOS delivery research](research/expo-ios-delivery.md) informs signing/distribution, not proof a build exists. [The archived Waypoint plan](research/waypoint-strategy-archived.md) and its reviews no longer control product scope.
+Historical research remains input only. [iOS delivery research](research/expo-ios-delivery.md) informs signing/distribution, not proof a build exists. [The archived GudTour plan](research/gudtour-strategy-archived.md) and its reviews no longer control product scope.

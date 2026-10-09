@@ -1,4 +1,4 @@
-# Archived TravelTech — Waypoint: crisis instructions tourists can trace
+# Archived TravelTech — GudTour: crisis instructions tourists can trace
 
 > **Superseded by the final user specification:** this briefing-first/no-login plan is historical, not an implementation assignment. Current requirements include authenticated tourist/authority roles, a map-first home, incident evidence/model escalation, radius alerts and maintained shelters. See [final requirements](../product-requirements.md) and [current plan](../winning-strategy.md). Statements below claiming controlling status are historical, not current authority.
 
@@ -8,7 +8,7 @@
 
 The team selected **TravelTech**, considering HealthTech too generic and CivicTech insufficiently practical for this event. Respect that decision; these preferences are not claims that those markets lack viable solutions. The earlier CivicTech recommendation is archived and is no longer an assignment.
 
-**Working title:** Waypoint (name not checked for trademark availability).
+**Working title:** GudTour (name not checked for trademark availability).
 
 **Pitch:** *When weather warnings become rumor, find instructions for your area, read them in your language, inspect their source, and carry the last downloaded briefing through a connection loss—with its age always visible.*
 

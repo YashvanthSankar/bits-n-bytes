@@ -1,5 +1,7 @@
 # Bits and Bytes — strict execution policy
 
+> **Latest scope:** [PLAN.md](../PLAN.md), [tech-stack.md](../tech-stack.md) and [TODO.md](../TODO.md) supersede conflicting behavior/stack assignments below. In particular: India-only mandatory foreground location, six languages, automatic typed Jev decisions, Convex, no news, five tourist destinations, and online-first operation. Earlier branding is historical.
+
 ## Known team decisions
 
 - Team reports **3–4 active builders**; individual roles remain unspecified.
@@ -8,7 +10,7 @@
 - User reports an **active paid Apple Developer account**. Verify authorized roles/access; no purchase or unapproved account changes, and no credentials in documents.
 - Team reports organizer confirmation that AI agents are allowed. Exact wording, permitted pre-event activity, and timezone have not been supplied; retain the confirmation for eligibility questions.
 - This initial deliverable is documentation and strategy, not application implementation.
-- Final user scope is preserved in `product-requirements.md`: map-first tourist/authority login, reporting, time-sensitive multi-source/model escalation, targeted multilingual notifications, location permissions and maintained shelters/contacts. This supersedes the old Waypoint briefing-only/no-login scope. Working brand: **Tovrilo**; availability is not proven.
+- Final user scope is preserved in `product-requirements.md`: map-first tourist/authority login, reporting, time-sensitive multi-source/model escalation, targeted multilingual notifications, location permissions and maintained shelters/contacts. This supersedes the old GudTour briefing-only/no-login scope. Working brand: **GudTour**; availability is not proven.
 - Follow `winning-strategy.md` and `ui-ux-direction.md` for current implementation contracts. Earlier research cannot silently remove required final features.
 - A win is the goal, not a guaranteed outcome. Organizer rubric and actual working evidence govern prioritization.
 

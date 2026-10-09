@@ -1,10 +1,12 @@
-# Tovrilo — map-first native UI/UX contract
+# GudTour — map-first native UI/UX contract
+
+> **Latest scope:** [PLAN.md](../PLAN.md), [tech-stack.md](../tech-stack.md) and [TODO.md](../TODO.md) supersede conflicting behavior/stack assignments below. In particular: India-only mandatory foreground location, six languages, automatic typed Jev decisions, Convex, no news, five tourist destinations, and online-first operation. Earlier branding is historical.
 
 **Controlling scope:** [final user requirements](product-requirements.md) and [implementation plan](winning-strategy.md). This supersedes the old Briefings/Saved navigation. Design instructions, not rendered or verified UI.
 
 ## Direction
 
-Calm, precise, mobile-native wayfinding. The map is the working surface, not a decorative hero. No AI chatbot, editorial layout, oversized slogan, purple gradient, glass-card grid, dashboard metrics, emoji navigation, fake trust percentage or “safe” green map. Brand: **Tovrilo — Local alerts. Your language.**
+Calm, precise, mobile-native wayfinding. The map is the working surface, not a decorative hero. No AI chatbot, editorial layout, oversized slogan, purple gradient, glass-card grid, dashboard metrics, emoji navigation, fake trust percentage or “safe” green map. Brand: **GudTour — Local alerts. Your language.**
 
 Loaded guidance: product-engineering, Expo overview/design-system/native-ui/UI/router/animation/data-fetching, Vercel React Native guidance and web interface guidelines. SDK-specific APIs still need checking against the pinned project; loaded skills are not evidence that an app works. Resolve style guidance into one consistent token system rather than two competing themes.
 

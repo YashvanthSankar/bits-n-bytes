@@ -1,8 +1,10 @@
 # Judge-facing evidence plan
 
-This is a planning checklist, not a report that tests have run. All evidence is **pending** until application implementation and verification occur within the permitted window.
+> **Latest scope:** [PLAN.md](../PLAN.md), [tech-stack.md](../tech-stack.md) and [TODO.md](../TODO.md) supersede conflicting behavior/stack assignments below. In particular: India-only mandatory foreground location, six languages, automatic typed Jev decisions, Convex, no news, five tourist destinations, and online-first operation. Earlier branding is historical.
 
-**Selected track: TravelTech / Tovrilo, Expo Android + iOS and web landing.** The final map-first role-based scope and controlling acceptance tests are in `winning-strategy.md`. Auth, incident persistence, authority maintenance, model gating and targeted notification behavior are now requested core features, not optional technical decoration.
+This is a planning checklist. Application evidence is **pending** until implementation and verification occur within the permitted window. The standalone OpenCode Zen Jev 1.13 synthetic connectivity check passed on 2026-10-10; see [the progress note](progress/2026-10-10-technical-plan-and-migration.md). It does not establish app behavior or decision accuracy. The core behavior is in PLAN.md and its engineering design in TECHNICAL_IMPLEMENTATION_PLAN.md.
+
+**Selected track: TravelTech / GudTour, Expo Android + iOS and web landing.** The final map-first role-based scope and controlling acceptance tests are in `winning-strategy.md`. Auth, incident persistence, authority maintenance, model gating and targeted notification behavior are now requested core features, not optional technical decoration.
 
 ## What the rubric means for our engineering choices
 
