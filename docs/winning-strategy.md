@@ -1,223 +1,200 @@
-# TravelTech — Waypoint: crisis instructions tourists can trace
+# Tovrilo — final TravelTech implementation plan
 
-**Status:** controlling planning document; no app code, build, deployment, tests or video completed. Team: 3–4 builders. Requested stack: Expo. **Latest user decision: Android + iOS apps, web landing page.** This replaces the earlier macOS request. DeepSeek V4.1 Flash supplies bounded research; the orchestrator owns scope, integration and verification. The [organizer brief](hackathon-brief.md) controls requirements.
+**Working name:** Tovrilo (*toh-VREE-loh*). **Tagline:** Local alerts. Your language.
 
-## 1. Fixed decision and winning thesis
+**Status:** documentation only. No app, backend, model integration, notification, build or deployment is implemented or tested. Final scope comes from [the user's product requirements](product-requirements.md); organizer eligibility, deliverables and scoring come from [the unchanged organizer brief](hackathon-brief.md). This plan supersedes the old Waypoint briefing-first/no-login strategy.
 
-The team selected **TravelTech**, considering HealthTech too generic and CivicTech insufficiently practical for this event. Respect that decision; these preferences are not claims that those markets lack viable solutions. The earlier CivicTech recommendation is archived and is no longer an assignment.
+## 1. Product promise and locked scope
 
-**Working title:** Waypoint (name not checked for trademark availability).
+A map-first Android/iOS app for tourists to understand nearby weather incidents, receive attributed multilingual alerts and find maintained shelters. Tourists onboard before travel. Authorities publish incidents and maintain shelter/contact information; community reports contribute time-sensitive evidence rather than instantly spreading rumors.
 
-**Pitch:** *When weather warnings become rumor, find instructions for your area, read them in your language, inspect their source, and carry the last downloaded briefing through a connection loss—with its age always visible.*
+**Required final product:**
 
-The distinctive loop is **area relevance → original bulletin → version-linked translation → saved briefing → update/cancellation on reconnect**. Not another itinerary app, weather forecast, emergency chatbot, or invented “AI trust score.” Standards already support multilingual, geographic and lifecycle alerts; our proposed distinction is the tourist-facing implementation of that complete loop, not an invention of the underlying standard or a first-ever claim.
+1. Separate tourist and authority login experiences with server-enforced permissions.
+2. Tourist onboarding: preferred alert language, destination, live location permission and optional background updates.
+3. Live map: hazard zones, shelters, freshness/source legend and bottom-center **Report incident** button.
+4. Reporting screen with phenomenon buttons: flash flood, landslide, cyclone/severe wind, heavy rain and other weather incident.
+5. Tourist reports start unverified; no public incident notification before confirmation.
+6. Authorized authority reports are automatically authority-verified and escalated to targeted notifications.
+7. Community escalation combines independent recent reports, current/recent weather and relevant news; a decision model returns `NOTIFIABLE_EMERGENCY` or an explicit non-positive result.
+8. Default configurable radius by incident type; recipients selected using last reported location.
+9. Per-user nearest eligible configured shelter and a shelter CTA, without a promise of safe routing.
+10. Multilingual instructions preserving critical meaning; original notice and issuing authority remain accessible.
+11. Authority shelter/contact maintenance, incident correction/withdrawal and visible updates.
+12. Public web landing page with actual Android/iOS access instructions.
 
-Treat this as a communication aid, not an emergency authority. Do not infer which streets are flooded, declare an area safe, route people through a disaster, or claim rescue dispatch. The software can relay supplied authority statements; it cannot establish their ground truth.
+**Not requested:** native macOS, a full web crisis app, social feed, chatbot, autonomous rescue, custom turn-by-turn routing, fabricated street-level weather coverage or guaranteed safety. Do not silently drop a required feature to recreate the old smaller scope; any deadline cut needs an explicit team decision and disclosure.
 
-## 2. Fixed platform scope: Android + iOS, web landing
+## 2. Role and identity contract
 
-The user clarified **“android+ios, web landing”**. Both app targets use one Expo/React Native codebase and the same briefing flow. **No native macOS app, desktop wrapper or full web crisis app is assigned.** The web deliverable is a small public landing page, not a substitute for the mobile app.
+Tourists can self-register, manage their own preferences/location, submit reports and read published incidents/shelters. They cannot edit verification, evidence decisions, issuer identity, official instructions or another user's data.
 
-| Deliverable | Acceptance / decision gate |
-| --- | --- |
-| Android | Standalone preview/release APK with bundled JavaScript; clean install and core loop without Expo Go/Metro |
-| iOS | Signed installable/TestFlight path when account/provisioning/access are available; otherwise a standalone tested iOS Simulator build only if organizers accept it as their testable artifact |
-| Public web landing | Problem/pitch, actual screenshots, data/translation limitations, installation/setup instructions, actual Android/iOS links and repo/video links once published; mobile-responsive HTTPS page |
+Authority login does **not** mean anyone can choose an authority role during signup. Authority accounts are provisioned/approved by an administrator, bound to an agency and jurisdiction, and authorized server-side. The prototype can use clearly labeled seeded demo agencies; it must not claim government accreditation. A revoked account cannot publish or mutate shelters.
 
-Start **both platform builds early**. A simulator `.app` is not an installable iPhone `.ipa`; TestFlight upload is not proof judges can access the build. Precise account, signing, device-registration and review constraints are tracked in [iOS delivery research](research/expo-ios-delivery.md). Verify the selected iOS path before promising a release. Expo Go and development-client builds requiring Metro are not standalone submission artifacts.
+Authorities can publish/update/withdraw their jurisdiction's incidents and maintain shelters and contacts. Privileged role assignments are separate from ordinary profile edits. Protect database reads/writes as well as API handlers; hiding controls is not authorization. Do not expose reporter identities, precise tourist locations or notification tokens to other tourists.
 
-The brief describes web development but permits testable mobile formats. Confirm that **mobile apps plus a landing page** are accepted; a landing page alone is not a functioning web solution to the crisis problem. If organizers require a full public web app, resolve that scope conflict with the user rather than silently expanding. External account/build/deployment actions remain authorization-gated.
+## 3. Incident state machine
 
-**User-confirmed prerequisite:** active paid Apple Developer account available (not independently inspected). Verify authorized roles and judge access. Ad hoc works only for registered tester UDIDs; external TestFlight requires Beta App Review. Internal TestFlight is team-only QA, not general judge access. Do not grant judges account roles to bypass review. Start the selected distribution path early; retain an organizer-accepted simulator fallback, with no guaranteed approval time.
+Keep three separate dimensions:
 
-## 3. Compliance and open confirmations
-
-- Development window: Oct 9 2026 20:30 to Oct 10 20:30; submission strictly before Oct 10 21:00. Timezone unstated—confirm it, do not silently assert IST.
-- Team reports organizer permission for AI agents; retain exact confirmation. Planning does not authorize pre-window app code. Start implementation only after the window and agreed scope are confirmed.
-- GitHub repository, README (problem/solution/setup), API/library disclosure and a real **2–5 minute video added to the repository**. Team leader alone submits through the supplied form. Link-only video acceptance is not assumed.
-- Confirm TravelTech fixture/replay use: only HealthTech explicitly permits simulated data. This is an ambiguity, not a statement that TravelTech simulation is forbidden.
-- Confirm mobile-first Android+iOS plus landing-page submission, and exact accepted iOS artifact/access path. Native macOS is no longer in scope.
-- Do not provision accounts, purchase services, publish repositories or deploy without authorization. Keep tokens server-side.
-- A working replay is valid functional evidence only if clearly described as replay; never call simulated bulletins live government alerts.
-
-## 4. MVP: one destination, two languages, one complete loop
-
-Destination scope: one tourist area and three named subareas, selected once usable sources are known. Language scope: **two distinct languages**: local source language plus English tourist instructions. If the source is already English, select a second tourist language with a competent reviewer; identical English views are not multilingual. Lock the destination, pair and reviewer before translation assignments. Another language is a stretch goal.
-
-### MUST
-
-1. Select a destination/subarea manually; no login or location permission required. Display the bulletin's declared area and the reason it matches. Coarse city coverage must stay coarse.
-2. List bulletins with source attribution, issued time, effective/expiry times, area, severity as supplied, status and data mode. Never display “all clear” because the list is empty.
-3. Detail screen with original instructions, original-source link/reference and translated instructions side by side or one tap apart. Translation provenance and version visible.
-4. Separate exercise fixtures, configured-source bulletins and unverified reports. No uploader can promote a report to a government bulletin. No statistical credibility score.
-5. Deterministic Alert/Update/Cancel replay using exact predecessor references; history remains inspectable. Cancelled, superseded and expired instructions are not current action cards.
-6. Persist the downloaded briefing locally; reopen it offline after app restart. Show offline state, last successful fetch and explicit inability to check newer updates/cancellations.
-7. Reconnect and refresh atomically; update/cancel replay reaches the client, invalidates obsolete translations, and leaves the previous complete cache intact if refresh fails.
-8. Standalone Android and accepted iOS artifacts tested independently; public landing page with honest access links. Readable, accessible screens and honest empty/error states.
-
-### SHOULD, only after the loop passes
-
-- A read-only adapter to one approved publicly accessible source, with documented license, coverage, retrieval timestamp and error handling.
-- Small static area diagram using local assets. If a map is used, hazard shapes must come from source data, not model invention; label approximate/replay shapes.
-- Local reading acknowledgment attached to a bulletin version. This records the user's tap, not comprehension or authority receipt.
-- A second tourist language with independent human review.
-
-### CUT first
-
-Push notifications, background polling, GPS tracking, social posting/moderation, crowdsourced credibility voting, emergency chatbot, generalized scraping, OCR ingestion, dynamic rescue/shelter routing, voice/TTS, offline map tiles, full CAP XML compliance, cryptographic signing, native desktop packaging without proven tooling. Do not sacrifice offline text, provenance or cancellation correctness for a map.
-
-## 5. Data and translation strategy
-
-### Honest two-mode source plan
-
-**Replay mode (baseline):** labeled Exercise/Test bulletins created for the chosen scenario; actual ingestion/validation/filtering/cache/lifecycle logic runs. Source references must say “team exercise fixture,” not impersonate a real agency. A source publisher is a protected local replay runner or protected server operation—not a publicly writable authority console.
-
-**Source mode (conditional):** at most one read-only adapter. Before adoption, verify endpoint access, permission/license, stable fields, relevant geography, source identity and update behavior. The absence of a live hazard is normal; historical examples must show their real age and archival mode. No guaranteed live-local feed has been verified at this planning stage.
-
-**Real-time feasibility gate:** Replay demonstrates delivery mechanics, not actual current local conditions. Obtain organizer confirmation that the labeled exercise meets the TravelTech statement. **Without that confirmation, one verified read-only source adapter becomes MUST**; do not present replay-only as meeting real-time availability. If no suitable accessible local source exists, escalate the unmet requirement and cut optional features rather than substitute coarse global events as street-level evidence. An adapter alone does not guarantee complete warning coverage.
-
-For meaningful-data credit, import one permitted public archival bulletin into a separate labeled example and record URL, publication time, retrieval time, license and transformation. Do not present a historical bulletin as active or imply it supplies real-time street flood extent. CAP is a format, not a data subscription; a global disaster feed is not street-level flood telemetry.
-
-**Provenance badges:** `Exercise fixture`, `Retrieved from configured source`, `Unverified report`, plus lifecycle/freshness labels. “Configured source” means the application fetched an approved endpoint; it does not mean independent cryptographic verification or validated ground truth. A hash identifies bytes for version binding; it does not prove official authorship. Missing attribution/invalid input is quarantined, not upgraded to trusted.
-
-Unverified example reports may be bundled read-only for the comparison demo; building a public report-posting system is out of scope. Never generate emergency instructions from those reports.
-
-### Translation rules
-
-Prefer a source-provided English version where present. Otherwise use human-reviewed translations for the bounded fixture set. Credit the translator/reviewer and label it team-reviewed, not authority-approved. An optional online machine translation must be clearly marked unreviewed, original always accessible, and cannot fabricate missing instructions.
-
-Cache translations by `(bulletin identity, content version/hash, source language, target language)`. On update, old translation is history only; until the new translation exists show the current original with “translation unavailable.” Preserve places, phone numbers, times, units and negation during review. Automated entity checks are regression guards, **not proof of semantic accuracy**. Record at least one negative test involving a flipped “do not.”
-
-API timeout, quota failure or missing language → explicit translation unavailable; never invent success or silently display the predecessor's translated instruction. No language model used to decide hazard truth or emergency action.
-
-## 6. Portable contract and deterministic semantics
-
-Use TypeScript pure functions for filtering and lifecycle, shared by all approved clients. This is a **CAP-inspired normalized subset**, not a claim to implement or validate all CAP 1.2 XML.
-
-### Core records
-
-- `Source`: stable ID, attribution, approved origin/reference, mode, coverage note.
-- `Bulletin`: unique composite `(sourceId, sender, identifier, sent)`; type `Alert | Update | Cancel`; status `Actual | Exercise | Test`; public scope only; exact predecessor references; area IDs and original area text; source language, original instruction/body; issued/effective/expiry instants with offsets; supplied severity; content hash/version; fetch time and source reference.
-- `Translation`: exact bulletin key/hash, language, text, origin `source | team-reviewed | machine-unreviewed`, reviewer metadata when applicable.
-- `BriefingSnapshot`: schema version, complete bulletins/lifecycle references/translations, selected area, last successful fetch, mode. Acknowledgments, if included, are local and version-specific.
-
-**Identity normalization:** `sourceId` is an exact configured adapter key assigned by the adapter, not trusted from payload. Preserve sender/identifier case and nonempty text; reject surrounding whitespace/control characters rather than guessing aliases. Require explicit-offset ISO `sent`; normalize to UTC milliseconds, reject invalid dates/unsupported precision, preserve raw timestamps for display. References follow the same rules. A sourceId absent from a CAP-like reference inherits the ingest adapter's sourceId, never global lookup. Reject explicit cross-source references and unauthorized sender changes. Same canonical identity with a different content hash is quarantined, not overwritten.
-
-Missing geographic detail stays unknown; never enrich with invented polygons. Require valid identity/times/references and bounded payloads. Preserve source-specific meaning; reject unsupported status/scope into an explanatory non-actionable state. No authenticated travelers or private data are needed for this MVP.
-
-### Lifecycle contract
-
-1. Validate and deduplicate exact message identities. Duplicate bytes are idempotent. Same identity with different content is quarantined as conflicting input, not overwritten.
-2. References include full source/sender/identifier/sent identity. Allow mutation of a predecessor only within the same configured source/sender; reject missing, self, cyclic or invalid references from action display and show diagnostics. Store unresolved references pending another refresh; do not show their instructions as active.
-3. Update explicitly supersedes referenced predecessors; Cancel explicitly cancels them. Keep complete history and persisted tombstones so replaying an old Alert cannot resurrect it. A later genuinely new Alert is a separate message, not automatically a reactivation.
-4. **Cancel safety precedence:** valid resolved cancellation is retained and prominently displayed, never discarded as an ordinary competing successor. For this conservative MVP, Cancel referencing any node in a known linked update chain suppresses current action instructions for that entire chain, including competing update branches; show “cancellation received—consult source,” not “hazard ended.” This chain-suppression is an application safety policy, not claimed CAP semantics. Multiple competing **Updates without Cancel** produce visible unresolved conflict and no current instruction recommendation. Independent Alerts may coexist; never merge conflicting instructions into generated advice.
-5. Base temporal eligibility is `effective <= now < expires`. If effective absent, use sent. If expiry absent, show “expiry not supplied / current validity unknown” and do not claim it is currently active. Reject expiry earlier than effective. “Expired” means bulletin validity ended, not hazard ended.
-6. A selected area's exact declared membership is a match. A city-level bulletin matches the relevant city with an explicit coarse-coverage explanation; unknown area is discoverable but marked “local applicability unknown.” No inferred street safety. Within current matched bulletins sort supplied severity, then sent descending, then identity for stability; unknown severity stays unknown.
-7. Evaluate both cached and online data using the same injected-clock function. Online refresh policy: user refresh and foreground checks; optional foreground 60-second polling only after baseline works. No background-delivery guarantee. Show “last fetched” even online; a failed fetch never advances it.
-8. Offline age warning: demo policy of 15 minutes since last successful fetch, clearly labeled an application policy, not an authority freshness standard. Before and after that threshold cached data is still not guaranteed current. Expiry is re-evaluated offline; cancellation can only be learned once retrieved. If clock rollback/inconsistency is detected, label validity unknown.
-
-Never show cached shelters or zones as guaranteed safe. Any relayed safe-zone declaration is versioned, attributed and time-bounded with offline uncertainty; shelter status/routing is not baseline scope.
-
-### Normative resolution table (replaces exploratory sequential tables)
-
-Compute from the retained validated message set, not arrival order; render lifecycle before temporal/freshness labels. No grouping solely by hazard name/event ID and no implicit Update from another Alert.
-
-| Input / graph state | Required result |
-| --- | --- |
-| New unique Alert, no exact update/cancel links | Independent chain; evaluate effective/expiry and area |
-| Exact duplicate | No new record or transition |
-| Valid Update references predecessor | Link/supersede predecessor; current successor original/translation only |
-| Unresolved Update/Cancel reference | Persist pending, visibly non-actionable; re-resolve when predecessor arrives |
-| Resolved Cancel references any known chain node | Preserve cancellation; suppress chain action instructions irrespective of competing Updates |
-| Multiple Update successors, no Cancel | Conflict visible, no current action instructions |
-| Cancel-before-Alert or old Alert replay after Cancel | Same final suppression as in-order input; no resurrection |
-| Expired/future/missing-expiry leaf | Expired/scheduled/validity-unknown; no current-validity claim |
-
-Recompute graph to a fixed point after successful ingest. Invalid/cross-source/cyclic inputs are quarantined. Tests permute Alert/Update/Cancel, include Cancel vs competing Updates and cancellation of an older chain node. Cancellation stays visible even when its predecessor expires; expiration never converts it into an all-clear.
-
-### Minimal architecture
-
-Expo + React Native + TypeScript; navigation chosen once by the integration owner. One persistence interface using a storage library verified on **both Android and iOS**. Landing page is a separate minimal static surface, not an offline web app. Feed can be static hosted exercise snapshots with a protected replay writer; add one small server only when required for source proxying or secret API keys. Do not ship service credentials to clients. Static read-only demo data needs no elaborate database or role system.
-
-Refresh is all-or-nothing: download → size/schema validation → **merge retained history, cancellation tombstones and pending references** with new validated messages → reference validation/lifecycle calculation → atomic snapshot replacement including all durable records. A successful shorter feed window does not delete previously seen records. Deduplicate canonical identities; quarantine identity/hash conflicts. For this bounded demo do not garbage-collect history; future retention requires an explicit anti-resurrection policy. Invalid/partial refresh does not delete the last complete cache or advance last-successful-fetch. Version schema migrations; invalid stored data produces a recoverable “no valid saved briefing” state, not invented content.
-
-## 7. Strict build assignments
-
-All implementation is later and time-window gated. Model for delegated work remains `opencode/deepseek-v4.1-flash`. Every task has exclusive files, an agreed contract, timebox and named tests. The orchestrator reviews evidence, integrates and decides cuts; no recursive vague delegation.
-
-| Builder | Exclusive scope | Acceptance evidence |
+| Dimension | Values | Meaning |
 | --- | --- | --- |
-| A — integration/release | Dependency/toolchain choices, adapters, source endpoint/replay delivery, builds/config, approved deployment | Clean Android install, accepted iOS launch, endpoint errors, secret scan |
-| B — domain/data | Normalization, lifecycle, relevance, fixtures, translation-version contract | Deterministic unit tests incl. order independence and cancellation |
-| C — app/UI/offline | Screens, persistence adapter, snapshot refresh, offline/error accessibility | Restart offline, reconnect invalidation, empty/missing-language states |
-| D — QA/demo/landing | Independent safety/edge checks, reviewed translations, minimal landing, README/disclosures, recording/submission rehearsal | Evidence ledger, real 2–5min video, both-platform smoke tests and landing-link checks |
+| Provenance | `COMMUNITY`, `AUTHORITY_VERIFIED` | Who issued it; verified authority identity is not proof of physical ground truth |
+| Confirmation | `UNVERIFIED`, `CONFIRMED`, `DISPUTED` | Evidence assessment, not official attribution |
+| Lifecycle | `OPEN`, `UPDATED`, `WITHDRAWN`, `EXPIRED` | Whether this version remains actionable |
 
-Three builders: B owns fixture translations/docs preparation; C supplies UI test recordings and minimal landing; A owns release integration. Everyone reserves final testing time. Agree interface files first; one owner merges shared files, lockfile and configuration. No external publication without authorization.
+Notification eligibility is a separate versioned decision: `NOTIFIABLE_EMERGENCY`, `NOT_QUALIFIED`, `UNCERTAIN`, or `PENDING_REVIEW`. UI labels distinguish **Authority-issued** from **Community-confirmed**. Model confirmation never upgrades a community incident to an official one.
 
-## 8. Acceptance tests: pending, not passed
+**Tourist path:** validated report → match/create incident → collect independent evidence → evaluate current evidence snapshot → confirmed + positive notification decision → radius targeting → localized notification + map update. Unverified reports are visible to their submitter and authorized reviewers, not portrayed as established hazards on the public map. Repeated reports alone cannot trigger notification.
 
-1. Manual area selection works without GPS permission; unknown/coarse areas do not imply a local all-clear.
-2. Exact area match/nonmatch, city-level match and unknown-area state have deterministic explanations.
-3. Invalid identities/times/scope, oversize payloads and unsafe links are rejected/quarantined. Render content as text, never executable HTML; allow only approved HTTP(S) source links, no automatic dialing.
-4. Duplicate ingestion is idempotent; altered bytes under the same identity are quarantined.
-5. Alert → Update → Cancel removes obsolete action cards and preserves history. Expiry boundary at `now == expires` is non-active; future effective time and missing expiry are correct.
-6. All permutations of the bounded message set yield the same final state; Cancel before its target remains pending then prevents resurrection. Test unknown/cross-source references, cycles, competing Updates, **Cancel vs competing Updates and Cancel of an older chain node**; cancellation stays visible and suppresses action instructions.
-7. Current translation matches current hash; predecessor translation cannot leak after update. Unsupported language/API failure shows original and honest fallback.
-8. Human review catches changed negation and checks times, phone numbers, places and units; entity tests alone are not semantic validation.
-9. Save briefing, kill/reopen app with networking disabled, recover original + reviewed translation and last-fetch metadata. Fresh install offline shows no saved briefing, not success.
-10. Freshness threshold 14:59/15:00, expiry while offline and clock rollback produce specified warnings without “safe” claims. Airplane mode does not deliver new cancellations.
-11. Reconnect fetches cancellation and invalidates old translation. Failed/partial refresh keeps prior complete snapshot and does not advance last successful fetch.
-    Also test **successful shorter-window refresh** omitting a previously seen Cancel/pending Cancel: durable records survive refresh and app restart, and target replay never resurrects instructions. Same-identity/different-hash input is quarantined.
-12. Exercise, configured-source and unverified inputs are visibly distinct in list, detail and cache; arbitrary public input cannot impersonate an authority.
-13. Standalone APK and accepted iOS artifact launch without Expo Go/development server; restart, offline cache and lifecycle work on each. Device-only/Simulator-only limitations explicitly recorded. TestFlight links are tested by intended testers, not just uploaded.
-14. Readable contrast, screen-reader labels, text scaling and no color-only severity; keyboard/mobile-responsive landing with tested artifact links. No secrets/location history in bundle, repository or video.
-15. README setup and release links tested by teammate; video measured 2–5min and accessible in repository; final submission fields rehearsed by leader.
+**Authority path:** approved authority submits within its jurisdiction → server records authority provenance and confirmation → automatically creates notification decision/outbox entry for a valid publishable incident → radius targeting → localized notification + map update. This honors the requested automatic official-report path: weather/news/model failure must not silently veto an authorized official warning. Invalid payload, revoked role, missing geometry or expired version cannot publish.
 
-## 9. 24-hour critical path and cut gates
+Every transition records actor, incident/version, evidence snapshot or official source, timestamps and policy/model version. Use an audit trail, not an unsupported claim of tamper-proof storage. Correction/withdrawal preserves history, removes stale actionable presentation and notifies prior recipients as applicable; withdrawal does not mean “all clear.”
 
-`T0` is a relative planning anchor for Oct 9 20:30; timezone remains **unconfirmed** until organizers answer. Do not treat this as a verified absolute schedule. Before T0: documentation/decisions only; do not create app code or disguise implementation as preparation. This schedule alone controls; research schedules are superseded.
+## 4. Evidence aggregation and decision model
 
-| Time | Deliverable / decision gate |
+- Cluster only compatible phenomenon reports within configured geographic/time windows; preserve each observation's event time and server receipt time. Never merge unrelated hazards merely because they share a place.
+- Count distinct eligible reporters, not button taps or accounts asserted to be independent. Dedupe repeated submissions; apply abuse limits and document that multiple accounts can still defeat naive counting.
+- Weight recency; old observations do not establish a current emergency. Future timestamps, implausible positions and unrelated areas are rejected or quarantined.
+- Fetch current **and recent** weather with source, geographic resolution, observation time and fetch time. Weather supports context, not proof. Sunny local skies cannot rule out upstream flooding, storm surge, reservoir release or landslides after earlier rain.
+- Collect relevant timestamped news from a documented source/search adapter. Validate place/event relevance and deduplicate syndicated copies. News is untrusted input, not an instruction to the model. Lack of news is not evidence that nothing happened.
+- Missing feeds remain `unavailable`, never invented sunshine/no-news evidence. Conflicting evidence is surfaced.
+
+**“Jev” is an unresolved provider reference, not an implemented integration.** Use a provider-independent adapter; select and verify the actual model/API, access, latency, cost and data terms before implementation.
+
+Model input: incident version, distinct recent-report evidence, source/time-stamped weather/news, known missing inputs and policy limits. Exclude unnecessary personal data. Output must be structured: decision enum, evidence references, rationale, uncertainty, model/version and evaluated time. The model cannot invent instructions, sources or hazard geometry.
+
+The model makes the proposed qualification decision for the community path; deterministic server gates check evidence sufficiency, geography, recency, output schema and unchanged incident version before accepting it. A positive model output alone is not authority verification. Thresholds/windows/radii are explicit **prototype policy settings**, not scientifically validated predictions. Uncertain or invalid results go to authority review, not automatic broadcast.
+
+Timeout, malformed response, stale evaluation or service failure → `UNCERTAIN`/retry/review, no community broadcast and no all-clear. Re-evaluate on new evidence. Record the actual input/output so decisions can be explained; identical evidence need not produce identical stochastic model output. This is a bounded prototype, not a production-certified autonomous emergency adjudicator.
+
+## 5. Notifications and last-known location
+
+1. Configure a default effect radius per phenomenon, with units and policy version. Authorized authorities may supply more accurate geometry/radius within validated limits. Circles are approximate notification zones, not flood extents.
+2. Evaluate geodesic distance on the server against each opted-in user's last reported position, timestamp and accuracy. Test equality at the radius boundary explicitly.
+3. Store the selected location/evidence version with the targeting decision; do not describe a stale location as current. Proposed demo freshness limit: 15 minutes, clearly application policy. Unknown/stale locations get a separate uncertain-location fallback: alert opted-in users subscribed to the affected destination, labeled as destination-based rather than precise nearby targeting. Do not silently exclude them or assert their current position.
+4. Create durable notification jobs in the same transaction as accepted publication. Idempotency key: incident version + recipient + notification kind. Worker retries delivery and processes receipts; token failure is not successful delivery.
+5. Expo push/APNs/FCM is best-effort. Permission denied, offline devices and OS restrictions can prevent delivery. The in-app alert inbox and foreground refresh remain available; do not promise everyone was notified because a provider accepted a request.
+6. Updates/withdrawals reference previous versions; avoid re-broadcasting unchanged evidence. Reconnecting clients retain withdrawals and do not resurrect a hazard from an older snapshot.
+
+Push payloads should contain minimal private data and a versioned incident link. Do not put precise tourist coordinates on lock screens. Account/language/token changes and signout must update recipient associations safely.
+
+## 6. Shelters and emergency contacts
+
+Authorities maintain shelter name, coordinates, jurisdiction, source, open/closed/unknown status, last-confirmed time, contact and optional accessibility/capacity information. Unknown capacity stays unknown. Only open, sufficiently current shelters outside known active hazard zones qualify for a suggested destination; this filtering is not proof of route or shelter safety.
+
+For each recipient select the nearest eligible configured shelter by geodesic distance from their last reported location. Show **“Closest listed shelter — route safety not verified”**, position age, shelter status age, source and contact. If none qualifies, show “No current eligible shelter listed” and authority contact rather than inventing a safe zone.
+
+CTA: **View shelter** → shelter details, call contact, optional external map directions. Preserve official instructions if an authority directs people elsewhere. External navigation does not inherit our hazard exclusions. Do not say “safest route,” and do not imply that Google Maps consumes these incident reports. Offline phone/map actions require the relevant device services; explain unavailable actions.
+
+## 7. Meaning-preserving multilingual communication
+
+Onboarding stores a preferred language; settings can change it later. Architecture supports a configured language catalog. Demonstrate at least two distinct languages end-to-end; wider language coverage is not “complete” until each advertised language has working alerts and tested critical text.
+
+For official notices preserve: place names, issuer, severity, dates/times/timezone, numbers/units, evacuation orders, negation and prohibited actions. Store immutable original instruction text plus version/hash. Translation key binds incident version + original hash + source/target language; corrected originals invalidate previous translations.
+
+Show original beside/below translated instructions in detail, issuing authority, source time and translation origin (`human-reviewed` or `machine-unreviewed`). Entity checks detect missing numbers/names but cannot prove semantic preservation. Human-reviewed emergency templates and test cases cover the demonstrated languages; do not advertise machine output as certified accurate.
+
+If a critical translation is missing, fails validation or is unreviewed, retain the original and a clear fallback notice. Do not silently substitute older translated instructions. A localized notification can use a reviewed generic warning template linking to original details while specific instructions await review. The decision model does not generate rescue advice.
+
+## 8. Location, offline behavior and privacy
+
+Onboard before arrival with destination subscription and language; current GPS might be the user's home, so it does not replace destination planning. Request foreground location with a clear explanation, then background access separately when justified. Denial/restriction must leave manual destination selection and alerts readable.
+
+Background location is conditional on permission, native configuration and OS behavior; continuous operation after force-quit cannot be guaranteed. Implement and verify in standalone builds, not merely Expo Go. Recheck on foreground; show location age/accuracy. Minimize update frequency and retention, allow pause/revocation/deletion, and keep precise location server-private.
+
+Persist a real local snapshot of published incidents, withdrawals, reviewed instructions, shelters and fetch metadata. On restart offline show saved data with “Cannot check for newer incidents, changes or withdrawals.” Recompute expiry; missing validity is unknown. Failed refresh preserves cache/last-success time; successful refresh merges withdrawals/history atomically rather than trusting a truncated live window. Basemap tiles are not automatically offline-capable; provide a readable saved list if the map is unavailable. Offline report drafts remain unsent until an acknowledged upload; never show a draft as submitted.
+
+## 9. Architecture and implementation boundaries
+
+**Proposed stack, not installed:** Expo Router + TypeScript apps; SDK-compatible native map/location/notifications; TanStack Query for remote state; SecureStore for auth; local persistent cache for offline data. Public informational landing hosted separately. Pin the SDK before selecting `@expo/ui` APIs or native dependencies.
+
+Backend proposal: Supabase Auth + Postgres with spatial queries (PostGIS where available), RLS and server-side handlers/workers for authority publishing, model/weather/news adapters and delivery. This is a proposal, not provisioned infrastructure. No service-role/model/weather/news secrets in `EXPO_PUBLIC_*` or a mobile bundle. Restrict native map keys by application identity where supported; document provider terms and quotas.
+
+Domain records: agency/approved role; tourist private preferences/location/device tokens; incident and immutable versions; report observations; evidence/assessment snapshots; source notices/versioned translations; shelter/contact records; audit events; delivery outbox/receipts. Index jurisdiction/incident/time and geographic queries; enforce ownership and versioned writes. Sensitive internal evidence is not exposed through the public incident read model.
+
+Interfaces agreed before parallel implementation:
+
+- Auth/onboarding → role, agency/jurisdiction, language, destination subscriptions and consent state.
+- Reporting → idempotent submit response, incident ID and unverified/published status; acknowledged uploads only.
+- Escalation → versioned evidence bundle and validated model result; official publication is a separate authorized path.
+- Published snapshot → geometry, provenance, confirmation, lifecycle, original/translation, timestamps and shelter references; no reporter PII.
+- Targeting/delivery → recipient selection reasons, notification job IDs and actual delivery states.
+
+## 10. Screen contract
+
+Read [ui-ux-direction.md](ui-ux-direction.md) before building. Tourist home is the **live map**, never a briefing dashboard. Persistent native destinations: **Map**, **Alerts**, **Profile**. Incident/shelter details open as native sheets or stack screens. Report incident is the bottom-center map action above safe-area/tab chrome.
+
+Authority mode has operational map, incident publishing/review and shelter/contact management. Same design system, visibly different permissions. No public role-switch that grants authority privileges. All data surfaces have loading, error, empty, cached/offline and content states; every enabled action performs the advertised task.
+
+## 11. 24-hour build plan
+
+This final scope is materially larger than the earlier plan; call it ambitious, not guaranteed feasible. Use one destination, a small phenomenon catalog, configured shelters and two tested languages for a complete vertical slice. Expand only after real delivery and verification.
+
+| Relative time | Integration checkpoint |
 | --- | --- |
-| T0–T1 | Confirm permissions, iOS distribution path, mobile+landing acceptance, source/replay permission, toolchain/accounts; freeze contract/fixture set; establish repository within window |
-| T1–T3 | Minimal Expo app, first Android and iOS standalone builds initiated, source snapshot contract; flag signing/account/toolchain blockers immediately |
-| T3–T6 | One area → source bulletin → original/translation end-to-end; first install test. No device artifact by T6: release/build failure takes priority over features |
-| T6–T10 | Offline persisted restart + deterministic lifecycle on both platforms; minimal public landing if authorized |
-| T10–T14 | Update/cancel/reconnect/version tests; source adapter only if stable permissions and fields verified, otherwise honest replay |
-| T14–T18 | Independent negative tests/accessibility and all MUST gaps. Cut map, second translation/API, acknowledgments before touching safety core |
-| T18–T20 | Android+iOS validation, landing-link checks, README/API inventory, disclosure/data citations, video rehearsal |
-| T20–T22 | Record real 4-minute walkthrough, inspect playback, repository/release access; release candidate |
-| T22–T23 | Independent smoke test, evidence ledger, leader submission rehearsal; no new features |
-| T23–T24 | Internal freeze target; only essential verified fixes before development ends. Preserve last working artifact |
-| T24–T24.5 | Submission buffer, not extra coding time. Leader submits well before hard deadline and retains receipt |
+| T0–T1 | Confirm development window/timezone, organizer fixture/mobile+landing acceptance, actual model/weather/news access, agency demo identities, build accounts and judge distribution route |
+| T1–T3 | Scaffold during permitted window, pin dependencies/contracts; start Android/iOS standalone build pipeline; auth, map and backend skeleton |
+| T3–T6 | Real tourist report + authorized official publish + persistent map/shelters; launch standalone apps and prove one push on each available physical platform |
+| T6–T10 | Recent-report aggregation, weather/news evidence, structured model gate; positive/uncertain/rejected paths |
+| T10–T14 | Radius targeting/outbox/receipts, per-user shelter selection, reviewed bilingual alerts and original notice; authority maintenance |
+| T14–T18 | Background permissions, offline restart/withdrawal reconciliation, abuse/RLS/version tests; polish accessibility |
+| T18–T22 | Fix blockers, accepted iOS distribution, standalone Android, public landing; record real 2–5 minute demo; clean-setup rehearsal |
+| T22 | Release candidate with tested links and artifacts |
+| T23 | Internal code/content freeze; submission rehearsal |
+| T24 | Stop development conservatively at official window close |
+| T24–T24.5 | Team leader submits complete deliverables before hard cutoff; no planned feature work |
 
-Neither mobile platform is quietly cut. By T6 require a clean Android launch and an accepted iOS build path with actual launch evidence; unresolved iOS distribution triggers an explicit user/organizer decision, not an “iOS supported” label. Account approval, cloud queues, signing and TestFlight access are schedule risks; no promised turnaround. Simulator fallback is valid only if accepted and tested.
+Four builders: (1) backend/auth/domain/security integration; (2) native map/onboarding/report UI; (3) evidence/model/translation/targeting worker; (4) authority surfaces, QA, builds/landing/demo. With three, combine authority UI into the mobile stream and share QA; keep one migrations/dependency owner. Delegate exclusively scoped files using DeepSeek V4.1 Flash; orchestrator reviews and integrates.
 
-## 10. Judge-facing story and evidence
+**Release blockers:** no verified provider = do not pretend model/news/weather integration works; no physical push test = no verified push claim; simulation-only data = label and obtain organizer acceptance; no judge-accessible iOS path = unresolved deployment. Any disabled required feature is a disclosed gap, not a completed product.
 
-| Criterion | Weight | What we demonstrate |
-| --- | --- | --- |
-| Innovation | 20% | Tourist-focused traceable instruction loop, version-bound translation and offline cancellation reconciliation—not unsupported novelty |
-| Technical | 35% | Tested lifecycle/reference/relevance engine, atomic persistence, failure handling, installable app; no unnecessary database/AI complexity |
-| Feasibility | 20% | One realistic destination, explicit source coverage/license, language review, permissionless manual selection and honest offline limits |
-| Video | 15% | Actual artifact completes workflow, with visible exercise labels and one negative case |
-| Deployment | 10% | Clean APK install, accepted iOS artifact/access and public landing; no requirement for judges to run Expo tooling |
+### Submission artifacts and distribution
 
-### Four-minute demo
+| Deliverable | Required access evidence | Owner / checkpoint | Current state |
+| --- | --- | --- | --- |
+| Android APK | Fresh install and launch without Metro; real artifact link | Release owner, initial T6 / final T22 | Pending |
+| iOS | Judge-accessible signed TestFlight/ad-hoc path, or explicitly organizer-accepted simulator fallback | Release owner, path decision T1 / launch T6 / final T22 | Pending; fallback acceptance unconfirmed |
+| Web landing | Public HTTPS page with tested real artifact/access links; host chosen at T1 | Release owner, final T22 | No host provisioned |
+| Repository/README | Accessible GitHub URL, clean setup, real dependency disclosures | Integration owner, final T22 | Local repository only; remote access unverified |
+| Demo video | Real 2–5 minute file in repo, duration/playback checked | QA/demo owner, final T22 | Not recorded |
 
-- **0:00–0:25:** Tourist sees fragmented warnings; state destination, source mode and actual supported platforms.
-- **0:25–1:15:** Select area, inspect matching bulletin, original source, timestamps and supplied instructions. Show unverified example separated, not judged by AI.
-- **1:15–2:00:** Switch to reviewed tourist-language text; show version/reviewer label and original. No claim translation guarantees safe action.
-- **2:00–2:45:** Save, turn off connectivity, restart; read cached text and visible age/expiry/unknown-currentness.
-- **2:45–3:35:** While disconnected advance labeled replay to Update/Cancel; reconnect. Show real refreshed lifecycle and obsolete translation removal. Not a push notification or actual government issue.
-- **3:35–4:00:** Actual artifact/access, one tested failure, source/translation limitations and sensible next step.
+- **Android:** directly installable standalone `.apk` with bundled JavaScript, verified without Metro. An `.aab` alone is not a direct-install judge artifact; Expo Go/development clients are not the release.
+- **iOS:** signed device build with an actually accessible TestFlight/ad-hoc path. Internal TestFlight is team-only, not general judge access; external testing may require Beta App Review with no guaranteed turnaround. Ad-hoc requires registered tester UDIDs. A simulator `.app` is not a physical iPhone `.ipa`; use a simulator fallback only if the organizer accepts it.
+- Active paid Apple Developer membership is user-reported; verify authorized account role, signing and judge access early. Push capabilities/credentials and background-location native configuration are now required considerations; prior research exclusions of push are superseded. Do not modify account settings without authorization.
+- Public landing: real artifact/access links, limitations and instructions tested in a clean browser. It is not a substitute for working mobile artifacts.
+- Repository: problem, solution, clean setup, configuration templates, API/library/model disclosures and actual 2–5 minute demo video. No secrets or signing material. Store builds via approved artifact hosting/release attachments; keep the required video file in the repository unless organizers explicitly approve link-only delivery. Check repository file-size constraints early.
 
-Round 2: retain a known working version and offline briefing; prepare a separate live runbook once timing is known. Do not claim measured panic reduction, rescue savings or lives saved. Meaningful-data evidence is provenance/coverage/lifecycle handling and permitted archival examples, not unvalidated impact arithmetic.
+## 12. Acceptance tests and demo
 
-## 11. Research hierarchy and verified anchor
+Required checks, all currently **pending**:
 
-Use [original TravelTech research](research/traveltech.md) as exploratory input, [Expo platform research](research/expo-platforms.md) for historical Android/macOS findings, [iOS delivery research](research/expo-ios-delivery.md) for current release gates, and [bounded Expo MVP research](research/traveltech-expo-mvp.md) for alternatives. This document controls chosen scope; broader source signatures, live machine translation, maps or authenticity tiers in exploratory notes are not implementation requirements.
+1. Tourist signup cannot grant authority role through profile/API/database mutation; revoked/out-of-jurisdiction publishers denied.
+2. Tourist report persists as unverified; no public notification or established-hazard marker before confirmation.
+3. Valid authority report auto-publishes/notifies even if enrichment/model is unavailable; source attribution preserved.
+4. Duplicate reporter taps and old/future reports do not count as current independent evidence; unrelated hazards do not merge.
+5. Community confirmation requires eligible evidence + accepted positive model result; invalid/timeout/uncertain response does not broadcast.
+6. Model evaluation against superseded incident version cannot publish; weather/news gaps and conflicting inputs are visible.
+7. Sunny-local-weather scenario cannot produce an all-clear or automatically reject upstream-flood evidence.
+8. Radius boundary, inside/outside, accuracy and stale-location destination fallback behave as documented; no private-location leakage.
+9. Duplicate publication/worker retry creates no duplicate logical notification; provider acceptance, receipt and failure distinguished.
+10. Actual preferred-language push and detail open on Android/iOS; denied notification/location permissions remain usable.
+11. Nearest eligible shelter differs for two users; closed/stale/known-hazard-zone shelters excluded; no eligible shelter handled honestly.
+12. Authority shelter/contact edits persist and tourist clients refresh; unauthorized direct writes denied.
+13. Translation preserves negation, evacuation orders, place names, deadlines and numbers in tested languages; update invalidates older translation; original always accessible.
+14. Background location/permission behavior tested on standalone devices; force-quit limitations stated.
+15. Restart offline restores saved alerts/shelters with correct freshness; withdrawal retained through short refresh/restart; offline drafts not marked sent.
+16. 200% text, screen reader, light/dark, reduced motion, keyboard, safe areas and map-to-list accessibility checked.
+17. Fresh installation without Metro, actual iOS judge access, public landing links, no-secret scan and clean README setup checked.
 
-The [independent plan review](research/traveltech-plan-review.md) identified judge-access, identity and refresh-retention gaps. Contracts above address identity/retention **in the plan, not with executed tests**. Apple account availability is user-confirmed; tester access, organizer replay/mobile+landing acceptance, source coverage and timezone remain open external gates.
+**Four-minute demo:** problem + pre-arrival language/destination → tourist unverified report/no broadcast → recent corroboration/weather/news and model qualification → real localized alert on another device → map hazard and per-user shelter detail → authority-issued notice with original/translation → authority correction/withdrawal + offline caveat → deployment and honest limitations. Show both official and community paths without presenting seeded agencies/weather as live government integration.
 
-**Verified primary source:** [OASIS CAP 1.2 standard](https://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2-os.html), fetched 2026-10-09. It specifies geographic targeting, multiple language info blocks, effective/expiry fields and Alert/Update/Cancel references; expiry may be absent and consumers may set policy. These facts support the lifecycle design, not any claim that a feed is available, that our subset is fully conformant, or that a source is authentic. Our missing-expiry and conflict rules above are conservative application policies.
+The official rubric is innovation 20, technical 35, feasibility 20, video 15, deployment 10. Innovation/feasibility are the user's focus, not a replacement for the full judging scheme. Technical evidence for the working loop outweighs extra mock screens. See [judging-evidence.md](judging-evidence.md).
+
+## 13. Name and remaining decisions
+
+Tovrilo replaces Waypoint as the working brand. An exact-name web search on 2026-10-09 surfaced unrelated similar-spelling results, not an obvious exact-name app/company. **Non-existence, domain availability and trademark clearance are not proven.** No domain or account has been registered. Release owner screens exact store/domain names at T1 and records results by T22; formal trademark clearance remains required before commercial launch. The hackathon name stays knowingly provisional, without a legal-clearance claim.
+
+Open: actual “Jev”/decision provider; weather/news coverage; language catalog; radius/report-window/shelter freshness settings; verified real agency onboarding; location retention; organizer replay acceptance/timezone; judge iOS access. Prototype policy numbers are not public-safety validation.
+
+Historical research remains input only. [iOS delivery research](research/expo-ios-delivery.md) informs signing/distribution, not proof a build exists. [The archived Waypoint plan](research/waypoint-strategy-archived.md) and its reviews no longer control product scope.

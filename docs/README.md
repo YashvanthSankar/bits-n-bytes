@@ -1,21 +1,28 @@
-# Bits and Bytes — CS Week hackathon docs
+# Tovrilo — documentation index
 
-Start with **[winning-strategy.md](winning-strategy.md)** for the team's chosen TravelTech direction, scoped Expo MVP, build assignments, deadline plan, tests, and demo. **Latest platform decision: Android + iOS apps, web landing page.** The earlier macOS request is superseded.
+**Current final product:** map-first TravelTech crisis communication with tourist/approved-authority login, incident reporting and evidence/model escalation, radius-targeted multilingual alerts, maintained shelters/contacts and consent-based location. **Platforms:** Android + iOS via Expo; public web landing page.
+
+Read in this order:
 
 | Document | Purpose |
 | --- | --- |
-| [hackathon-brief.md](hackathon-brief.md) | Supplied organizer problem statements, rules and rubric |
-| [winning-strategy.md](winning-strategy.md) | Controlling TravelTech plan: Waypoint / Expo |
-| [agent-execution-policy.md](agent-execution-policy.md) | Team context, strict delegation/ownership and evidence standards |
-| [judging-evidence.md](judging-evidence.md) | Rubric mapping and verification ledger |
-| [research/healthtech.md](research/healthtech.md) | Independent DeepSeek alternative-track proposal and cautions |
-| [research/traveltech.md](research/traveltech.md) | Initial DeepSeek TravelTech research and safety cautions |
-| [research/traveltech-expo-mvp.md](research/traveltech-expo-mvp.md) | Bounded Expo proposal, reconciled by orchestrator |
-| [research/expo-platforms.md](research/expo-platforms.md) | Primary-source Android/macOS build and distribution research |
-| [research/expo-ios-delivery.md](research/expo-ios-delivery.md) | Current iOS artifact/signing/TestFlight/simulator release gates |
-| [research/traveltech-plan-review.md](research/traveltech-plan-review.md) | Independent review and orchestrator disposition |
-| [research/civictech.md](research/civictech.md) | Rejected-track exploratory input, not an assignment |
-| [research/civictech-strategy-archived.md](research/civictech-strategy-archived.md) | Superseded CivicTech recommendation retained as history |
-| [research/compliance.md](research/compliance.md) | Requirements, open questions, operational release checklist |
+| [product-requirements.md](product-requirements.md) | Preserved final user product request; replaces earlier briefing-only scope |
+| [winning-strategy.md](winning-strategy.md) | Controlling Tovrilo plan, state machine, architecture, tasks and acceptance tests |
+| [ui-ux-direction.md](ui-ux-direction.md) | Map-first native navigation, screens and anti-generic quality gates |
+| [hackathon-brief.md](hackathon-brief.md) | Unchanged supplied organizer statements, rules and full rubric |
+| [agent-execution-policy.md](agent-execution-policy.md) | Strict ownership, delegation and implementation authorization |
+| [judging-evidence.md](judging-evidence.md) | Pending evidence ledger and judging/demo requirements |
+| [research/expo-ios-delivery.md](research/expo-ios-delivery.md) | iOS signing/TestFlight/simulator constraints, not proof of delivery |
 
-All artifacts are **planning documentation**. No application, deployment, tests, submission, or video has been completed. Research-agent proposals are inputs, not authoritative rules or verified competitor claims. Where they differ, the supplied brief controls requirements and `winning-strategy.md` controls our chosen scope. The latter's schedule supersedes exploratory schedules in research notes.
+## Historical research — not current feature assignments
+
+- [Archived Waypoint strategy](research/waypoint-strategy-archived.md): superseded briefing-first/no-login plan.
+- [Earlier TravelTech plan review](research/traveltech-plan-review.md): reviews the archived scope, not approval of Tovrilo.
+- [Initial TravelTech research](research/traveltech.md) and [bounded Expo proposal](research/traveltech-expo-mvp.md): exploratory input; old exclusions of maps/login/notifications no longer apply.
+- [Expo platform research](research/expo-platforms.md): historical Android/macOS findings; macOS is no longer assigned.
+- [HealthTech research](research/healthtech.md), [CivicTech research](research/civictech.md) and [archived Civic strategy](research/civictech-strategy-archived.md): rejected-track history.
+- [Compliance research](research/compliance.md): organizer requirements/questions; current schedule is in the controlling plan.
+
+**Precedence:** organizer brief governs official eligibility/deliverables; final user requirements govern requested product; controlling plan/UI contract interpret implementation and safety; research is non-authoritative. Do not silently shrink the final request using old MVP exclusions.
+
+Everything remains **planning documentation**. No app, deployment, tests, notification, submission or video is completed. All advertised integrations need working evidence. Tovrilo is a provisional name, not proven unique or legally cleared.

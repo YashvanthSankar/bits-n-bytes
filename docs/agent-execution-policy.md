@@ -8,6 +8,8 @@
 - User reports an **active paid Apple Developer account**. Verify authorized roles/access; no purchase or unapproved account changes, and no credentials in documents.
 - Team reports organizer confirmation that AI agents are allowed. Exact wording, permitted pre-event activity, and timezone have not been supplied; retain the confirmation for eligibility questions.
 - This initial deliverable is documentation and strategy, not application implementation.
+- Final user scope is preserved in `product-requirements.md`: map-first tourist/authority login, reporting, time-sensitive multi-source/model escalation, targeted multilingual notifications, location permissions and maintained shelters/contacts. This supersedes the old Waypoint briefing-only/no-login scope. Working brand: **Tovrilo**; availability is not proven.
+- Follow `winning-strategy.md` and `ui-ux-direction.md` for current implementation contracts. Earlier research cannot silently remove required final features.
 - A win is the goal, not a guaranteed outcome. Organizer rubric and actual working evidence govern prioritization.
 
 ## Delegation already commissioned
@@ -56,9 +58,9 @@ Use parallel work for independent modules, not concurrent edits to shared files.
 Names and assignments are provisional until the team's stack is known.
 
 - **Integration/backend owner:** schema, authorization, domain logic, deployment secrets, migrations.
-- **Frontend owner:** primary end-to-end workflow, accessible states, responsive layout.
-- **Second workflow/data owner:** domain-specific secondary surface, deterministic seed data, contract tests.
-- **QA/demo/release owner:** independent abuse/edge-case checks, README, API/library disclosure, recording, submission rehearsal.
+- **Native UI owner:** map-first tourist onboarding/reporting/alerts, accessible native states and role-aware navigation.
+- **Evidence/decision owner:** recent independent reports, weather/news/model adapters, version-bound translations and notification worker contracts.
+- **Authority/QA/release owner:** publishing/review and shelter/contact surfaces, independent abuse/edge-case checks, builds, landing, README, dependency disclosure and real demo.
 
 With three builders, the second workflow/data owner also handles QA preparation, and all builders contribute test cases. The team leader alone performs the official submission. Assign an explicit backup communication channel, but do not violate the leader-only submission rule.
 
