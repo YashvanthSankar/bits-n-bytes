@@ -13,6 +13,7 @@ Start with **[winning-strategy.md](winning-strategy.md)** for the team's chosen 
 | [research/traveltech-expo-mvp.md](research/traveltech-expo-mvp.md) | Bounded Expo proposal, reconciled by orchestrator |
 | [research/expo-platforms.md](research/expo-platforms.md) | Primary-source Android/macOS build and distribution research |
 | [research/expo-ios-delivery.md](research/expo-ios-delivery.md) | Current iOS artifact/signing/TestFlight/simulator release gates |
+| [research/traveltech-plan-review.md](research/traveltech-plan-review.md) | Independent review and orchestrator disposition |
 | [research/civictech.md](research/civictech.md) | Rejected-track exploratory input, not an assignment |
 | [research/civictech-strategy-archived.md](research/civictech-strategy-archived.md) | Superseded CivicTech recommendation retained as history |
 | [research/compliance.md](research/compliance.md) | Requirements, open questions, operational release checklist |

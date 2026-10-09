@@ -1,6 +1,6 @@
 # TravelTech on Expo — Strict 24-Hour MVP Plan
 
-> **Orchestrator reconciliation:** This is exploratory research, not the build assignment. `../winning-strategy.md` controls scope: one destination, source language + English, read-only fixture reports, optional live adapter, no generated emergency guidance or translation-confidence badge. Browser/PWA substitution for native macOS requires explicit user approval. The original sequential lifecycle table below is illustrative, not sufficient for order-independent processing; implement the controlling plan's exact references, pending orphans, tombstones, conflict quarantine and atomic cache contract. Provider quotas/language counts are not relied upon or independently verified here; re-check vendor plans if adopting an API. The controlling schedule starts APK work early, not at T+14.
+> **Orchestrator reconciliation:** Exploratory, not the build assignment. `../winning-strategy.md` controls: Android+iOS, web landing only; one destination, two distinct reviewed languages; no generated emergency guidance or confidence badge. Live adapter becomes mandatory if organizers reject labeled exercise delivery. Implement the controlling exact-identity graph, durable pending refs/tombstones and merge-before-commit cache contract, not older illustrative tables. Provider quotas/language counts are unverified. All schedules below are superseded; start both mobile artifacts early and deploy only after authorization.
 
 **Track:** TravelTech — *Real-Time Crisis Communication for Tourists During Extreme Weather Events* (`docs/hackathon-brief.md`).
 **Platform decision under test:** Android (Expo) primary; shared desktop UI via Expo Web; native macOS **pending feasibility** (see §2).
@@ -300,7 +300,7 @@ Only mark these passed after the named check actually runs. Record build/commit 
 2. Valid `update` → prior `superseded_by` set, new current, state `updated`, history length 2.
 3. `update` with unknown reference → `unknown`/orphan, no merge.
 4. Valid `cancel` → state `cancelled`, absent from active list, retained in history.
-5. `cancel` with unknown reference → no fabricated target, logged as orphan.
+5. `cancel` with unknown reference → durable pending record, no fabricated target; re-resolve later and retain across refresh/restart.
 6. Duplicate identical message → no duplicate active state (idempotent ingest).
 7. Same inputs in different order → same final state and stable ids (order independence).
 
@@ -323,8 +323,8 @@ Only mark these passed after the named check actually runs. Record build/commit 
 19. No numeric/letter trust score field exists in any rendered view (assert absence).
 
 **Translation**
-20. Number/unit/place preservation check passes → categorical "preserved" badge.
-21. A dropped/altered number → badge downgrade **and** source text shown prominently.
+20. Number/unit/place preservation check passes → internal regression evidence only, no confidence badge.
+21. A dropped/altered number → translation blocked pending review; current original accessible, internal failed-check record, no confidence badge.
 22. Glossary term present in source → matched-from-glossary flag.
 23. MT/proxy unavailable → cached translation + glossary + source text; app does not block.
 
@@ -340,7 +340,7 @@ T0 = confirmed development start (assume IST; confirm timezone). The prior compl
 
 | Elapsed | Output | Owner |
 |---|---|---|
-| T+0–0.5 | Scope/stack lock; Expo skeleton; **public Expo Web shell deployed** (de-risks the 10% gate) | Integration |
+| T+0–0.5 | Historical alternative only: superseded by controlling schedule; no full Expo web assignment or deployment without authorization | Integration |
 | T+0.5–2 | Repo, types, data model, source registry; first commits | Integration |
 | T+1–3 | Lifecycle pure functions + deterministic lifecycle/expiry tests | Domain |
 | T+3–7 | GDACS adapter + simulated CAP fixture + `expo-sqlite` persistence | Domain/Data |
@@ -367,7 +367,7 @@ T0 = confirmed development start (assume IST; confirm timezone). The prior compl
 | 0:00–0:20 | Problem: foreign tourist, local warnings untranslated, rumors, dead zones. |
 | 0:20–0:45 | Live/seed alert list with a **provenance card**; caption "coarse event-level — not street flood data." |
 | 0:45–1:20 | **Lifecycle:** show an **Update** superseding a prior version (history visible), then a **Cancel** removing an item, then an **expiry** demotion. |
-| 1:20–2:00 | **Language:** switch language; source text always visible; glossary hit + "numbers preserved" badge. |
+| 1:20–2:00 | **Language:** switch between two distinct languages; original accessible, reviewed version-bound translation and attribution, no confidence badge. |
 | 2:00–2:35 | **Rumor separation:** unverified lane, clearly distinct, never merged. |
 | 2:35–3:15 | **Offline:** airplane mode; stale banner; expired alert demoted; no instruction from stale data. |
 | 3:15–3:40 | **Failure:** kill the feed / translation service → honest degraded state. |

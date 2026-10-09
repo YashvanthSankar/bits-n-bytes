@@ -4,6 +4,8 @@
 
 **Brief gate:** mobile apps must be "installable and testable (APK / TestFlight / emulator-friendly build)" (`docs/hackathon-brief.md` §Evaluation Criteria 5).
 
+> **Orchestrator update:** User confirms an active paid Apple Developer account; signing roles unverified. Internal TestFlight is team-only QA, not outside-judge access. Ad hoc needs actual tester UDIDs; otherwise use external TestFlight approval or an organizer-accepted simulator fallback. Orchestrator fetched Expo TestFlight/simulator pages independently on 2026-10-09, confirming these distinctions. No account/build operations occurred.
+
 ## 1. Bottom line
 
 There are **four different iOS outcomes**; conflating them is the main failure mode.
@@ -23,7 +25,7 @@ There are **four different iOS outcomes**; conflating them is the main failure m
 ## 2. Mechanisms (verified)
 
 - **Simulator:** `eas.json` → `ios.simulator: true`; `eas build -p ios --profile <preview>`; `eas build:run -p ios` installs it. Expo: "a standalone (independent of Expo Go) version of the app running without needing to deploy to TestFlight or even having an Apple Developer account." Also: **"iOS Simulator builds can only be installed on simulators and not on real devices."**
-- **Ad hoc internal:** `"distribution": "internal"`; iOS uses ad hoc (or enterprise) provisioning with an allow-list of device UDIDs; only devices in the list at build time can install. Add a device via `eas device:create`, then rebuild or `eas build:resign`. Paid account; max **100 iPhones per year** per app. Shareable 32-char-UUID URL; no approval/processing wait. **EAS "internal distribution" ≠ TestFlight "internal testing."**
+- **Ad hoc internal:** `"distribution": "internal"`; device UDID allow-list at build time. Add via `eas device:create`, then rebuild or `eas build:resign`. Paid membership device-registration limits apply across apps, not per app. Shareable URL; no store review, but device registration/build time is not guaranteed. **EAS "internal distribution" ≠ TestFlight "internal testing."**
 - **TestFlight internal:** production `distribution: "store"` `.ipa`; up to **100** App Store Connect team testers; per Expo's TestFlight table **no Beta App Review**, "available as soon as the build finishes processing"; invited by email only.
 - **TestFlight external:** up to **10,000** testers; **Beta App Review required on the first build of every app version**; email/CSV/public link; beta description + feedback email required. Apple: external testers need "your first build already approved by App Review for TestFlight." Builds expire after **90 days**.
 
@@ -31,7 +33,7 @@ There are **four different iOS outcomes**; conflating them is the main failure m
 
 - **Paid Apple Developer Program: $99/year** (Apple). Required for TestFlight and for signing a build installable on a real iPhone via EAS. A free account cannot distribute; TestFlight and App Store Connect require membership.
 - **Free account limits (Apple):** on-device testing via an Xcode personal team only — up to 10 App IDs, 3 devices, 3 apps per device; provisioning profiles **expire after 7 days** (rebuild/reinstall). This is a *dev* install, not a distributable artifact.
-- **iOS credentials:** Distribution Certificate, Provisioning Profile, Push Notification Key. EAS can auto-generate/manage them; "Generating your iOS credentials ... requires you to sign in with an Apple Developer Program membership." Profiles expire after 12 months.
+- **iOS signing credentials:** Distribution Certificate and Provisioning Profile. Push Notification Key only if push is enabled; push is outside MVP. EAS can manage credentials; Apple Developer Program membership required. Profiles expire after 12 months.
 - **Ad hoc** needs each device's UDID in the provisioning profile at build time; **TestFlight** needs an app record in App Store Connect (EAS Submit can create it).
 
 ## 4. Timing and access (schedule risk)
@@ -59,7 +61,7 @@ There are **four different iOS outcomes**; conflating them is the main failure m
 | CP1 (T0–T1) | If paid account: `eas device:create` the judging iPhone; start the ad hoc internal build. In parallel, build a release simulator artifact as fallback. | iOS artifact in flight |
 | CP2 | If ad hoc install succeeds on a clean device → primary iOS artifact = ad hoc URL; optionally add TestFlight internal. | Ship ad hoc |
 | CP3 | If no paid account / organizers accept simulator → primary installable = Android APK; iOS = release simulator `.app` + exact repro; landing page labels it a simulator artifact. | Ship simulator fallback |
-| CP4 | If only TestFlight is acceptable → TestFlight internal only; external only with Beta App Review slack. | Constrained |
+| CP4 | If only TestFlight is acceptable, internal is team-only QA; outside judges require external review plus actual invitation/link access. Start early; no guaranteed review time. | Constrained; upload alone is not judge access |
 
 ## 7. Landing page / artifact honesty
 

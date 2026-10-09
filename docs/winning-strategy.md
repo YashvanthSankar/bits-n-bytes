@@ -28,6 +28,8 @@ Start **both platform builds early**. A simulator `.app` is not an installable i
 
 The brief describes web development but permits testable mobile formats. Confirm that **mobile apps plus a landing page** are accepted; a landing page alone is not a functioning web solution to the crisis problem. If organizers require a full public web app, resolve that scope conflict with the user rather than silently expanding. External account/build/deployment actions remain authorization-gated.
 
+**User-confirmed prerequisite:** active paid Apple Developer account available (not independently inspected). Verify authorized roles and judge access. Ad hoc works only for registered tester UDIDs; external TestFlight requires Beta App Review. Internal TestFlight is team-only QA, not general judge access. Do not grant judges account roles to bypass review. Start the selected distribution path early; retain an organizer-accepted simulator fallback, with no guaranteed approval time.
+
 ## 3. Compliance and open confirmations
 
 - Development window: Oct 9 2026 20:30 to Oct 10 20:30; submission strictly before Oct 10 21:00. Timezone unstated—confirm it, do not silently assert IST.
@@ -99,6 +101,8 @@ Use TypeScript pure functions for filtering and lifecycle, shared by all approve
 - `Translation`: exact bulletin key/hash, language, text, origin `source | team-reviewed | machine-unreviewed`, reviewer metadata when applicable.
 - `BriefingSnapshot`: schema version, complete bulletins/lifecycle references/translations, selected area, last successful fetch, mode. Acknowledgments, if included, are local and version-specific.
 
+**Identity normalization:** `sourceId` is an exact configured adapter key assigned by the adapter, not trusted from payload. Preserve sender/identifier case and nonempty text; reject surrounding whitespace/control characters rather than guessing aliases. Require explicit-offset ISO `sent`; normalize to UTC milliseconds, reject invalid dates/unsupported precision, preserve raw timestamps for display. References follow the same rules. A sourceId absent from a CAP-like reference inherits the ingest adapter's sourceId, never global lookup. Reject explicit cross-source references and unauthorized sender changes. Same canonical identity with a different content hash is quarantined, not overwritten.
+
 Missing geographic detail stays unknown; never enrich with invented polygons. Require valid identity/times/references and bounded payloads. Preserve source-specific meaning; reject unsupported status/scope into an explanatory non-actionable state. No authenticated travelers or private data are needed for this MVP.
 
 ### Lifecycle contract
@@ -135,7 +139,7 @@ Recompute graph to a fixed point after successful ingest. Invalid/cross-source/c
 
 Expo + React Native + TypeScript; navigation chosen once by the integration owner. One persistence interface using a storage library verified on **both Android and iOS**. Landing page is a separate minimal static surface, not an offline web app. Feed can be static hosted exercise snapshots with a protected replay writer; add one small server only when required for source proxying or secret API keys. Do not ship service credentials to clients. Static read-only demo data needs no elaborate database or role system.
 
-Refresh is all-or-nothing: download → size/schema/reference validation → lifecycle calculation → atomic snapshot replacement. Persist cancellation history across refresh; invalid/missing partial data does not delete the last complete cache. Version schema migrations; invalid stored data produces a recoverable “no valid saved briefing” state, not invented content.
+Refresh is all-or-nothing: download → size/schema validation → **merge retained history, cancellation tombstones and pending references** with new validated messages → reference validation/lifecycle calculation → atomic snapshot replacement including all durable records. A successful shorter feed window does not delete previously seen records. Deduplicate canonical identities; quarantine identity/hash conflicts. For this bounded demo do not garbage-collect history; future retention requires an explicit anti-resurrection policy. Invalid/partial refresh does not delete the last complete cache or advance last-successful-fetch. Version schema migrations; invalid stored data produces a recoverable “no valid saved briefing” state, not invented content.
 
 ## 7. Strict build assignments
 
@@ -163,6 +167,7 @@ Three builders: B owns fixture translations/docs preparation; C supplies UI test
 9. Save briefing, kill/reopen app with networking disabled, recover original + reviewed translation and last-fetch metadata. Fresh install offline shows no saved briefing, not success.
 10. Freshness threshold 14:59/15:00, expiry while offline and clock rollback produce specified warnings without “safe” claims. Airplane mode does not deliver new cancellations.
 11. Reconnect fetches cancellation and invalidates old translation. Failed/partial refresh keeps prior complete snapshot and does not advance last successful fetch.
+    Also test **successful shorter-window refresh** omitting a previously seen Cancel/pending Cancel: durable records survive refresh and app restart, and target replay never resurrects instructions. Same-identity/different-hash input is quarantined.
 12. Exercise, configured-source and unverified inputs are visibly distinct in list, detail and cache; arbitrary public input cannot impersonate an authority.
 13. Standalone APK and accepted iOS artifact launch without Expo Go/development server; restart, offline cache and lifecycle work on each. Device-only/Simulator-only limitations explicitly recorded. TestFlight links are tested by intended testers, not just uploaded.
 14. Readable contrast, screen-reader labels, text scaling and no color-only severity; keyboard/mobile-responsive landing with tested artifact links. No secrets/location history in bundle, repository or video.
@@ -212,5 +217,7 @@ Round 2: retain a known working version and offline briefing; prepare a separate
 ## 11. Research hierarchy and verified anchor
 
 Use [original TravelTech research](research/traveltech.md) as exploratory input, [Expo platform research](research/expo-platforms.md) for historical Android/macOS findings, [iOS delivery research](research/expo-ios-delivery.md) for current release gates, and [bounded Expo MVP research](research/traveltech-expo-mvp.md) for alternatives. This document controls chosen scope; broader source signatures, live machine translation, maps or authenticity tiers in exploratory notes are not implementation requirements.
+
+The [independent plan review](research/traveltech-plan-review.md) identified judge-access, identity and refresh-retention gaps. Contracts above address identity/retention **in the plan, not with executed tests**. Apple account availability is user-confirmed; tester access, organizer replay/mobile+landing acceptance, source coverage and timezone remain open external gates.
 
 **Verified primary source:** [OASIS CAP 1.2 standard](https://docs.oasis-open.org/emergency/cap/v1.2/CAP-v1.2-os.html), fetched 2026-10-09. It specifies geographic targeting, multiple language info blocks, effective/expiry fields and Alert/Update/Cancel references; expiry may be absent and consumers may set policy. These facts support the lifecycle design, not any claim that a feed is available, that our subset is fully conformant, or that a source is authentic. Our missing-expiry and conflict rules above are conservative application policies.

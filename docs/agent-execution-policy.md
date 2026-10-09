@@ -5,6 +5,7 @@
 - Team reports **3–4 active builders**; individual roles remain unspecified.
 - Team chose **TravelTech**. Latest user platform decision: **“android+ios, web landing”**, using **Expo** for the apps. This supersedes the initial Android/macOS request. The team's rationale is that HealthTech feels generic and CivicTech insufficiently practical; these are preferences, not verified market facts.
 - Native macOS and a full web crisis app are not assigned. Verify iOS distribution/signing early; the public web surface is a landing page, not substitute app functionality.
+- User reports an **active paid Apple Developer account**. Verify authorized roles/access; no purchase or unapproved account changes, and no credentials in documents.
 - Team reports organizer confirmation that AI agents are allowed. Exact wording, permitted pre-event activity, and timezone have not been supplied; retain the confirmation for eligibility questions.
 - This initial deliverable is documentation and strategy, not application implementation.
 - A win is the goal, not a guaranteed outcome. Organizer rubric and actual working evidence govern prioritization.

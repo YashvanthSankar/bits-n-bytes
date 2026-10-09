@@ -202,7 +202,7 @@ Times are relative to **T0 = development start (Fri 20:30)**. T+24 = dev end. T+
 | Elapsed | Wall (IST, inferred) | Milestone | Gate linkage |
 |---|---|---|---|
 | T+0.0 | Fri 20:30 | Statement chosen; repo created; README skeleton; clarification questions sent | G1, G3, §3 |
-| T+0.5 | 21:00 | Architecture + stack locked; **deployment skeleton live at a public URL** | G4 |
+| T+0.5 | 21:00 (timezone unconfirmed) | Historical schedule; controlling strategy supersedes it. Deployment only after authorization; current web scope is landing only | G4 |
 | T+1.5 | 22:00 | Data model + auth/skeleton; first commits pushed | G5 |
 | T+4 | Sat 00:30 | Core happy-path vertical slice works end-to-end | G9 |
 | T+8 | 04:30 | **MVP checkpoint** — primary flow demoable | G8, G9 |
