@@ -1,56 +1,100 @@
-# GudTour — ordered implementation TODOs
+# GudTour — feasible implementation TODOs
 
-Updated: 2026-10-10. All application tasks are pending. This is a planning backlog, not authorization to start coding.
+Updated: 2026-10-10. **Application implementation has not started.** This backlog organizes the approved product design; it does not authorize coding or claim working features.
 
-Read [TECHNICAL_IMPLEMENTATION_PLAN.md](TECHNICAL_IMPLEMENTATION_PLAN.md) for engineering contracts, PLAN.md for behavior and tech-stack.md for the latest user overrides: Expo/Convex/Google OAuth, platform-native maps, AccuWeather, SACHET, Jev 1.13 via OpenCode Zen, Google Translation, no news, online-first.
+Source of truth: [PLAN.md](PLAN.md) for core behavior, [tech-stack.md](tech-stack.md) for selected services, and [TECHNICAL_IMPLEMENTATION_PLAN.md](TECHNICAL_IMPLEMENTATION_PLAN.md) for contracts and mechanisms. Stack: Expo Android/iOS, Convex, Google OAuth, Apple/Google basemaps, SACHET, AccuWeather, Jev 1.13 through OpenCode Zen and Google Cloud Translation. News and full offline maps are excluded by the user.
 
-## Ownership and execution rules
+## The outcome we are building
 
-| Owner | Exclusive responsibility |
+A tourist in India reports a nearby hazard. Recent independent evidence, weather and official warnings inform Jev qualification. A qualifying incident or official authority declaration produces a geographically relevant alert in the tourist's preferred language, with the original instruction, issuer, eligible shelter and emergency contacts. Authorities can maintain and correct that information. Nearby chat and honest degraded states complete the requested app.
+
+**First working checkpoint:** an approved authority publishes one DEMO emergency; an eligible nearby tourist receives it, an outside tourist does not, and the recipient can read the original/translation and a suitable listed shelter. Build this reliable path before attaching automatic community qualification. This checkpoint is not the final scope or a substitute for the remaining milestones.
+
+## How to execute feasibly
+
+- Complete one visible workflow at a time, using the existing technical contracts. Add schema/UI/provider work only when the next workflow needs it.
+- Use DEMO-isolated fixtures for early integration; label them clearly. Provider integration and device delivery must later be checked with real calls and builds.
+- Start Android device verification early and keep iOS builds/signing active from M1. Both platforms remain required for final acceptance.
+- Start with English plus one additional language to prove the translation flow; finish all six languages before M9 passes.
+- Test authorization, time/radius boundaries and retries alongside each feature. M9 consolidates evidence rather than postponing all testing to the end.
+- Keep only one primary milestone active per owner. If a provider is blocked, continue independent work and document the blocker; never replace missing evidence with fabricated success.
+- There is no promised 24-hour completion schedule. Estimate remaining work after each working checkpoint against the actual team, access and deadline. A short event may not fit the complete scope; report that explicitly before proposing any scope change.
+- Tick a task only when its stated behavior is demonstrated and its check is recorded. A mock, file, accepted push ticket or single provider smoke call alone does not complete an app workflow.
+
+## Ownership
+
+| Owner | Responsibility |
 | --- | --- |
-| A — Integration/backend | Shared types, Convex schema/auth, authorization, domain mutations, configuration, integration |
-| B — Tourist mobile | Gate/onboarding, map, reporting, incident/shelter/settings screens and public cache |
-| C — Evidence/alerts | Feed/weather/OpenCode Zen Jev/translation adapters, assessment and delivery workers |
-| D — Authority/release | Authority screens/moderation, independent QA, native artifacts, landing and demo |
+| A — Backend/integration | Shared contracts/schema, Google auth, permissions, geographic/domain mutations and integration |
+| B — Tourist mobile | Entry, map, reporting, alert/shelter/settings screens, location and public cache |
+| C — Evidence/delivery | SACHET, weather, Jev, Translation and delivery workers |
+| D — Authority/verification/release | Authority/moderation screens, independent checks, native distribution, landing and demo |
 
-These are proposed human/team streams, not running agents. With three builders, B and D share screens; QA/release remains an explicit assignment. A owns shared schema, dependencies and interfaces. Do not concurrently edit shared files.
+These are proposed team responsibilities, not automatic agent assignments. For three builders, combine B/D screen ownership and explicitly share independent verification. A owns changes to shared schema/dependencies. Assign names before implementation and avoid simultaneous edits to shared files.
 
-Every task uses a short bounded checkpoint: objective, owned modules, agreed input/output/auth/error contract, acceptance check and evidence. Timeboxes below are integration checkpoints; unfinished work is reported rather than marked complete.
-
-## M0 — Planning and provider readiness (first 60 minutes after implementation approval)
+## Completed planning and access evidence
 
 - [x] P00 Read latest remote PLAN.md and identify conflicts in older documents.
 - [x] P01 Record user-selected stack and online-first/no-news overrides in tech-stack.md.
 - [x] P02 Align older README/strategy/UI references with current behavior; preserve historical requirements as history. Owner A.
-- [x] P11 Complete the in-depth technical design and architecture entry point, preserving PLAN.md core behavior. Owner A.
+- [x] P11 Complete and maintain the technical design, architecture entry point and this feasible milestone backlog without reducing PLAN.md core behavior. Owner A.
 - [x] P12 Migrate planning work to the verified GitHub-connected bitsnbytes folder and remove the verified duplicate checkout. Owner A.
-- [ ] P03 Confirm application implementation authorization and organizer development window. Owner A.
-- [ ] P04 Inventory access to Convex, EAS/Apple signing, GCP, Jev and AccuWeather without storing credentials in docs. Owners A/C/D.
+- [x] P07a Confirm OpenCode Zen paid Jev 1.13 endpoint access with one authorized synthetic Noul call; HTTP 200 on 2026-10-10. Owner C.
+
+The Jev check above proves only one synthetic Noul request succeeded. Choice mapping, real incident accuracy, deployed credentials and app integration remain pending.
+
+
+## M0 — Clear the setup blockers
+
+**Goal:** Have a documented development/deployment path and know which features are blocked by access.
+
+**Depends on:** None; this is the entry gate.
+
+**Design reference:** Technical plan §§1–4, 22, 26.
+
+- [ ] P03 Confirm the user has authorized application coding and the organizer development window is open. Record the actual deadline. Owner A.
+- [ ] P04 Create an access checklist for Convex, EAS/Apple signing, GCP, OpenCode Zen and AccuWeather. Record available/pending access without credentials. Owners A/C/D.
 - [ ] P05 Verify AccuWeather current + 24-hour history endpoint entitlement, quota and allowed retention. Owner C.
 - [ ] P06 Inspect a real SACHET feed and one CAP notice; document geographic coverage/update/cancellation fields. Owner C.
-- [x] P07a Confirm OpenCode Zen paid Jev 1.13 endpoint access with one authorized synthetic Noul call; HTTP 200 on 2026-10-10. Owner C.
-- [ ] P07 Verify remaining Jev Choice/Score schemas, probabilities/confidence, timeout/errors, budget limits and labeled incident evaluations. Owner C.
-- [ ] P08 Verify GCP OAuth, Android Maps and Translation enablement/billing/permissions; prepare scoped configuration. Owner A.
+- [ ] P07 Verify live Jev Choice responses, selected-option probabilities and confidence; check Score only if used. Record timeout/auth/rate-limit/malformed behavior and run labeled incident evaluations before automatic publication. Owner C.
+- [ ] P08 Verify Google OAuth first, then Android Maps and Translation before their dependent features. Record enabled services, billing, restrictions and deployed credential flow. Owner A.
 - [ ] P09 Agree initial approved demo authorities/jurisdictions and sourced or DEMO-labeled shelters/contacts. Owners A/D.
-- [ ] P10 Choose judge-accessible Android/iOS delivery paths and landing host immediately. Owner D.
+- [ ] P10 Confirm Android install and signed iOS judge-access paths before screen-heavy work; choose landing hosting before release. Owner D.
+- [ ] Q01 Create a pass/fail ledger from PLAN.md section 18 before feature work. Replace only the user-deferred full-offline cases with online-first recovery checks; review the ledger at every milestone. Owner D.
 
-**Exit:** chosen services have accessible contracts; missing keys/entitlements/distribution blockers are explicit. No fake provider success.
+Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and P08 is completed per Google feature. They are not reasons to block unrelated foundation work.
 
-## M1 — Foundation and shared contracts (checkpoint by hour 3)
+**Done when:** Coding authorization/window is recorded; the team has a usable Convex/EAS path and Android/iOS install plan. Provider gaps are assigned to their dependent milestone. Missing weather/translation access does not block unrelated auth or incident work.
+
+
+## M1 — Open the native app and sign in
+
+**Goal:** An Android and iOS development build signs in with Google and reads its own profile from Convex.
+
+**Depends on:** M0 coding/access gate; F03 precedes shared feature contracts.
+
+**Design reference:** Technical plan §§3–4, 6–9, 18, 22.
 
 - [ ] F01 Initialize Expo TypeScript app, Router and dedicated Convex project; pin SDK/native-compatible dependencies. Owner A.
 - [ ] F02 Establish light/dark tokens, native chrome, safe areas, readable large-text controls and six-language resource structure. Owner B.
 - [ ] F03 Define shared geometry, timestamp, language, policy, error and version/idempotency contracts. Owner A.
-- [ ] F04 Define Convex records/indexes and finite geographic candidate queries; document exact boundary checks. Owner A.
+- [ ] F04 Create the core identity/incident/location schema and bounded geographic indexes first; add shelter/alert/chat tables with their milestones using technical-plan section 6. Owner A.
 - [ ] F05 Define privacy-filtered public read models separate from private observations, locations and devices. Owner A.
 - [ ] F06 Implement Google OAuth through Convex Auth; prove native redirect, session restore and sign-out on both platforms. Owner A, D verifies.
 - [ ] F07 Enforce default tourist role and operator-approved authority memberships/jurisdictions in every backend handler. Owner A.
-- [ ] F08 Create native development builds early; confirm Android Google basemap and iOS Apple basemap render. Owners B/D.
+- [ ] F08 Produce Android/iOS development builds; prove Google basemap on Android and Apple basemap on iOS before building map overlays. Owners B/D.
 - [ ] F09 Implement common loading/error/empty/offline/stale components and structured error handling. Owner B.
 
-**Exit:** both native apps authenticate and read real authorized Convex data; direct unauthorized mutations are denied.
+**Done when:** Run both native builds, restore a session after restart, sign out, and directly attempt an unauthorized read/mutation. The tourist cannot assign an authority role. Both basemaps render.
 
-## M2 — India gate, onboarding and location (checkpoint by hour 5; depends on M1)
+
+## M2 — Admit an eligible tourist and capture location
+
+**Goal:** A tourist in India can complete onboarding; location freshness and optional permissions are accurately represented.
+
+**Depends on:** M1; L05 and L07 are shared prerequisites for targeting.
+
+**Design reference:** Technical plan §§5, 7–9, 18.
 
 - [ ] L01 Language selection before permission prompts; India boundary gate using <=5-minute, <=200-metre fix. Owner B.
 - [ ] L02 Blocking denied/disabled/uncertain/outside-India states with Settings/Retry and restoration behavior. Owner B.
@@ -61,9 +105,16 @@ Every task uses a short bounded checkpoint: objective, owned modules, agreed inp
 - [ ] L07 Device registration and profile/token/language association; sign-out stops tracking and disconnects device delivery. Owners A/C.
 - [ ] L08 Verify background permission denial, revocation and platform restrictions in native builds. Owner D.
 
-**Exit:** outside-India and foreground-denied users cannot enter; background/push denial leaves the foreground app usable.
+**Done when:** Check inside/outside/uncertain India, denied foreground permission and an old/inaccurate fix. Background/push denial leaves admitted foreground use working. Stored fix time is the actual observation time.
 
-## M3 — Incidents, observations and live map (checkpoint by hour 8; depends on M1/M2)
+
+## M3 — Report and corroborate a real persisted incident
+
+**Goal:** Two accounts see the same unverified incident on map/list and can contribute independent recent observations.
+
+**Depends on:** M1–M2; no AI dependency.
+
+**Design reference:** Technical plan §§5–6, 8–10, 18.
 
 - [ ] I01 Implement eight hazard presets, radii, witness windows and stale timers exactly from PLAN.md section 5. Owner A.
 - [ ] I02 Keep verification, activity and emergency qualification as separate fields/state transitions. Owner A.
@@ -78,9 +129,61 @@ Every task uses a short bounded checkpoint: objective, owned modules, agreed inp
 - [ ] I11 Incident detail: evidence, source, timestamps, lifecycle, recent/total witnesses and eligible corroboration. Owner B.
 - [ ] I12 Implement stale/expired/rejected/resolved/merged behavior; never infer safe/all-clear from silence. Owner A.
 
-**Exit:** two clients see a persisted report and fresh witness updates; no tourist emergency notification happens before qualification.
+**Done when:** Submit from account one, reopen from account two, corroborate, retry the first request, and withdraw an observation. Counts remain independent, status/timestamps update, and no emergency notification is emitted.
 
-## M4 — SACHET, AccuWeather and Jev (checkpoint by hour 11; starts after F03/F04)
+
+## M4 — Publish official instructions and maintain shelters
+
+**Goal:** An approved authority can declare/update/end an emergency and maintain usable shelters/contacts in its jurisdiction.
+
+**Depends on:** M1–M3. P09 must supply approved DEMO authority/jurisdiction and labeled shelter/contact fixtures.
+
+**Design reference:** Technical plan §§6, 9–10, 14–15, 18.
+
+- [ ] A01 Authority overview prioritizes emergencies, conflicting instructions, pending/stale assessments and flags. Owner D.
+- [ ] A02 Review actions: verify/unverified, hazard/severity/area changes, merge, reject and resolve with actor/reason/time. Owners A/D.
+- [ ] A03 Declare/update review sheet shows instructions, area, severity, deadline and recipient estimate when available. Owner D.
+- [ ] A04 Publish official declaration immediately, bypass Jev; default verification is distinct from explicit emergency declaration. Owner A.
+- [ ] N04 Atomic alert/source/revision publication with expansion job, then paginated deduplicated recipient jobs; no logical duplicates from retries/merge aliases. Owner A.
+- [ ] A05 Implement timed suppression (30-minute default, two-hour maximum), urgent-review flags and resumption. Owner A.
+- [ ] A06 Source-specific withdrawal/resolution/false-alert correction; reject after alert requires explicit correction atomically. Owner A.
+- [ ] A07 Shelter maintenance: open/closed/full/unknown, fresh confirmation, capacity, accessibility, facilities, contact and archive. Owners A/D.
+- [ ] A08 Contact maintenance with jurisdiction/source and over-30-day age label. Owners A/D.
+- [ ] A09 Select nearest eligible open shelter: <=2-hour confirmation, <=50 km, outside known hazard areas, instruction/accessibility precedence. Owner A.
+- [ ] A10 Shelter list/detail shows excluded reasons, status ages and distance; external Google Maps/copy/dialer fallbacks. Owner B.
+- [ ] A11 Audit authority changes; reject revoked/cross-jurisdiction access and stale concurrent writes. Owner A, D verifies.
+
+**Done when:** Publish with Jev unavailable: the official alert/source/revision and expansion job commit immediately. Reject a cross-jurisdiction edit. Demonstrate stay-put, no eligible shelter, and full/stale/unsafe shelter exclusions. Delivery becomes visible in M5.
+
+
+## M5 — Deliver a translated, targeted official alert
+
+**Goal:** Complete the first working checkpoint: the correct tourist receives an official emergency, original/translation and an eligible shelter.
+
+**Depends on:** M2 device/location registration, M4 publication/shelters and its N04 durable publication contract; P08 Translation access and APNs/FCM configuration.
+
+**Design reference:** Technical plan §§8, 14–18, 22.
+
+- [ ] N01 Google Translation backend adapter with scoped server authentication and version/hash/language cache. Owner C.
+- [ ] N02 Show originals immediately; prefer exact-version official translations, otherwise show machine-translation status. Invalidate obsolete translations and provide reviewed localized labels while translation is pending. Owner C.
+- [ ] N03 Review static UI/templates in all six languages; test names/numbers/deadlines/negation and instruction strength. Owners B/C/D.
+- [ ] N05 Target <=30-minute, <=1-km-accuracy Indian positions including uncertainty overlap; new entry into ongoing emergency triggers eligibility. Owner A.
+- [ ] N06 Register/configure APNs/FCM; send Expo notifications and process tickets/receipts/token failures with bounded retries. Owners C/D.
+- [ ] N07 Foreground full-screen alert, one-at-a-time severity/source ordering, actions and silent reopen/dismissed yellow banner. Owner B.
+- [ ] N08 Implement material-update sound rules, ten-minute repeat limit/Critical exception, exit/re-entry and quiet ending/correction follow-ups. Owners A/B/C.
+- [ ] N09 Deep links open current incident/alert revision; language changes do not replay sounds. Owner B.
+- [ ] N10 Verify preferred-language receive/open on physical Android/iOS; distinguish provider accepted, receipt, opened and failed. Owner D.
+
+**Done when:** Use two eligible accounts at inside/outside positions to verify targeting; separately test stale/inaccurate locations. Prove foreground and background receive/open on native devices, original fallback on translation failure, material-update sound rules and silent reopen. Complete all six languages before release.
+
+
+## M6 — Add official feeds, weather and automatic Jev qualification
+
+**Goal:** A tourist incident uses fresh source-backed evidence to become notifiable, not qualified or insufficient evidence without masquerading as an official declaration.
+
+**Depends on:** M3 evidence records and M5 working delivery. P05 weather entitlement, P06 real SACHET fields and P07 Jev contracts/evaluation are gates for their adapters.
+
+**Design reference:** Technical plan §§10–14, 21–24.
 
 - [ ] E01 Implement bounded CAP/RSS parser, source directory configuration, timeouts and per-feed status. Owner C.
 - [ ] E02 Normalize warning geometry/provenance/originals, references, revisions, cancellations, advisory versus urgent declaration. Owner C.
@@ -92,41 +195,18 @@ Every task uses a short bounded checkpoint: objective, owned modules, agreed inp
 - [ ] E08 Reassess on meaningful changes and five-minute target; outage retries at 1/5/15 minutes then every 15. Owner C.
 - [ ] E09 Preserve active emergencies on negative result/outage; route changed assessment to authority review without all-clear. Owners A/C.
 - [ ] E10 Assemble source-backed evidence summaries without asking Jev to generate prose or instructions. Owner C.
+- [ ] E11 Record provider usage/errors, coalesce duplicate evidence jobs and enforce configurable context/concurrency/spend ceilings. At the model ceiling, pause Jev calls while official declarations still publish. Owner C.
 
-**Exit:** real provider results produce the three distinct outcomes; timeout/malformed/stale results cannot broadcast or override authority state.
+**Done when:** Inspect a real CAP notice/weather response and record a live Jev Choice assessment. Test all three normalized outcomes with appropriate labeled cases, independent/stale reports, malformed/late/outage responses and authority precedence. A qualifying current result reaches the same proven alert path; source cancellation never creates a false all-clear.
 
-## M5 — Authority operations and shelters (checkpoint by hour 12; starts after F07/I02)
 
-- [ ] A01 Authority overview prioritizes emergencies, conflicting instructions, pending/stale assessments and flags. Owner D.
-- [ ] A02 Review actions: verify/unverified, hazard/severity/area changes, merge, reject and resolve with actor/reason/time. Owners A/D.
-- [ ] A03 Declare/update review sheet shows instructions, area, severity, deadline and recipient estimate when available. Owner D.
-- [ ] A04 Publish official declaration immediately, bypass Jev; default verification is distinct from explicit emergency declaration. Owner A.
-- [ ] A05 Implement timed suppression (30-minute default, two-hour maximum), urgent-review flags and resumption. Owner A.
-- [ ] A06 Source-specific withdrawal/resolution/false-alert correction; reject after alert requires explicit correction atomically. Owner A.
-- [ ] A07 Shelter maintenance: open/closed/full/unknown, fresh confirmation, capacity, accessibility, facilities, contact and archive. Owners A/D.
-- [ ] A08 Contact maintenance with jurisdiction/source and over-30-day age label. Owners A/D.
-- [ ] A09 Select nearest eligible open shelter: <=2-hour confirmation, <=50 km, outside known hazard areas, instruction/accessibility precedence. Owner A.
-- [ ] A10 Shelter list/detail shows excluded reasons, status ages and distance; external Google Maps/copy/dialer fallbacks. Owner B.
-- [ ] A11 Audit authority changes; reject revoked/cross-jurisdiction access and stale concurrent writes. Owner A, D verifies.
+## M7 — Make nearby chat usable and moderated
 
-**Exit:** authority edits immediately change tourist data and shelter eligibility; shelter-in-place overrides generic shelter CTA.
+**Goal:** Tourists can exchange local plain-text information; location, expiry, restrictions and authority moderation are enforced.
 
-## M6 — Six-language alerts and real delivery (checkpoint by hour 14; depends on E07/A04)
+**Depends on:** M1–M2 and authority membership from M4; independent of Jev.
 
-- [ ] N01 Google Translation backend adapter with scoped server authentication and version/hash/language cache. Owner C.
-- [ ] N02 Preserve originals, prefer official supplied translations, invalidate obsolete translations and implement generic-language fallback. Owner C.
-- [ ] N03 Review static UI/templates in all six languages; test names/numbers/deadlines/negation and instruction strength. Owners B/C/D.
-- [ ] N04 Atomic alert/source/revision publication with expansion job, then paginated deduplicated recipient jobs; no logical duplicates from retries/merge aliases. Owner A.
-- [ ] N05 Target <=30-minute, <=1-km-accuracy Indian positions including uncertainty overlap; new entry into ongoing emergency triggers eligibility. Owner A.
-- [ ] N06 Register/configure APNs/FCM; send Expo notifications and process tickets/receipts/token failures with bounded retries. Owners C/D.
-- [ ] N07 Foreground full-screen alert, one-at-a-time severity/source ordering, actions and silent reopen/dismissed yellow banner. Owner B.
-- [ ] N08 Implement material-update sound rules, ten-minute repeat limit/Critical exception, exit/re-entry and quiet ending/correction follow-ups. Owners A/B/C.
-- [ ] N09 Deep links open current incident/alert revision; language changes do not replay sounds. Owner B.
-- [ ] N10 Verify preferred-language receive/open on physical Android/iOS; distinguish provider accepted, receipt, opened and failed. Owner D.
-
-**Exit:** second user receives a real targeted alert; outside/stale users do not; translation failure never delays the prepared fallback indefinitely.
-
-## M7 — Nearby chat and moderation (checkpoint by hour 16; starts after L05/F07)
+**Design reference:** Technical plan §§6, 8–9, 19, 21.
 
 - [ ] C01 Geospatial stream anchored to message origin: 15 km, <=5-minute/<=500-metre fix, chronological order, 24-hour expiry. Owner A.
 - [ ] C02 Plain-text composer <=500 characters, alias/locality labels and authority announcement attribution. Owner B.
@@ -136,9 +216,16 @@ Every task uses a short bounded checkpoint: objective, owned modules, agreed inp
 - [ ] C06 Local alias mute; official alerts remain visible. Disable fresh delivery/posting when chat fix expires. Owner B.
 - [ ] C07 Expire live/cached messages and retain moderation evidence for specified seven-day/active-appeal periods. Owner A.
 
-**Exit:** two users inside/outside the radius get different streams; sender movement does not relocate messages; expiry and moderation work.
+**Done when:** Two users inside/outside 15 km see different feeds. Moving the sender does not move an existing message. Test stale location, limits, expiry, hide/reason, restriction and one appeal. Chat never triggers incident qualification.
 
-## M8 — Online resilience and privacy (checkpoint by hour 17; depends on prior read models)
+
+## M8 — Handle disconnection, deletion and worker recovery
+
+**Goal:** Previously received information stays readable with honest ages; private data and background jobs have an explicit lifecycle.
+
+**Depends on:** Working read models from M3–M7. Implement relevant cache/deletion safeguards as features are added.
+
+**Design reference:** Technical plan §§17, 20–23.
 
 - [ ] R01 Persist last successful public snapshot and received emergency text with item/sync timestamps. Owner B.
 - [ ] R02 Connection loss shows cached lists/contacts and offline banner; no promise of downloaded basemaps/live capacity. Owner B.
@@ -147,12 +234,19 @@ Every task uses a short bounded checkpoint: objective, owned modules, agreed inp
 - [ ] R05 Retention jobs: inactive latest location 24 hours, incident history twelve months, alert history 30 days, chat/moderation rules. Owner A.
 - [ ] R06 Profile deletion/sign-out clear private data/device association/drafts; retained public evidence is anonymized. Owners A/B.
 - [ ] R07 API/client/log disclosure checks for private location, name, blood group, contact, tokens and credentials. Owner D.
+- [ ] R08 Recover expired worker leases and resume paginated jobs from checkpoints. Replay a targeting/delivery job and verify no duplicate logical job; record uncertain network sends separately. Owners A/C.
 
-**Exit:** a failed refresh preserves age labels; old cancelled warnings do not revive; direct private-data reads are denied.
+**Done when:** Disconnect/reconnect with an unsent draft; require explicit send and fresh context. Ended alerts stay ended. Sign out/delete an account and verify device/location/cache cleanup. Recover an expired job lease without duplicating logical jobs; confirm retention and appeal holds.
 
-## M9 — Integrated acceptance and release (hours 17–22)
 
-- [ ] Q01 Translate PLAN.md section 18 into a pass/fail ledger; explicitly replace full-offline cases with online-first recovery checks. Owner D.
+## M9 — Prove the complete app and prepare deliverables
+
+**Goal:** Every required core workflow has recorded evidence; native artifacts, landing and demo are actually accessible.
+
+**Depends on:** M1–M8 passed, or any unmet requirement explicitly recorded as incomplete; no silent scope reduction.
+
+**Design reference:** Technical plan §§23–25; PLAN.md §18; organizer brief.
+
 - [ ] Q02 Domain tests for time/radius boundaries, uncertainty overlap, witness deduplication, state/source endings and shelter exclusions. Owners A/C.
 - [ ] Q03 Convex tests for tourist privilege escalation, owner privacy, revoked authorities and jurisdiction/concurrent-version rejection. Owner D.
 - [ ] Q04 Fault tests for Jev/weather/feed/translation outage, malformed CAP, stale action responses and duplicate worker execution. Owner C, D verifies.
@@ -164,18 +258,35 @@ Every task uses a short bounded checkpoint: objective, owned modules, agreed inp
 - [ ] Q10 Record real 2–5-minute video: community qualification, official bypass, multilingual targeted alert, suitable shelter, chat and one failure. Owner D.
 - [ ] Q11 Save measured checks/build/commit/limitations in judging evidence; DEMO labels isolate fixtures from ordinary users. Owner D.
 
-**Exit:** required workflows are real and tested; artifacts/video/links are accessible; every remaining gap is disclosed.
+**Done when:** A clean tester installs Android without Metro and uses the accepted signed iOS path. The pass/fail ledger covers all six languages, auth/privacy, boundaries, concurrent changes, outages, accessibility and actual delivery. Landing links work and the real 2–5-minute video shows both community and official flows.
 
-## M10 — Freeze and submission (hours 22–24)
+
+## M10 — Freeze and submit the verified release
+
+**Goal:** The team leader submits the correct repository, real demo video and required access links before the official deadline.
+
+**Depends on:** M9 release evidence and organizer-required deliverables.
+
+**Design reference:** Technical plan §25 and organizer brief.
 
 - [ ] S01 Release candidate, artifact/link/video playback checks and full demo rehearsal. Owners A/D.
 - [ ] S02 Freeze feature changes; fix release blockers only within permitted window. Owner A.
 - [ ] S03 Team leader submits GitHub, actual demo video and required access links before the official deadline. Team leader.
 
-## Deferred by latest scope
+**Done when:** Rehearse from clean installs, play the full video, open every submitted link and record the leader's actual submission receipt. Only release blockers are changed after freeze.
 
-Downloaded basemap packs, comprehensive offline area downloads, automatically queued offline observations, offline routing and a fully offline crisis experience. News adapters are removed, not pending. PLAN.md's SOS/rescue/family tracking/media reports/chat attachments/shelter reservations remain excluded. The public web page is a landing, not a full web app.
+## Next three actions after implementation authorization
 
-## Completion evidence
+1. Complete P03/P04/P10: confirm the window, access and native installation paths.
+2. Complete F01/F03: create the smallest Expo/Convex foundation and shared input/output contracts; add only the records needed for the first flow.
+3. Prove F06/F07/F08: native Google login, denied privilege escalation and both basemaps, before investing in detailed screens.
 
-Checking a box requires an actual accepted result, not merely created files. At each checkpoint record objective, owned modules, test/check, result, commit/build, dependency blocker and next task. Documentation completed here does not mark any app functionality implemented.
+## Deliberately deferred or excluded
+
+Downloaded basemaps, offline routing, automatically queued offline reports and a fully offline crisis experience are deferred by the user. News ingestion is removed. Rescue dispatch/SOS, family tracking, media reports, chat attachments/DMs, shelter reservations and a full web crisis app remain excluded. The web deliverable is a public landing page. These exclusions do not remove chat, authority workflows, six languages or either native platform.
+
+## Evidence and progress format
+
+For each task record: **task ID → behavior demonstrated → check/result → build/commit/device → blocker or limitation → next action**. Record provider access, model decision quality, server publication, push ticket/receipt and human app-open as different claims. A failed milestone stays open.
+
+Do not commit keys, .env.local or private tourist data. Do not lower the Jev threshold, fake weather, bypass location rules or relabel fixtures to make a demonstration pass. Only an explicit user decision changes the core product scope.

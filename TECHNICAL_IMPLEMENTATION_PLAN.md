@@ -655,23 +655,25 @@ For every acceptance result record date, build/commit, device/OS, fixture/live c
 
 ## 25. Implementation sequence and integration gates
 
-Use [TODO.md](TODO.md) task IDs rather than independent competing backlogs. Its timeboxes are checkpoints for the hackathon, not a guarantee that all work fits without measured progress.
+Use [TODO.md](TODO.md) task IDs rather than independent competing backlogs. Its milestones are demonstrated workflow goals with dependencies and completion checks, not fixed-hour promises. Estimate remaining work against the actual team and organizer deadline after each working checkpoint. The full requested scope is not assumed to fit a short event without that evidence.
 
 | Gate | Deliverable | Dependency/exit evidence |
 | --- | --- | --- |
-| M0 | Provider access, authority fixtures, native distribution decisions | P00–P10; Choice/Score, GCP, weather and signing gaps explicit |
+| M0 | Coding/access/native distribution gates and acceptance ledger | P tasks and Q01; per-provider checks gate their dependent features |
 | M1 | Expo/Convex/auth/contracts and base native build | F tasks; real login and unauthorized-call denial |
 | M2 | India gate/profile/location/device registration | L tasks; actual timestamp/accuracy and permissions |
 | M3 | Map/report/incident/witness transaction flow | I tasks; visible unverified report without notification |
-| M4 | CAP/weather/Jev evidence pipeline | E tasks; version-safe evaluation and model-derived status |
-| M5 | Authority declarations/shelters/contacts | A tasks; official bypass and jurisdiction enforcement |
-| M6 | Translation/recipient expansion/real notifications | N tasks; two-device targeted multilingual alert |
+| M4 | Authority declarations/shelters/contacts | A tasks; official bypass and jurisdiction enforcement |
+| M5 | Translation/recipient expansion/real notifications | N tasks; first working official-alert checkpoint on native devices |
+| M6 | CAP/weather/Jev evidence pipeline | E tasks; version-safe community qualification reuses proven alert delivery |
 | M7 | Nearby chat/moderation/appeals | C tasks; privacy/radius/expiry enforced |
 | M8 | Cache/recovery/privacy/retention | R tasks; disconnected read and explicit resend behavior |
 | M9 | Acceptance, native releases, landing and real demo | Q tasks; artifacts and evidence, disclosed limitations |
 | M10 | Rehearsal/freeze/submission | S tasks; actual accessible links before official deadline |
 
 Before parallel work, A publishes shared DTOs, error enums, mutation ownership and schema/index contracts. B/D build against those contracts; C applies provider results only through A-owned internal commands. Integrate vertical flows at each gate. If a gate fails, state the failure and remediate; do not replace a required workflow with a mock while describing it as complete.
+
+Build the official declaration → eligible recipient → original/translation → suitable listed shelter path before attaching automatic community qualification. This order isolates identity, targeting, translation and delivery problems from model/evidence problems; it changes build order, not final scope. Feed/weather adapters can be developed independently once their contracts and access are ready. Android verification starts early, with iOS builds/signing active from the foundation milestone; both remain final deliverables.
 
 Demo sequence: DEMO tourist incident appears unverified → second independent observation/weather/source evidence is evaluated → qualifying app emergency reaches the nearby eligible device → original/translated instructions and suitable listed shelter are shown → authority declaration publishes immediately → a material update/cancellation is attributed → chat and one provider-failure state are demonstrated. Simulated upstream evidence is visibly DEMO and never targets ordinary users. The recorded 2–5-minute demo must show implemented behavior, not screenshots of this plan.
 
