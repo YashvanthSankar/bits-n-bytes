@@ -55,3 +55,26 @@ it('sends the neutral notice evidence in both Jev stages without promising verif
   expect(JSON.stringify(body.questions)).toContain('not proof of SACHET origin');
  }
 });
+
+
+it('preserves both notice sources and applies the same evidence standard in both assessment stages', async () => {
+ const fetcher = vi.fn<(url: string, init: RequestInit) => Promise<Response>>().mockImplementation(async (_, init) => {
+  const body = JSON.parse(init.body as string);
+  const answers = Object.fromEntries(Object.entries(body.questions as Record<string, { criteria: Record<string, string> }>).map(([key, q]) => [key, answer(Object.keys(q.criteria), key === 'qualification' ? 'INSUFFICIENT_EVIDENCE' : 'UNKNOWN')]));
+  return new Response(JSON.stringify({ model: 'jev-1.13', answers }));
+ });
+ const official = { items: [{ noticeId: 'sachet-1', headline: 'Flood warning', sentAt: 100, expires: 200, exactGeometryMatched: true }], partial: false };
+ const authority = { items: [{ noticeId: 'authority-1', title: 'Flood warning', issuedAt: 100, expiresAt: 200, urgency: 'Immediate', certainty: 'Observed' }], partial: false };
+ await assessIncident({ incident: { hazard: 'FLASH_FLOOD' }, official, authorityNotices: authority }, { apiKey: 'test-only', fetcher });
+ for (const call of fetcher.mock.calls) {
+  const body = JSON.parse(call[1].body as string), state = JSON.parse(body.state);
+  expect(state.evidence.official).toEqual(official);
+  expect(state.evidence.authorityNotices.items[0]).toMatchObject(authority.items[0]!);
+  for (const q of Object.values(body.questions) as { instructions: string }[]) {
+   expect(q.instructions).toContain('equal evidentiary standing');
+   expect(q.instructions).toContain('Neither source type has an automatic priority, discount or veto');
+   expect(q.instructions).toContain('Copied or relayed versions');
+   expect(q.instructions).toContain('unresolved material conflict remains uncertainty');
+  }
+ }
+});
