@@ -1,8 +1,11 @@
+
 # GudTour
 
 ### Local alerts. Your language.
 
 **A map-first crisis-communication app for tourists in India, built natively for both Android and iOS from one shared codebase.**
+
+<img width="1536" height="1024" alt="GudTour Local Alert Architecture" src="https://github.com/user-attachments/assets/1facf822-c8a2-415b-bb46-973bd222656f" />
 
 GudTour answers one question for a visitor under stress: **“What is happening near me, who is saying it, and what should I read next?”**
 
