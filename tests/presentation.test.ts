@@ -24,4 +24,13 @@ describe('readable six-language foundations', () => {
     }
     expect(contrast(theme.onAccent, theme.accent)).toBeGreaterThanOrEqual(4.5);
   });
+  it.each(['light','dark'] as const)('%s glass icons remain readable over extreme map backgrounds',(mode)=>{
+    const theme=colors[mode];const rgba=theme.glassSurface;
+    const opacity=parseInt(rgba.slice(7,9),16)/255;
+    const foreground=rgba.slice(1,7).match(/../g)!.map(c=>parseInt(c,16));
+    for(const r of [0,255])for(const g of [0,255])for(const b of [0,255]){
+      const composite='#'+[r,g,b].map((value,i)=>Math.round(value*(1-opacity)+foreground[i]!*opacity).toString(16).padStart(2,'0')).join('');
+      expect(contrast(theme.text,composite)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
 });

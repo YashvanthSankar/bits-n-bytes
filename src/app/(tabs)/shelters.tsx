@@ -1,0 +1,29 @@
+import { useConvexAuth, useQuery } from 'convex/react';
+import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import { View } from 'react-native';
+import { api } from '../../../convex/_generated/api';
+import { ActionButton, AppText, EmptyState, LoadingState, Screen } from '../../components/ui';
+import { ReadBoundary } from '../../components/ReadBoundary';
+import { useLocationSession } from '../../session/LocationSession';
+import { useTheme } from '../../theme/useTheme';
+
+function Shelters() {
+  const {t,i18n}=useTranslation();const theme=useTheme();const {isAuthenticated}=useConvexAuth();const {fix}=useLocationSession();
+  const listed=useQuery(api.shelters.nearby,isAuthenticated && fix?{}:'skip');
+  return <Screen><AppText variant="title" accessibilityRole="header">{t('navShelters')}</AppText><AppText>{t('shelterListNotice')}</AppText>
+    {!isAuthenticated || !fix ? <ActionButton title={t('locationAction')} onPress={()=>router.replace('/location')} /> : !listed ? <LoadingState /> : <>
+      {listed.partial && <AppText>{t('matchesPartial')}</AppText>}
+      {!listed.items.length && <EmptyState title={t('shelterEmpty')} message={t('shelterEmptyNotice')} />}
+      {listed.items.map(shelter=><View key={shelter.id} style={{gap:8,borderWidth:1,borderColor:theme.border,borderRadius:16,padding:16,backgroundColor:theme.surface}}>
+        <AppText variant="heading">{shelter.name}</AppText><AppText>{shelter.issuer}</AppText><AppText>{shelter.address}</AppText>
+        <AppText>{t(`shelter${shelter.status}`)} · {(shelter.distanceM/1000).toFixed(1)} km · {t('approximateDistance')}</AppText>
+        <AppText variant="caption">{t('lastConfirmed')}: {new Date(shelter.statusConfirmedAt).toLocaleString(i18n.language)}</AppText>
+        {shelter.stale && <AppText style={{color:theme.warning}}>{t('stale')}</AppText>}
+        {shelter.accessInstruction && <AppText>{shelter.accessInstruction}</AppText>}
+        {shelter.phone && <AppText>{shelter.phone}</AppText>}
+      </View>)}
+    </>}
+  </Screen>;
+}
+export default function SheltersScreen(){return <ReadBoundary><Shelters /></ReadBoundary>;}

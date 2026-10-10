@@ -11,7 +11,7 @@ Source: PLAN.md §18, with the explicit online-first overrides below. Record act
 | AC03 | Background permission denied | Full foreground app works; reduced tracking/alert warning is visible. | Pending |
 | AC04 | Notification permission denied | Onboarding continues; in-app alerts work; delivery limitations are clear. | Pending |
 | AC05 | Tourist reports a flood | Unverified/pending detail opens; other tourists receive no alert yet. | Pending |
-| AC06 | Tourist taps corroboration repeatedly | One independent witness; updates obey the cooldown. | Pending |
+| AC06 | Tourist taps corroboration repeatedly | One independent witness; immediate updates accepted without cooldown (2026-10-10 user override). | Pending |
 | AC07 | Corroboration from too far away | Disabled with explanation; new local observation remains possible. | Pending |
 | AC08 | Ten old reports versus one new report | Recent and total counts differ; old reports do not form a fresh evidence cluster. | Pending |
 | AC09 | Jev qualifies with sufficient probability | Automatic area-targeted app-assessed emergency, without authority approval. | Pending |

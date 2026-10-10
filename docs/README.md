@@ -6,6 +6,8 @@ The [detailed technical implementation plan](../TECHNICAL_IMPLEMENTATION_PLAN.md
 
 Use [API/team setup](api-setup.md) for configured credentials and [SACHET feed contract](research/sachet-feed-contract.md) for verified ETag/geometry behavior.
 
+For continuity, read the root [agent handoff context](../context.md), which records current runtime handles, user overrides, worktree state and next steps without credentials.
+
 Start with [architecture.md](architecture.md) for the core product and technical boundaries. Provider access and repository migration evidence are in [the 2026-10-10 progress note](progress/2026-10-10-technical-plan-and-migration.md).
 
 Historical document order:

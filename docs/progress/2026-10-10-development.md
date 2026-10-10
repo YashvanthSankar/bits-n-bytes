@@ -99,3 +99,26 @@ Previous onboarding/API checkpoint `fb94df7` was committed and pushed to main.
 - Validation: strict TypeScript/lint, 102 tests across 12 files, successful Convex development deploy, and Android/iOS/web exports. Native reload and report rendering confirmed; no synthetic LIVE emergency was posted.
 
 - Read-budget review caps initial nearby/candidate results and cell pages at 30 incidents. Partial lists carry an explicit flag; cell pagination retains its cursor so later pages remain accessible. This prevents 100 worst-case witness aggregates exceeding a Convex read budget. A dense 32-incident test checks both partial disclosure and 30+2 pagination.
+
+
+### Incident submission policy override — I13
+
+- The user removed incident submission rate limiting on 2026-10-10. This supersedes the historical five-per-hour and ten-minute witness-update defaults recorded above. Incident creation and corroboration updates now accept immediate submissions without those limits; chat limits and emergency sound rules retain their separate policies.
+- Removed backend rate-window reads/writes and cooldown rejection, plus report-form countdown/disabled waiting states. Eligibility no longer rejects a person for having just contributed. Legacy postingRates rows remain migration history only and are not read or written by submissions. Policy version advanced to 2026-10-10-v2.
+- Preserved authentication, current acknowledged India GPS, observation-time/proximity checks, one effective witness per person, and command replay deduplication.
+- Evidence: regression cases accept twelve new reports per hour and twelve immediate updates of one incident, with one witness and no new rate rows. All 102 tests, strict TypeScript and lint pass. Deployed successfully to basic-newt-690 at 09:04 IST.
+- F10 frosted navigation is now tracked explicitly and in progress; native/platform accessibility verification is still pending.
+
+
+### iOS navigation and continuity checkpoint — F10
+
+- User selected icon-only floating navigation and a full-screen map with Report incident floating above the bar. Initial landing after onboarding remains the map, with a compact welcome/current-location panel and genuine Incidents/Shelters quick actions. Optional device reverse geocoding supplies a real locality; failure retains the generic label. Captured GPS time/accuracy is exposed without pretending a recenter refreshes location.
+- Fresh iOS development build succeeded and installed ExpoBlur and SVG modules; this removes the native “Un” placeholders. Consistent Lucide icons and real blur render in actual iOS light/dark screenshots. Sources remain platform-compatible; Android runtime is unverified and deferred by the user's latest direction.
+- Fixed the second tab's Report footer overlapping navigation. KeyboardAvoidingView overwrote inline paddingBottom; a separate measured-inset wrapper now reserves the bar space. Actual default-font screenshot tmp/ios-incidents-footer-fixed.png shows Report fully above the bar.
+- User explicitly prioritized functionality and requested default fonts. Restored simulator content_size large, closed Android emulator, and deferred extended accessibility/responsiveness checks. Do not relaunch Android for routine work.
+- Settings now saves only language with session-derived ownership, revision checks and exact retry receipt; tests cover unauthorized/stale/changed-key writes and preservation of other private profile fields. Shelters list is connected to a bounded private-location-based public read, with honest empty/pending information. Shelter maintenance/recommendations and chat still remain unfinished.
+- New official workflow tables and complete geometry scope validation are preparation only; no authority emergency publisher/targeting worker exists yet. Geometry tests cover jurisdiction holes, concavities, invalid rings, nested components and uncertainty index coverage.
+- Validation at 09:27: strict TypeScript/lint and 111 tests/13 files passed. Initial all-platform export passed; latest popup/Screen/locality source requires final export. Root context.md now records decisions, configuration references, authoritative state, current limitations and exact continuation instructions without secrets.
+- I14: similar incidents now appear in an automatic native modal with explicit existing/new-event choice, dismiss/reopen controls and a compact form summary. Native modal exercise is still pending, not marked complete from code alone.
+
+- Final checkpoint verification: 111 tests/13 files, TypeScript/lint and all-platform export pass with the popup/Screen/locality changes included. Exact configured-secret scan passed for 354 Git-eligible files. Completed checkpoint IDs: I13, F10 (current iOS scope), DOC01. I14 remains pending native exercise.

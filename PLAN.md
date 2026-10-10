@@ -153,7 +153,9 @@ Corroboration records what the person currently observes; it does not grant offi
 
 ### Abuse controls and user-facing outcomes
 
-- Maximum five new incident submissions per tourist per hour and one corroboration/update per incident per ten minutes. Show when they may contribute again.
+**2026-10-10 user override:** Incident creation, corroboration and observation updates have no application rate limit or submission cooldown. Authentication, location/time validation, idempotency and independent witness counting still apply.
+
+- Accept incident submissions and corroboration updates without per-hour limits or waiting periods. Each person still contributes at most one independent witness per incident.
 - Keep the ability to read alerts and contact authorities available while posting is restricted.
 - Users can flag an incident as inaccurate, duplicate, or abusive. Flags are moderation evidence, not votes that automatically cancel an emergency.
 - Moderators give a reason when rejecting an observation. The contributor sees that reason and can appeal once through Help.
@@ -490,7 +492,7 @@ The coding agent must demonstrate these observable outcomes. These are behavior 
 | Background permission denied | Full foreground app works; reduced tracking/alert warning is visible. |
 | Notification permission denied | Onboarding continues; in-app alerts work; delivery limitations are clear. |
 | Tourist reports a flood | Unverified/pending detail opens; other tourists receive no alert yet. |
-| Tourist taps corroboration repeatedly | One independent witness; updates obey the cooldown. |
+| Tourist taps corroboration repeatedly | One independent witness; immediate updates are accepted without a cooldown. |
 | Corroboration from too far away | Disabled with explanation; new local observation remains possible. |
 | Ten old reports versus one new report | Recent and total counts differ; old reports do not form a fresh evidence cluster. |
 | Jev qualifies with sufficient probability | Automatic area-targeted app-assessed emergency, without authority approval. |

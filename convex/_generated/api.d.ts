@@ -13,6 +13,7 @@ import type * as authority from "../authority.js";
 import type * as health from "../health.js";
 import type * as http from "../http.js";
 import type * as incidents from "../incidents.js";
+import type * as lib_areas from "../lib/areas.js";
 import type * as lib_authorization from "../lib/authorization.js";
 import type * as lib_errors from "../lib/errors.js";
 import type * as lib_idempotency from "../lib/idempotency.js";
@@ -22,6 +23,7 @@ import type * as locations from "../locations.js";
 import type * as observations from "../observations.js";
 import type * as operator from "../operator.js";
 import type * as profiles from "../profiles.js";
+import type * as shelters from "../shelters.js";
 
 import type {
   ApiFromModules,
@@ -35,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   health: typeof health;
   http: typeof http;
   incidents: typeof incidents;
+  "lib/areas": typeof lib_areas;
   "lib/authorization": typeof lib_authorization;
   "lib/errors": typeof lib_errors;
   "lib/idempotency": typeof lib_idempotency;
@@ -44,6 +47,7 @@ declare const fullApi: ApiFromModules<{
   observations: typeof observations;
   operator: typeof operator;
   profiles: typeof profiles;
+  shelters: typeof shelters;
 }>;
 
 /**

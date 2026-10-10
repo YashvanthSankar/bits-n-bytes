@@ -24,13 +24,13 @@ it('commits one unverified incident/observation and replays the exact receipt',a
  expect(receipt).toMatchObject({verification:'UNVERIFIED',qualification:null,recentWitnesses:1,totalWitnesses:1});
  expect(await actor(first).mutation(api.observations.submit,args)).toEqual(receipt);
  const rows=await t.run(async ctx=>({incidents:await ctx.db.query('incidents').collect(),observations:await ctx.db.query('observations').collect(),rates:await ctx.db.query('postingRates').collect()}));
- expect(rows.incidents).toHaveLength(1);expect(rows.observations).toHaveLength(1);expect(rows.rates).toHaveLength(1);
+ expect(rows.incidents).toHaveLength(1);expect(rows.observations).toHaveLength(1);expect(rows.rates).toHaveLength(0);
  expect(rows.incidents[0]).toMatchObject({assessmentStatus:'PENDING',qualification:null});
  await expect(actor(first).mutation(api.observations.submit,{...args,description:'Different body'})).rejects.toThrow('COMMAND_KEY_REUSED');
 });
 it('one person cannot add repeated independent witnesses; a second nearby author corroborates',async()=>{
  const origin=await actor(first).mutation(api.observations.submit,report(await admit(first)));
- await expect(actor(first).mutation(api.observations.submit,{...report(await admit(first),'report-0002'),incidentId:origin.incidentId})).rejects.toThrow('RATE_LIMITED');
+ expect(await actor(first).mutation(api.observations.submit,{...report(await admit(first),'report-0002'),incidentId:origin.incidentId})).toMatchObject({recentWitnesses:1,totalWitnesses:1});
  const secondArgs={...report(await admit(second),'report-second-0001'),incidentId:origin.incidentId};
  expect(await actor(second).mutation(api.observations.submit,secondArgs)).toMatchObject({recentWitnesses:2,totalWitnesses:2,verification:'CORROBORATED',qualification:null});
  expect(await actor(second).mutation(api.observations.submit,secondArgs)).toMatchObject({totalWitnesses:2});
@@ -52,13 +52,13 @@ it('does not use a five-kilometre alert radius as witness proximity',async()=>{
  await expect(actor(second).mutation(api.observations.submit,{...report(distant,'report-second-0001'),incidentId:origin.incidentId})).rejects.toThrow('OBSERVATION_TOO_FAR');
  expect(await actor(second).query(api.observations.eligibility,{incidentId:origin.incidentId})).toMatchObject({eligible:false,reason:'OBSERVATION_TOO_FAR'});
 });
-it('keeps the public nearby list private and shows contribution cooldown eligibility',async()=>{
+it('keeps the public nearby list private and allows immediate contribution updates',async()=>{
  const receipt=await actor(first).mutation(api.observations.submit,report(await admit(first)));
  const nearby=await actor(second).query(api.incidents.nearby,{});
  expect(nearby.items).toHaveLength(1);expect(nearby).toMatchObject({radiusM:5000,partial:false});
  expect(JSON.stringify(nearby)).not.toContain('Test-only observation');expect(JSON.stringify(nearby)).not.toContain(first);
  expect(await actor(second).query(api.observations.eligibility,{incidentId:receipt.incidentId})).toMatchObject({eligible:true});
- expect(await actor(first).query(api.observations.eligibility,{incidentId:receipt.incidentId})).toMatchObject({eligible:false,reason:'RATE_LIMITED'});
+ expect(await actor(first).query(api.observations.eligibility,{incidentId:receipt.incidentId})).toMatchObject({eligible:true,reason:null});
 });
 it('suggests a candidate rather than silently attaching the second new report',async()=>{
  await actor(first).mutation(api.observations.submit,report(await admit(first)));
@@ -66,10 +66,13 @@ it('suggests a candidate rather than silently attaching the second new report',a
  await actor(second).mutation(api.observations.submit,report(await admit(second),'report-second-0001'));
  expect(await t.run(ctx=>ctx.db.query('incidents').collect())).toHaveLength(2);
 });
-it('enforces five new reports per rolling hour without counting replay twice',async()=>{
+it('accepts more than five new reports per hour without rate events or duplicate replay',async()=>{
  const value=await admit(first);
- for(let i=0;i<5;i++)await actor(first).mutation(api.observations.submit,report(value,'report-number-'+i));
- await expect(actor(first).mutation(api.observations.submit,report(value,'report-number-5'))).rejects.toThrow('RATE_LIMITED');
+ const submissions=Array.from({length:12},(_,i)=>report(value,'report-number-'+i));
+ for(const args of submissions)await actor(first).mutation(api.observations.submit,args);
+ await actor(first).mutation(api.observations.submit,submissions[11]!);
+ expect(await t.run(ctx=>ctx.db.query('incidents').collect())).toHaveLength(12);
+ expect(await t.run(ctx=>ctx.db.query('postingRates').collect())).toHaveLength(0);
 });
 it('does not let an ordinary profile create or query DEMO evidence',async()=>{
  await expect(actor(first).mutation(api.observations.submit,{...report(await admit(first)),audience:'DEMO'})).rejects.toThrow('NOT_FOUND');
@@ -84,10 +87,9 @@ it('read-time recency remains correct when the scheduled expiry job is late', as
  await t.mutation(internal.observations.refreshState,{incidentId:receipt.incidentId,generation:incident!.evidenceGeneration});
  expect(await t.run(ctx=>ctx.db.get(receipt.incidentId))).toMatchObject({recentWitnesses:0,verification:'UNVERIFIED'});
 });
-it('allows a later update without creating another independent witness', async () => {
+it('allows repeated immediate updates without creating another independent witness', async () => {
  const receipt=await actor(first).mutation(api.observations.submit,report(await admit(first)));
- vi.useFakeTimers();vi.setSystemTime(Date.now()+10*60_000+1);
- expect(await actor(first).mutation(api.observations.submit,{...report(await admit(first),'update-report-0002'),incidentId:receipt.incidentId})).toMatchObject({recentWitnesses:1,totalWitnesses:1});
+ for(let i=0;i<12;i++) expect(await actor(first).mutation(api.observations.submit,{...report(await admit(first),'update-report-'+i),incidentId:receipt.incidentId})).toMatchObject({recentWitnesses:1,totalWitnesses:1});
  expect(await t.run(ctx=>ctx.db.query('observations').collect())).toHaveLength(1);
 });
 it('labels truncated nearby/candidate results and preserves continuation for bounded cell pages',async()=>{

@@ -57,6 +57,18 @@ describe('server identity, admission and privacy', () => {
     await expect(actor(a).mutation(api.locations.update, { ...locationArgs('location-update-002'), fix: makeFix(20, HOUR) })).rejects.toThrow('LOCATION_STALE');
     await expect(actor(a).mutation(api.locations.update, { ...locationArgs('location-update-003'), fix: { ...makeFix(), observedAt: Date.now() + HOUR } })).rejects.toThrow('LOCATION_INVALID');
   });
+  it('changes only the authenticated profile language with revision/replay guards',async()=>{
+    await actor(a).mutation(api.locations.update,locationArgs('language-location-001'));
+    await actor(a).mutation(api.profiles.save,profileArgs);
+    const change={requestId:'language-save-0001',expectedRevision:1,language:'ta' as const};
+    await expect(t.mutation(api.profiles.setLanguage,change)).rejects.toThrow('AUTH_REQUIRED');
+    await expect(actor(b).mutation(api.profiles.setLanguage,change)).rejects.toThrow('NOT_FOUND');
+    expect(await actor(a).mutation(api.profiles.setLanguage,change)).toEqual({revision:2});
+    expect(await actor(a).mutation(api.profiles.setLanguage,change)).toEqual({revision:2});
+    await expect(actor(a).mutation(api.profiles.setLanguage,{...change,requestId:'language-save-0002'})).rejects.toThrow('REVISION_CONFLICT');
+    await expect(actor(a).mutation(api.profiles.setLanguage,{...change,language:'fr'})).rejects.toThrow('COMMAND_KEY_REUSED');
+    expect((await actor(a).query(api.profiles.me,{})).profile).toMatchObject({language:'ta',name:profileArgs.name,bloodGroup:'AB+',emergencyContact:profileArgs.emergencyContact,revision:2});
+  });
   it('keeps one latest fix, ignores older replay, and removes geographic eligibility outside India', async () => {
     const first = locationArgs('location-update-001');
     await actor(a).mutation(api.locations.update, first);

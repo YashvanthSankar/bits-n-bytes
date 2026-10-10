@@ -1,6 +1,6 @@
 # GudTour repository instructions
 
-Read docs/README.md and docs/architecture.md before changing this repository. PLAN.md is the core behavior contract; TECHNICAL_IMPLEMENTATION_PLAN.md and TODO.md define engineering and task order. Development is authorized on 2026-10-10. Review, commit and push after each three completed todos; only mark tasks complete with recorded verification.
+Read docs/README.md and docs/architecture.md before changing this repository. Then read root context.md for the latest user priorities, runtime state and unfinished work; keep it current when handing off. PLAN.md is the core behavior contract; TECHNICAL_IMPLEMENTATION_PLAN.md and TODO.md define engineering and task order. Development is authorized on 2026-10-10. Review, commit and push after each three completed todos; only mark tasks complete with recorded verification.
 
 Never commit .env.local, provider credentials or private tourist data. Derive identity/authority membership from the Convex authenticated context. Model qualification is not authority verification; official emergencies bypass model approval. External effects belong in actions, atomic domain writes in mutations. Keep dated progress and acceptance evidence synchronized.
 

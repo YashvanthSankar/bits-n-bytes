@@ -77,9 +77,7 @@ export const eligibility = query({ args: { incidentId: v.id('incidents') }, hand
     if (error instanceof ConvexError && typeof error.data === 'object' && error.data && 'code' in error.data && error.data.code === 'OBSERVATION_TOO_FAR') return { eligible:false,reason:'OBSERVATION_TOO_FAR' as const,retryAfterMs:0 };
     throw error;
   }
-  const previous = await ctx.db.query('observations').withIndex('by_incident_author',q=>q.eq('incidentId',incident._id).eq('authorId',userId)).unique();
-  const retryAfterMs = previous ? Math.max(0,previous.lastContributionAt+POLICY.witnessCooldownMs-Date.now()) : 0;
-  return { eligible:retryAfterMs === 0,reason:retryAfterMs ? 'RATE_LIMITED' as const : null,retryAfterMs };
+  return { eligible:true,reason:null,retryAfterMs:0 };
 } });
 
 export const candidates = query({ args: { hazard, audience: v.optional(audience) }, handler: async (ctx, args) => {
@@ -131,8 +129,6 @@ export const submit = mutation({ args: {
       if (!['ACTIVE','STALE'].includes(incident.lifecycle)) return reject('INCIDENT_CLOSED');
       await mayObserve(ctx, incident, location);
     } else {
-      const rates = await ctx.db.query('postingRates').withIndex('by_user_kind_at', q => q.eq('userId',userId).eq('kind','NEW_INCIDENT').gt('createdAt',now-HOUR)).take(POLICY.incidentHourlyLimit);
-      if (rates.length >= POLICY.incidentHourlyLimit) return reject('RATE_LIMITED', { retryAfterMs: Math.max(1, rates[0]!.createdAt + HOUR - now) });
       const area = { type: 'circle' as const, center: location.point, radiusM: HAZARD_POLICY[args.hazard].radiusM };
       if (memberships.length) await requireAuthorityForCircle(ctx, area, selectedAudience);
       const provenance = memberships.length ? 'AUTHORITY' as const : 'COMMUNITY' as const;
@@ -140,10 +136,8 @@ export const submit = mutation({ args: {
       const id = await ctx.db.insert('incidents', { hazard: args.hazard, locality: 'Address unavailable', geometryId, provenance, verification: provenance === 'AUTHORITY' ? 'AUTHORITY_VERIFIED' : 'UNVERIFIED', lifecycle: 'ACTIVE', qualification: null, assessmentStatus: 'PENDING', severity: 'UNKNOWN', recentWitnesses: 0, totalWitnesses: 0, lastObservedAt: args.observedAt, staleAt: provenance === 'AUTHORITY' ? now + 6 * HOUR : args.observedAt + HAZARD_POLICY[args.hazard].staleAfterMs, revision: 1, evidenceGeneration: 1, controlRevision: 1, nextAssessmentAt: now, audience: selectedAudience });
       incident = (await ctx.db.get(id))!;
       for (const precision of [4,5]) await ctx.db.insert('geoPoints',{ kind: 'INCIDENT', entityId: id, precision, cell: geohash.encode(location.point.latitude,location.point.longitude,precision),point:location.point,active:true,observedAt:args.observedAt });
-      await ctx.db.insert('postingRates',{userId,kind:'NEW_INCIDENT',createdAt:now});
     }
     const previous = await ctx.db.query('observations').withIndex('by_incident_author', q => q.eq('incidentId',incident._id).eq('authorId',userId)).unique();
-    if (previous && now - previous.lastContributionAt < POLICY.witnessCooldownMs) return reject('RATE_LIMITED',{retryAfterMs:previous.lastContributionAt+POLICY.witnessCooldownMs-now});
     const observation = { incidentId: incident._id, authorId: userId, alias: profile.alias, capturedPoint: location.point, fixObservedAt: location.observedAt, accuracyM: location.accuracyM, observedAt: args.observedAt, receivedAt: now, description, status: 'ACTIVE' as const, revision: (previous?.revision ?? 0)+1, lastContributionAt: now, provenance: !args.incidentId && memberships.length ? 'AUTHORITY' as const : 'COMMUNITY' as const };
     const observationId = previous?._id ?? await ctx.db.insert('observations', observation);
     if (previous) await ctx.db.patch(observationId, observation);

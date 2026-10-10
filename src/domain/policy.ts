@@ -3,7 +3,7 @@ import type { HazardCode } from '../contracts/domain';
 export const MINUTE = 60_000;
 export const HOUR = 60 * MINUTE;
 export const DAY = 24 * HOUR;
-export const POLICY_VERSION = '2026-10-10-v1';
+export const POLICY_VERSION = '2026-10-10-v2';
 
 export const HAZARD_POLICY: Readonly<Record<HazardCode, {
   radiusM: number; witnessWindowMs: number; staleAfterMs: number;
@@ -25,8 +25,6 @@ export const POLICY = {
   alertFix: { maxAgeMs: 30 * MINUTE, maxAccuracyM: 1_000 },
   staleLocationMs: 15 * MINUTE,
   maxObservationAgeMs: DAY,
-  witnessCooldownMs: 10 * MINUTE,
-  incidentHourlyLimit: 5,
   corroboratedWitnessCount: 2,
   qualificationProbability: 0.9,
   assessmentIntervalMs: 5 * MINUTE,

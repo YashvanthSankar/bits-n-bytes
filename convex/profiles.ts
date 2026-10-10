@@ -17,6 +17,18 @@ export const me = query({ args: {}, handler: async ctx => {
   };
 } });
 
+/** Language-only settings cannot overwrite concurrent private profile edits. */
+export const setLanguage = mutation({ args: { requestId:v.string(), expectedRevision:v.number(), language }, handler:async(ctx,args)=>{
+  const userId=await requireUser(ctx);
+  return command(ctx,userId,'PROFILE_LANGUAGE',args.requestId,args,async()=>{
+    const profile=await ctx.db.query('profiles').withIndex('by_user',q=>q.eq('userId',userId)).unique();
+    if(!profile) return reject('NOT_FOUND');
+    if(profile.revision!==args.expectedRevision) return reject('REVISION_CONFLICT',{currentRevision:profile.revision});
+    await ctx.db.patch(profile._id,{language:args.language,revision:profile.revision+1});
+    return {revision:profile.revision+1};
+  });
+} });
+
 export const save = mutation({ args: {
   requestId: v.string(), expectedRevision: v.number(), name: v.string(), language,
   bloodGroup: v.optional(v.string()), emergencyContact: v.optional(v.object({ name: v.string(), phone: v.string() })), stepFreeNeeded: v.boolean(),

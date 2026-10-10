@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { PropsWithChildren, ReactNode } from 'react';
 import { spacing, typography } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
+import { useNavigationInset } from '../navigation/NavigationInset';
 
 export function AppText({ variant = 'body', style, ...props }: TextProps & { variant?: keyof typeof typography }) {
   const theme = useTheme();
@@ -11,13 +12,16 @@ export function AppText({ variant = 'body', style, ...props }: TextProps & { var
 }
 export function Screen({ children, footer }: PropsWithChildren<{ footer?: ReactNode }>) {
   const theme = useTheme();
-  return <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+  const navigationInset = useNavigationInset();
+  return <SafeAreaView edges={navigationInset === null ? ['top', 'bottom', 'left', 'right'] : ['top', 'left', 'right']} style={{ flex: 1, backgroundColor: theme.background }}>
+    <View style={{flex:1,paddingBottom:navigationInset??0}}>
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, padding: spacing.xl, width: '100%', maxWidth: 640, alignSelf: 'center', gap: spacing.xxl }} keyboardShouldPersistTaps="handled">{children}</ScrollView>
     {footer && <View style={{ borderTopWidth: 1, borderTopColor: theme.border, backgroundColor: theme.background }}>
       <View style={{ width: '100%', maxWidth: 640, alignSelf: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.md }}>{footer}</View>
     </View>}
     </KeyboardAvoidingView>
+    </View>
   </SafeAreaView>;
 }
 export function ActionButton({ title, onPress, disabled = false, busy = false, variant = 'primary' }: {

@@ -18,3 +18,6 @@ export const verification = v.union(v.literal('UNVERIFIED'), v.literal('CORROBOR
 export const lifecycle = v.union(v.literal('ACTIVE'), v.literal('STALE'), v.literal('RESOLVED'), v.literal('REJECTED'), v.literal('MERGED'), v.literal('EXPIRED'));
 export const assessmentStatus = v.union(v.literal('PENDING'), v.literal('ACCEPTED'), v.literal('ERROR'), v.literal('SUPERSEDED'));
 export const provenance = v.union(v.literal('COMMUNITY'), v.literal('AUTHORITY'), v.literal('SACHET'));
+export const actionKind = v.union(v.literal('STAY_PUT'), v.literal('AVOID_TRAVEL'), v.literal('NAMED_SHELTER'), v.literal('EVACUATE'), v.literal('OTHER'));
+export const shelterStatus = v.union(v.literal('OPEN'), v.literal('CLOSED'), v.literal('FULL'), v.literal('UNKNOWN'));
+export const accessibility = v.union(v.literal('STEP_FREE'), v.literal('NOT_STEP_FREE'), v.literal('UNKNOWN'));

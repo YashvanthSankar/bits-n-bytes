@@ -15,7 +15,7 @@ function Detail() {
   useEffect(()=>{if(!isLoading && !isAuthenticated) router.replace('/location');},[isLoading,isAuthenticated]);
   const incident = useQuery(api.incidents.detail, isAuthenticated && id ? { incidentId:id as Id<'incidents'> } : 'skip');
   const eligibility = useQuery(api.observations.eligibility, isAuthenticated && id ? { incidentId:id as Id<'incidents'> } : 'skip');
-  const eligibilityLabel = eligibility?.reason === 'OBSERVATION_TOO_FAR' ? 'observationTooFar' : eligibility?.reason === 'INCIDENT_CLOSED' ? 'incidentClosed' : eligibility?.reason === 'RATE_LIMITED' ? 'rateLimitError' : 'locationAction';
+  const eligibilityLabel = eligibility?.reason === 'OBSERVATION_TOO_FAR' ? 'observationTooFar' : eligibility?.reason === 'INCIDENT_CLOSED' ? 'incidentClosed' : 'locationAction';
   return <Screen footer={<>
     <ActionButton title={t('corroborate')} disabled={!incident || !eligibility?.eligible} onPress={() => incident && router.push({pathname:'/report',params:{incidentId:incident.id,hazard:incident.hazard,audience:incident.audience}})} />
     <ActionButton title={t('backToMap')} variant="secondary" onPress={() => router.replace('/map')} />

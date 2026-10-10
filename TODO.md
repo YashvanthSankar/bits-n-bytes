@@ -15,10 +15,12 @@ Source of truth: [PLAN.md](PLAN.md) for core behavior, [tech-stack.md](tech-stac
 | Location L01/L02/L05 | Shared country checks and server latest-fix mutation exist; Mobile fresh-fix admission and private profile implemented; mocked denial/disabled/old/coarse cases pass. Full native revocation/targeting pending. |
 | API access P06/P08 | Maps restrictions/billing and Translation calls verified; RSS/CAP/polygon XML and real ETag 304 verified. Credentials saved privately; see docs/api-setup.md. |
 | Report UI I03/I04 | Native report form renders on iOS; eight explicit choices, relative/earlier time, 500-character text, fresh GPS and explicit candidate/different-event choice. Export/typecheck checks pass; two-account device submission acceptance remains pending. |
-| Incident backend I01/I02/I07 | Eight preset boundaries, separate state dimensions and authenticated atomic reporting/rate/proximity guards verified. UI, correction/withdrawal and full M3 acceptance remain pending. |
+| Incident backend I01/I02/I07 | Eight preset boundaries, separate state dimensions and authenticated atomic reporting/time/proximity guards verified. UI, correction/withdrawal and full M3 acceptance remain pending. |
+| Navigation F10 | iOS icon-only routes, native blur, full-screen map and unobscured Incidents Report button verified. Android runtime/extended display checks deferred by user. |
+| Submission policy I13 | Complete: no hourly limit/cooldown; 12-report and repeated immediate-update regressions pass. Convex development deployment verified. |
 | Main product flows | Official alerts, shelters, provider workers, chat and release acceptance pending. |
 
-Primary onboarding actions now stay pinned above the bottom safe area while content scrolls. Latest mobile checkpoint: 102 tests, strict typecheck/lint, Convex development deployment and Android/iOS/web exports pass. Report/detail and initial 5-km map/list are connected; two-account device submission and complete crisis workflows remain pending.
+Primary onboarding actions now stay pinned above the bottom safe area while content scrolls. Latest mobile checkpoint: 111 tests, strict typecheck/lint, Convex development deployment and Android/iOS/web exports pass. Report/detail and initial 5-km map/list are connected; two-account device submission and complete crisis workflows remain pending.
 
 See [dated verification details](docs/progress/2026-10-10-development.md). Task completion here is scoped to the named foundation/backend work; M1's full sign-in/device goal remains incomplete.
 
@@ -51,6 +53,8 @@ A tourist in India reports a nearby hazard. Recent independent evidence, weather
 These are proposed team responsibilities, not automatic agent assignments. For three builders, combine B/D screen ownership and explicitly share independent verification. A owns changes to shared schema/dependencies. Assign names before implementation and avoid simultaneous edits to shared files.
 
 ## Completed planning and access evidence
+
+- [x] DOC01 Create root context.md with product decisions, current implementation, runtime/configuration references, verified limitations and next actions; link it from agent entry instructions. Keep it current without credentials.
 
 - [x] P00 Read latest remote PLAN.md and identify conflicts in older documents.
 - [x] P01 Record user-selected stack and online-first/no-news overrides in tech-stack.md.
@@ -102,6 +106,7 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 - [x] F07 Enforce default tourist role and operator-approved authority memberships/jurisdictions in every backend handler. Owner A.
 - [ ] F08 Produce Android/iOS development builds; prove Google basemap on Android and Apple basemap on iOS before building map overlays. Owners B/D.
 - [x] F09 Implement common loading/error/empty/offline/stale components and structured error handling. Owner B.
+- [x] F10 Build floating frosted bottom navigation for Map, Incidents, Shelters, Nearby chat and Settings; verify correct icon-only routes, iOS native blur and unobscured Report actions. Extended responsiveness/accessibility and Android runtime checks deferred per user priority. Owner B.
 
 **Done when:** Run both native builds, restore a session after restart, sign out, and directly attempt an unauthorized read/mutation. The tourist cannot assign an authority role. Both basemaps render.
 
@@ -140,7 +145,9 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 - [x] I04 Suggest same-type nearby candidates; require user choice to corroborate or report a different event. Owners A/B.
 - [ ] I05 Idempotent submit persists observation; acknowledged response opens unverified/pending detail. Owner A. Backend receipt/replay tests pass and native routing is connected; device submit/open confirmation remains pending.
 - [ ] I06 Count one independent witness per person; refresh observation time without incrementing count. Owner A.
-- [x] I07 Enforce proximity/fix quality, <=24-hour observed-time validation, five reports/hour and ten-minute witness cooldown. Owner A.
+- [x] I07 Enforce proximity/fix quality and <=24-hour observed-time validation. Incident creation/updates have no rate limit or cooldown per 2026-10-10 user override. Owner A.
+- [ ] I14 Present similar incident suggestions automatically in a popup, require existing/new-event choice, and allow reviewing again without losing the report draft. Owner B. Implemented; native popup confirmation pending.
+- [x] I13 Remove all incident creation/corroboration rate limits and submission cooldowns; prove >5 reports/hour and immediate repeated updates, preserving one witness per person and exact command replay. Owner A.
 - [ ] I08 Corrections/withdrawals/flags and merge redirects preserve history and independent counts. Owners A/D.
 - [ ] I09 Map overlays include active unverified reports with dashed uncertainty, official areas and shelters; recenter/filter/grouped marker list. Owner B.
 - [ ] I10 Incident list: emergency section, distance ordering, 5/15/25/50-km filters and separate stale/archive views. Owner B.
@@ -295,9 +302,10 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 
 ## Next development actions
 
-1. Verify I05/I11 on native devices: submit/open receipt, two-account contribution and source/evidence detail.
-2. Finish I06/I08/I12: scalable independent counts, correction/withdrawal/history and lifecycle checks.
-3. Continue M4 official publication/shelters and M5 delivery; complete Android auth/Maps and native permission checks alongside these workflows.
+1. Fix and verify unobscured Report actions above floating navigation on iOS; keep simulator default fonts. Functionality precedes extended responsiveness/accessibility polish per user instruction.
+2. Verify I05/I11 on iOS: submit/open receipt, two-account contribution and source/evidence detail.
+3. Finish I06/I08/I12: scalable independent counts, correction/withdrawal/history and lifecycle checks.
+4. Continue M4 official publication/shelters and M5 delivery; focus iOS native checks now; Android runtime is deferred by user instruction.
 
 ## Deliberately deferred or excluded
 

@@ -139,8 +139,8 @@ Create immutable versioned policy records; include policyVersion in assessments,
 | Personalized shelter position | Refresh required if older than 15 min |
 | Duplicate suggestions | Active, same type, recent <=24 h, <=1 km; cyclone <=10 km |
 | Corroboration proximity | <=1 km of eligible observation; official area inclusion also qualifies |
-| Incident submissions | Five per tourist per rolling hour |
-| Witness update cooldown | Ten minutes per user/incident |
+| Incident submissions | No application rate limit (user override 2026-10-10) |
+| Witness update cooldown | None; immediate updates retain one witness per person |
 | Community corroborated label | At least two distinct recent qualifying witnesses |
 | Jev qualification | Selected NOTIFIABLE_EMERGENCY; selected-option probability >=0.90 |
 | Candidate reassessment | Five-minute target plus material evidence events |
@@ -300,7 +300,7 @@ Current shared error codes are AUTH_REQUIRED, AUTHORITY_REQUIRED, JURISDICTION_D
 | incidents.detail / query | incidentId | Canonical ID/redirect, public timeline/evidence/status, current instructions; no witness positions/PII |
 | observations.candidates / query | hazard, qualifying locationRef, observedAt | Same-type nearby suggestions; report fix and observation validation |
 | observations.submit / mutation | hazard, acknowledged fix, observedAt, description, incidentId?, audience?, requestId | Persisted incidentId/observationId/revision; India/fix/rate/idempotency guards |
-| observations.corroborate / mutation | incidentId, locationRef, observedAt, description?, requestId | One witness/update, recent/total count, status; proximity/cooldown/open incident |
+| observations.corroborate / mutation | incidentId, locationRef, observedAt, description?, requestId | One witness/update, recent/total count, status; proximity/open incident; no submission cooldown |
 | observations.correct / mutation | observationId, correction/withdrawal, expectedRevision, requestId | Own contribution updated, emergency correction-review flag if needed |
 | incidents.flag / mutation | incidentId, reason enum, requestId | Moderation queue receipt; own identity, deduplicated |
 | shelters.nearby / query | status/distance/step-free filters | Maintained records, eligible recommendation and exclusion reasons; India |
@@ -349,12 +349,12 @@ Internal functions are not callable from the mobile app. A worker's input refere
 
 ### 10.1 Submission transaction
 
-1. Authenticate, validate India/fix/observation time/text, resolve command key and check restriction/rate windows.
+1. Authenticate, validate India/fix/observation time/text, resolve command key and check account restrictions. There is no incident submission rate window.
 2. Verify candidate choice. For a new event, insert incident and observation; for corroboration resolve the canonical incident and recheck proximity/open lifecycle.
-3. Upsert the one effective observation per canonical incident/user. Apply cooldown to an update, not to a replay of an already accepted command.
+3. Upsert the one effective observation per canonical incident/user. Accept immediate updates without a cooldown; accepted command replays still return the original receipt.
 4. Preserve captured fix and original observedAt; insert observation/audit event and incident revision.
 5. Recompute recent/total distinct eligible counts, advance evidenceGeneration, and enqueue/coalesce reassessment.
-6. Commit command result and rate event. Return acknowledged IDs and status; no pre-qualification alert job exists.
+6. Commit command result without an incident rate event. Return acknowledged IDs and status; no pre-qualification alert job exists.
 
 Descriptions are bounded plain text. HTML/links are not executable; reports cannot provide internal source instructions. Other hazard requires description. Client validation improves usability, but backend validation is authoritative.
 

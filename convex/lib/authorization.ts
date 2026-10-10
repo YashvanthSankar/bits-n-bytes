@@ -7,6 +7,7 @@ import { asGeoJSON, distanceM, distanceToBoundaryM } from '../../src/domain/geog
 import { booleanPointInPolygon } from '@turf/boolean-point-in-polygon';
 import { point } from '@turf/helpers';
 import { reject } from './errors';
+import { containsArea, validateArea } from './areas';
 
 export async function requireUser(ctx: QueryCtx) {
   const userId = await getAuthUserId(ctx);
@@ -46,17 +47,21 @@ export function containsCircle(scope: AreaGeometry, affected: Extract<AreaGeomet
     && distanceToBoundaryM(affected.center, boundary) >= affected.radiusM;
 }
 export async function requireAuthorityForCircle(ctx: QueryCtx, affected: Extract<AreaGeometry, { type: 'circle' }>, audience: 'LIVE' | 'DEMO') {
+  return requireAuthorityForArea(ctx, affected, audience);
+}
+export async function requireAuthorityForArea(ctx: QueryCtx, affected: AreaGeometry, audience: 'LIVE' | 'DEMO', agencyId?: string) {
+  validateArea(affected);
   const userId = await requireUser(ctx);
   const memberships = await activeMemberships(ctx, userId);
   if (!memberships.length) return reject('AUTHORITY_REQUIRED');
   for (const { membership, agency } of memberships) {
-    if (agency.audience !== audience) continue;
+    if (agency.audience !== audience || (agencyId && agency._id !== agencyId)) continue;
     if (membership.jurisdictionIds.length > 32) return reject('CONFIGURATION_REQUIRED');
     for (const id of membership.jurisdictionIds) {
       const jurisdiction = await ctx.db.get(id);
       if (!jurisdiction?.active || jurisdiction.agencyId !== agency._id) continue;
       const geometry = await ctx.db.get(jurisdiction.geometryId);
-      if (geometry && containsCircle(geometry.area, affected)) return { userId, membership, agency, jurisdiction };
+      if (geometry && containsArea(geometry.area, affected)) return { userId, membership, agency, jurisdiction };
     }
   }
   return reject('JURISDICTION_DENIED');
