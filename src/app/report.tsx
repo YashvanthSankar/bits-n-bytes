@@ -1,4 +1,5 @@
-import { hazardIcons } from '../components/hazardIcons';
+import { HazardTile } from '../components/HazardTile';
+import { JourneyHeader } from '../components/JourneyHeader';
 import { Map, Send, Search, RefreshCw, PencilLine } from 'lucide-react-native';
 import { useConvex, useConvexAuth, useMutation } from 'convex/react';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
@@ -83,11 +84,11 @@ export default function ReportScreen() {
       busy={busy} disabled={isLoading || !isAuthenticated || !hazard} onPress={() => void (matches === null ? checkMatches() : send())} />
     <ActionButton icon={Map} title={t('backToMap')} variant="secondary" disabled={locked} onPress={() => router.replace('/map')} />
   </>}>
-    <AppText variant="title" accessibilityRole="header">{t('reportTitle')}</AppText>
+    <JourneyHeader title={t('reportTitle')} />
     {audience === 'DEMO' && <AppText>DEMO</AppText>}
     <View style={{ gap: 8 }}><AppText variant="heading">{t('hazardLabel')}</AppText>
-      {choosingHazard ? HAZARD_CODES.map(code => <Choice key={code} icon={hazardIcons[code]} label={t(`hazard${code}`)} selected={hazard === code} disabled={locked || !!incidentId}
-        onPress={() => { setHazard(code); setChoosingHazard(false); setMatches(null); setChosen(null); }} />) : <>
+      {choosingHazard ? <View accessibilityRole="radiogroup" style={{flexDirection:'row',flexWrap:'wrap',gap:12}}>{HAZARD_CODES.map(code => <HazardTile key={code} code={code} selected={hazard === code} disabled={locked || !!incidentId}
+        onPress={() => { setHazard(code); setChoosingHazard(false); setMatches(null); setChosen(null); }} />)}</View> : <>
         <AppText>{t(`hazard${hazard}`)}</AppText>
         {!incidentId && <ActionButton icon={PencilLine} title={t('changeHazard')} variant="secondary" disabled={locked} onPress={()=>setChoosingHazard(true)} />}</>}
     </View>

@@ -12,6 +12,8 @@ import { countryStatus } from '../domain/geography';
 import { consumeAuthCode, codeFromCallback } from '../services/authCallback';
 import { currentIndiaFix, LocationFailure } from '../services/location';
 import { useLocationSession } from '../session/LocationSession';
+import { JourneyHeader } from '../components/JourneyHeader';
+import { JourneyMark } from '../components/JourneyMark';
 
 export default function LoginScreen() {
   const { t } = useTranslation(); const { signIn } = useAuthActions();
@@ -41,7 +43,7 @@ export default function LoginScreen() {
   return <Screen footer={<>
     <ActionButton title={t('googleSignIn')} disabled={isLoading || Platform.OS === 'web'} busy={busy} onPress={() => void login()} />
     <ActionButton title={t('locationAction')} variant="secondary" disabled={busy} onPress={() => router.replace('/location')} />
-  </>}><AppText variant="title" accessibilityRole="header">{t('loginTitle')}</AppText><AppText>{t('loginDescription')}</AppText>
+  </>}><JourneyHeader title={t('loginTitle')} /><JourneyMark /><AppText>{t('loginDescription')}</AppText>
     {error && <AppText accessibilityLiveRegion="polite">{t(error)}</AppText>}
     {Platform.OS === 'web' && <AppText>{t('nativeRequired')}</AppText>}
   </Screen>;

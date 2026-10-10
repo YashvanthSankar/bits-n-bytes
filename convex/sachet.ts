@@ -4,6 +4,7 @@ import { internal } from './_generated/api';
 import { fetchXml, INDIA_FEED, parseCap, parseDiscovery, parsePolygon, sachetUrl } from './providers/sachet';
 import { payloadHash } from './lib/idempotency';
 import { point } from './lib/validators';
+import { POLICY } from '../src/domain/policy';
 import { overlapsArea } from '../src/domain/geography';
 
 export const prepare = internalMutation({ args: {}, handler: async ctx => {
@@ -60,13 +61,13 @@ export const accept = internalMutation({ args: { id: v.id('feedDocuments'), gene
     if (!cap.infos.some(info => info.polygonUrls.includes(doc.url))) throw Error('CAP_POLYGON_NOT_LINKED');
     parsePolygon(args.xml, cap.identifier);
   }
-  await ctx.db.patch(doc._id, { xml: args.xml, etag: args.etag, hash, revision, lastSuccessAt: now, ...(changed ? { changedAt: now } : {}), failures: 0, lastError: undefined, leaseUntil: 0, nextPollAt: now + 120_000 });
+  await ctx.db.patch(doc._id, { xml: args.xml, etag: args.etag, hash, revision, lastSuccessAt: now, ...(changed ? { changedAt: now } : {}), failures: 0, lastError: undefined, leaseUntil: 0, nextPollAt: now + POLICY.feedIntervalMs });
   return { accepted: true, changed };
 } });
 export const fail = internalMutation({ args: { id: v.id('feedDocuments'), generation: v.number(), error: v.string() }, handler: async (ctx, args) => {
   const doc = await ctx.db.get(args.id); if (!doc || doc.generation !== args.generation || !doc.leaseUntil) return;
   const failures = doc.failures + 1;
-  await ctx.db.patch(doc._id, { failures, lastError: args.error.slice(0, 80), leaseUntil: 0, nextPollAt: Date.now() + Math.min(900_000, 60_000 * 2 ** Math.min(failures - 1, 4)) });
+  await ctx.db.patch(doc._id, { failures, lastError: args.error.slice(0, 80), leaseUntil: 0, nextPollAt: Date.now() + Math.min(6 * 60 * 60_000, POLICY.feedIntervalMs * 2 ** Math.min(failures - 1, 4)) });
 } });
 export const poll = internalAction({ args: {}, handler: async ctx => {
   await ctx.runMutation(internal.sachet.prepare, {});
@@ -109,7 +110,7 @@ export const relevant = internalQuery({ args: { point, accuracyM: v.number() }, 
       if (!geometries.length) { geometryPending++; continue; }
       if (!geometries.some(area => overlapsArea({ point: args.point, accuracyM: args.accuracyM, observedAt: now }, area))) continue;
       const { polygonUrls: omitted, ...original } = info; void omitted;
-      items.push({ noticeId: notice._id, revision: notice.revision, sourceUrl: document.url, issuer: notice.sender, identifier: notice.identifier, issuedAt: notice.sentAt, checkedAt, stale: now - checkedAt > 600_000, ...original, geometries });
+      items.push({ noticeId: notice._id, revision: notice.revision, sourceUrl: document.url, issuer: notice.sender, identifier: notice.identifier, issuedAt: notice.sentAt, checkedAt, stale: now - checkedAt > POLICY.feedStaleMs, ...original, geometries });
     }
   }
   return { items, geometryPending, partial: notices.length > 200, checkedAt: now };

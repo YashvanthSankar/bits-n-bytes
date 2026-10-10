@@ -7,16 +7,17 @@ import { validateIndiaFix } from '../domain/eligibility';
 export class LocationFailure extends Error {
   constructor(public readonly reason: 'disabled' | 'denied' | 'accuracy' | 'outside' | 'uncertain' | 'unavailable', public readonly settings = false) { super(reason); }
 }
-export async function currentIndiaFix(onCaptured?: (value: { fix: LocationFix; backgroundPermission: PermissionState }) => Promise<void>, requirements: { maxAgeMs: number; maxAccuracyM: number } = POLICY.entryFix): Promise<{ fix: LocationFix; backgroundPermission: PermissionState }> {
+export async function currentIndiaFix(onCaptured?: (value: { fix: LocationFix; backgroundPermission: PermissionState }) => Promise<void>, requirements: { maxAgeMs: number; maxAccuracyM: number } = POLICY.entryFix, options: { preferRecent?: boolean; requestPermission?: boolean } = {}): Promise<{ fix: LocationFix; backgroundPermission: PermissionState }> {
   if (!await Location.hasServicesEnabledAsync()) throw new LocationFailure('disabled', true);
   let permission = await Location.getForegroundPermissionsAsync();
-  if (!permission.granted && permission.canAskAgain) permission = await Location.requestForegroundPermissionsAsync();
+  if (!permission.granted && permission.canAskAgain && options.requestPermission !== false) permission = await Location.requestForegroundPermissionsAsync();
   if (!permission.granted) throw new LocationFailure('denied', !permission.canAskAgain);
   // GPS may hang with disabled simulator location. A timeout never admits a stale fallback.
   let timer: ReturnType<typeof setTimeout> | undefined;
   let position: Location.LocationObject;
+  const cached = options.preferRecent ? await Location.getLastKnownPositionAsync({ maxAge: 30_000, requiredAccuracy: requirements.maxAccuracyM }).catch(() => null) : null;
   try {
-    position = await Promise.race([
+    position = cached ?? await Promise.race([
       Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High }),
       new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new LocationFailure('unavailable')), 25_000); }),
     ]);

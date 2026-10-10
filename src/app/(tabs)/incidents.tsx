@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../../convex/_generated/api';
 import { ActionButton, AppText, EmptyState, LoadingState, Screen } from '../../components/ui';
 import { IncidentCard } from '../../components/IncidentCard';
+import { JourneyHeader } from '../../components/JourneyHeader';
 import { ReadBoundary } from '../../components/ReadBoundary';
 import { useLocationSession } from '../../session/LocationSession';
 
@@ -14,7 +15,7 @@ function Incidents() {
   const { t } = useTranslation(); const { isAuthenticated } = useConvexAuth(); const { fix } = useLocationSession();
   const nearby = useQuery(api.incidents.nearby, isAuthenticated && fix ? {} : 'skip');
   return <Screen footer={<ActionButton icon={Plus} title={t('reportTitle')} onPress={() => router.push('/report')} disabled={!isAuthenticated || !fix} />}>
-    <AppText variant="title" accessibilityRole="header">{t('navIncidents')}</AppText><AppText variant="caption">{t('nearbyReports')} · 5 km</AppText>
+    <JourneyHeader title={t('navIncidents')} subtitle={`${t('nearbyReports')} · 5 km`} />
     <EmergencyAlerts />
     {!isAuthenticated || !fix ? <ActionButton title={t('locationAction')} onPress={() => router.replace('/location')} /> : !nearby ? <LoadingState /> : <>
       {nearby.partial && <AppText>{t('matchesPartial')}</AppText>}

@@ -7,6 +7,7 @@ const state=vi.hoisted(()=>({authenticated:true,signOut:vi.fn(),signIn:vi.fn(),b
 vi.mock('lucide-react-native', () => Object.fromEntries(['UserRound','ShieldCheck','RefreshCw','LocateFixed','LogOut','FlaskConical','Languages','ChevronRight','ChevronDown'].map(name => [name, () => null])));
 vi.mock('@convex-dev/auth/react',()=>({useAuthActions:()=>({signOut:state.signOut,signIn:state.signIn})}));
 vi.mock('react-native',()=>({View:'View',Pressable:'Pressable',Platform:{OS:'ios'}}));
+vi.mock('react-native-svg',()=>({default:'Svg',Circle:'Circle',Path:'Path',Rect:'Rect',G:'G',Ellipse:'Ellipse'}));
 vi.mock('expo-router',()=>({useFocusEffect:(callback:()=>void)=>{const focused=React.useContext(Focus);React.useEffect(()=>focused?callback():undefined,[focused,callback]);},router:{replace:(path:string)=>{state.replace(path);state.navigate?.(path);},push:vi.fn()}}));
 vi.mock('expo-linking',()=>({createURL:()=> 'gudtour://auth/callback'}));
 vi.mock('expo-location',()=>({getForegroundPermissionsAsync:state.permission}));

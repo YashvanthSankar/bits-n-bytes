@@ -18,3 +18,13 @@ it('does not make a second call after invalid supporting evidence output',async(
  const fetcher=vi.fn<(url:string,init:RequestInit)=>Promise<Response>>().mockResolvedValue(new Response(JSON.stringify({model:'jev-1.13',answers:{}})));
  await expect(assessIncident({}, {apiKey:'test-only',fetcher})).rejects.toMatchObject({code:'INVALID_RESPONSE'});expect(fetcher).toHaveBeenCalledTimes(1);
 });
+
+it('does not send a previous assessment label or suppression control as model evidence',async()=>{
+ const fetcher=vi.fn<(url:string,init:RequestInit)=>Promise<Response>>().mockImplementation(async(_,init)=>{
+  const body=JSON.parse(init.body as string);
+  const answers=Object.fromEntries(Object.entries(body.questions as Record<string,{criteria:Record<string,string>}>).map(([key,q])=>[key,answer(Object.keys(q.criteria),key==='qualification'?'NOTIFIABLE_EMERGENCY':'UNKNOWN')]));
+  return new Response(JSON.stringify({model:'jev-1.13',answers}));
+ });
+ await assessIncident({incident:{priorQualification:'NOT_QUALIFIED',suppressionUntil:123,counts:{recent:2},samples:[{description:'Current dangerous flood'}]}},{apiKey:'test-only',fetcher});
+ for(const call of fetcher.mock.calls){const state=JSON.parse(JSON.parse(call[1].body as string).state);expect(state.evidence.incident).toEqual({counts:{recent:2},samples:[{description:'Current dangerous flood'}]});}
+});

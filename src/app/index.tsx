@@ -10,6 +10,7 @@ import { useLanguage } from '../i18n/LanguageProvider';
 import { languageNames } from '../i18n/resources';
 import { spacing } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
+import { JourneyMark } from '../components/JourneyMark';
 
 function LanguageScreen() {
   const { t } = useTranslation(); const theme = useTheme();
@@ -23,12 +24,13 @@ function LanguageScreen() {
     {error && <AppText accessibilityLiveRegion="polite" style={{ color: theme.danger }}>{t('saveError')}</AppText>}
     <ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => { setBusy(true); void changeLanguage(language).then(() => router.replace('/location')).catch(() => setError(true)).finally(() => setBusy(false)); }} />
   </>}>
-    <View style={{ paddingTop: spacing.section, gap: spacing.sm }}>
+    <View style={{ paddingTop: spacing.sm, gap: spacing.sm }}>
       <AppText variant="heading" style={{ color: theme.accent }}>GudTour</AppText>
       <AppText variant="caption" style={{ color: theme.secondary }}>{t('tagline')}</AppText>
     </View>
+    <JourneyMark />
     <View style={{ gap: spacing.md }}><AppText variant="title" accessibilityRole="header">{t('languageTitle')}</AppText><AppText style={{ color: theme.secondary }}>{t('languageDescription')}</AppText></View>
-    {!ready ? <LoadingState /> : <View accessibilityRole="radiogroup">
+    {!ready ? <LoadingState /> : <View accessibilityRole="radiogroup" style={{borderRadius:24,overflow:'hidden',backgroundColor:theme.surface}}>
       {LANGUAGE_CODES.map((code) => <Pressable key={code} onPress={() => void select(code)} disabled={busy}
         accessibilityRole="radio" accessibilityState={{ checked: language === code, disabled: busy }} accessibilityLabel={`${languageNames[code].native}, ${languageNames[code].english}`}
         style={({ pressed }) => ({ minHeight: 64, padding: spacing.lg, borderBottomWidth: 1, borderBottomColor: theme.border, backgroundColor: language === code ? theme.selection : pressed ? theme.muted : 'transparent', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.md })}>

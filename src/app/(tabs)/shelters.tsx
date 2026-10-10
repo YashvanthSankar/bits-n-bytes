@@ -9,15 +9,17 @@ import { ActionButton, AppText, EmptyState, LoadingState, Screen } from '../../c
 import { ReadBoundary } from '../../components/ReadBoundary';
 import { useLocationSession } from '../../session/LocationSession';
 import { useTheme } from '../../theme/useTheme';
+import { JourneyHeader } from '../../components/JourneyHeader';
 
 function Shelters() {
   const {t}=useTranslation();const theme=useTheme();const {isAuthenticated}=useConvexAuth();const {fix}=useLocationSession();
   const listed=useQuery(api.shelters.nearby,isAuthenticated && fix?{}:'skip');
-  return <Screen><AppText variant="title" accessibilityRole="header">{t('navShelters')}</AppText><AppText variant="caption" style={{ color: theme.secondary }}>{t('shelterListNotice')}</AppText>
+  return <Screen><JourneyHeader title={t('navShelters')} subtitle={t('shelterListNotice')} />
     {!isAuthenticated || !fix ? <ActionButton title={t('locationAction')} onPress={()=>router.replace('/location')} /> : !listed ? <LoadingState /> : <>
       {listed.partial && <AppText>{t('matchesPartial')}</AppText>}
       {!listed.items.length && <EmptyState title={t('shelterEmpty')} message={t('shelterEmptyNotice')} />}
-      {listed.items.map(shelter=><View key={shelter.id} style={{gap:8,borderWidth:1,borderColor:theme.border,borderRadius:16,padding:16,backgroundColor:theme.surface}}>
+      {listed.items.map(shelter=><View key={shelter.id} style={{gap:8,borderWidth:1,borderColor:theme.border,borderRadius:18,padding:16,backgroundColor:theme.surface}}>
+        <View accessible={false} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}><House size={28} strokeWidth={1.4} color={theme.text}/><AppText variant="heading" style={{fontVariant:['tabular-nums']}}>{(shelter.distanceM/1000).toFixed(1)} km</AppText></View>
         {shelter.id===listed.nearestId && <AppText style={{color:theme.accent}}>{t('nearestListedShelter')}</AppText>}<AppText variant="heading">{shelter.name}</AppText>{shelter.audience==='DEMO' && <AppText>DEMO</AppText>}<AppText>{shelter.issuer}</AppText><AppText>{shelter.address}</AppText>
         <AppText>{t(`shelter${shelter.status}`)} · {(shelter.distanceM/1000).toFixed(1)} km · {t('approximateDistance')}</AppText>
         <Fact icon={MapPin}><AppText variant="caption">{t('lastConfirmed')}</AppText><RelativeTime timestamp={shelter.statusConfirmedAt}/></Fact>

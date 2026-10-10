@@ -40,12 +40,14 @@ export const store = internalMutation({ args: { incidentId: v.id('incidents'), i
 } });
 export const build = internalAction({ args: { incidentId: v.id('incidents') }, handler: async (ctx, args): Promise<{ snapshotId: Id<'evidenceSnapshots'> | null; outcome: string }> => {
   const input = await ctx.runQuery(internal.evidence.input, args); if (!input) return { snapshotId: null, outcome: 'NOT_ELIGIBLE' };
-  const weather = await ctx.runAction(internal.weather.context, { point: input.point });
-  const official = await ctx.runQuery(internal.sachet.relevant, { point: input.point, accuracyM: Math.min(1000, input.sourceAccuracyM ?? 0) });
-  // Custom test notices are never read for LIVE incidents and are stored separately from NDMA/SACHET records.
-  const demoAuthorityNotices = input.audience === 'DEMO'
-    ? await ctx.runQuery(internal.demoNotices.relevant, { point: input.point, accuracyM: Math.min(1000, input.sourceAccuracyM ?? 0), audience: 'DEMO' })
-    : { items: [], partial: false, checkedAt: Date.now() };
+  // Independent source lookups run together; the snapshot is still stored atomically below.
+  const [weather, official, demoAuthorityNotices] = await Promise.all([
+    ctx.runAction(internal.weather.context, { point: input.point }),
+    ctx.runQuery(internal.sachet.relevant, { point: input.point, accuracyM: Math.min(1000, input.sourceAccuracyM ?? 0) }),
+    input.audience === 'DEMO'
+      ? ctx.runQuery(internal.demoNotices.relevant, { point: input.point, accuracyM: Math.min(1000, input.sourceAccuracyM ?? 0), audience: 'DEMO' })
+      : Promise.resolve({ items: [], partial: false, checkedAt: Date.now() }),
+  ]);
   const missingInputs = [];
   if (!weather.data || weather.data.stale) missingInputs.push('CURRENT_WEATHER_UNAVAILABLE_OR_STALE');
   if (!weather.data?.history.length) missingInputs.push('PAST_24H_WEATHER_UNAVAILABLE');

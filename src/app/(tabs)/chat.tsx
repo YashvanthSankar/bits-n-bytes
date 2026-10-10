@@ -1,21 +1,22 @@
 import { useConvexAuth, useConvexConnectionState, useMutation, useQuery } from 'convex/react';
 import { randomUUID } from 'expo-crypto';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { Navigation, Plus, ArrowUp, MessageCircle } from 'lucide-react-native';
-import { useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, AppState, FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../convex/_generated/api';
 import type { FunctionReturnType } from 'convex/server';
 import { AppText, LoadingState } from '../../components/ui';
 import { ReadBoundary } from '../../components/ReadBoundary';
+import { JourneyBrand } from '../../components/JourneyHeader';
 import { chatGroups } from '../../features/chat/presentation';
 import { relativeTime } from '../../i18n/relativeTime';
 import { errorTranslationKey } from '../../domain/apiError';
 import { POLICY } from '../../domain/policy';
 import { validateFix } from '../../domain/eligibility';
-import { useReportLocation } from '../../features/incidents/useReportLocation';
+import { useChatLocation } from '../../features/chat/useChatLocation';
 import { useLocationSession } from '../../session/LocationSession';
 import { useNavigationInset } from '../../navigation/NavigationInset';
 import { useTheme } from '../../theme/useTheme';
@@ -25,51 +26,68 @@ export default function ChatScreen() { return <ReadBoundary><NearbyChat /></Read
 function NearbyChat() {
   const { t, i18n } = useTranslation(); const theme = useTheme(); const inset = useNavigationInset();
   const { isAuthenticated } = useConvexAuth(); const { isWebSocketConnected: online } = useConvexConnectionState();
-  const { fix } = useLocationSession(); const refreshLocation = useReportLocation(POLICY.chatFix);
+  const { fix } = useLocationSession(); const refreshLocation = useChatLocation();
   const [now, setNow] = useState(Date.now); const [body, setBody] = useState(''); const [busy, setBusy] = useState(false); const [error, setError] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
   const [unread, setUnread] = useState(false);
-  const feed = useQuery(api.chat.nearby, isAuthenticated ? { refreshKey } : 'skip');
+  // One live subscription: message/location writes update it without polling/reconnecting.
+  const feed = useQuery(api.chat.nearby, isAuthenticated ? { refreshKey: 0 } : 'skip');
   const send = useMutation(api.chat.send); const list = useRef<FlatList<Message>>(null);
   const nearBottom = useRef(true);
   const newestId = useRef<string | undefined>(undefined);
   const pending = useRef<{ body: string; requestId: string } | null>(null);
-  useEffect(() => { const timer = setInterval(() => { setNow(Date.now()); if (online) setRefreshKey(value => value + 1); }, 15_000); return () => clearInterval(timer); }, [online]);
+  useEffect(() => { const timer = setInterval(() => { setNow(Date.now()); }, 15_000); return () => clearInterval(timer); }, []);
   const eligible = validateFix(fix, now, POLICY.chatFix).ok && feed?.needsLocation !== true;
   const messages = chatGroups((feed?.items ?? []).filter(message => message.expiresAt > now));
-  const canSend = eligible && online && !!body.trim() && !busy;
-  async function refresh() {
+  const canSend = online && !!body.trim() && !busy;
+  const refresh = useCallback(async (requestPermission = false) => {
     if (busy || !online) return;
     setBusy(true); setError('');
-    try { await refreshLocation(); setNow(Date.now()); setRefreshKey(value => value + 1); }
+    try { await refreshLocation(true, requestPermission); setNow(Date.now()); }
     catch (cause) { setError(t(errorTranslationKey(cause))); }
     finally { setBusy(false); }
-  }
+  }, [busy, online, refreshLocation, t]);
+  const lastAttempt = useRef(0);
+  const automatic = useCallback(() => {
+    if (!isAuthenticated || !online || busy || AppState.currentState !== 'active') return;
+    const time = Date.now();
+    const expiring = !fix || time - fix.observedAt >= POLICY.chatFix.maxAgeMs - 60_000;
+    if ((!eligible || expiring) && time - lastAttempt.current >= 60_000) {
+      lastAttempt.current = time;
+      void refresh();
+    }
+  }, [isAuthenticated, online, busy, fix, eligible, refresh]);
+  useFocusEffect(useCallback(() => {
+    automatic();
+    const timer = setInterval(() => { automatic(); }, 60_000);
+    const subscription = AppState.addEventListener('change', state => { if (state === 'active') automatic(); });
+    return () => { clearInterval(timer); subscription.remove(); };
+  }, [automatic]));
   async function publish() {
-    const clean = body.trim(); if (!clean || busy || !online || !eligible) return;
+    const clean = body.trim(); if (!clean || busy || !online) return;
     setBusy(true); setError('');
     try {
-      await refreshLocation();
+      await refreshLocation(feed?.needsLocation === true);
       const request = pending.current?.body === clean ? pending.current : { body: clean, requestId: randomUUID() };
       pending.current = request;
-      await send(request); nearBottom.current = true; setUnread(false); pending.current = null; setBody(''); setNow(Date.now()); setRefreshKey(value => value + 1);
+      await send(request); nearBottom.current = true; setUnread(false); pending.current = null; setBody(''); setNow(Date.now());
     } catch (cause) { setError(t(errorTranslationKey(cause))); }
     finally { setBusy(false); }
   }
   return <SafeAreaView edges={['top', 'left', 'right']} style={{ flex: 1, backgroundColor: theme.background, paddingBottom: inset ?? 0 }}>
     <KeyboardAvoidingView style={{ flex: 1, width: '100%', maxWidth: 640, alignSelf: 'center' }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 16, gap: 6 }}>
+      <View style={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12, gap: 6 }}>
+        <View style={{paddingBottom:12}}><JourneyBrand /></View>
         <View style={{flexDirection:'row',alignItems:'center',gap:12}}>
-          <View style={{flex:1,gap:4}}><AppText variant="heading" accessibilityRole="header">{t('navChat')}</AppText><AppText variant="caption" style={{color:theme.secondary}}>{t('chatNearby')}</AppText></View>
+          <View style={{flex:1,gap:4}}><AppText variant="title" accessibilityRole="header">{t('navChat')}</AppText><AppText variant="caption" style={{color:theme.secondary}}>{t('chatNearby')}</AppText></View>
           <Pressable onPress={()=>router.push('/report')} accessibilityRole="button" accessibilityLabel={t('reportTitle')} style={{minWidth:44,minHeight:44,borderRadius:22,backgroundColor:theme.surface,alignItems:'center',justifyContent:'center'}}><Plus size={22} color={theme.accent}/></Pressable>
         </View>
         <AppText variant="caption" style={{ color: theme.secondary, paddingHorizontal: 4 }}>{t('chatCommunity')}</AppText>
         {!online && <AppText accessibilityLiveRegion="polite" variant="caption">{t('chatOffline')}</AppText>}
-        {!eligible && online && <Pressable accessibilityRole="button" accessibilityLabel={t('chatRefresh')} disabled={busy} onPress={()=>void refresh()} style={{minHeight:44,flexDirection:'row',alignItems:'center',gap:8}}>{busy?<ActivityIndicator color={theme.accent}/>:<Navigation size={17} color={theme.accent}/>}<AppText variant="caption" style={{color:theme.accent,fontWeight:'600'}}>{t('chatRefresh')}</AppText></Pressable>}
+        {!eligible && online && <Pressable accessibilityRole="button" accessibilityLabel={t('chatRefresh')} disabled={busy} onPress={()=>void refresh(true)} style={{minHeight:44,flexDirection:'row',alignItems:'center',gap:8}}>{busy?<ActivityIndicator color={theme.accent}/>:<Navigation size={17} color={theme.accent}/>}<AppText variant="caption" style={{color:theme.accent,fontWeight:'600'}}>{t('chatRefresh')}</AppText></Pressable>}
         {!!error && <AppText accessibilityLiveRegion="polite" variant="caption" style={{ color: theme.danger }}>{error}</AppText>}
       </View>
       <FlatList ref={list} data={messages} keyExtractor={message => message.id} keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 16, gap: 4, flexGrow: 1 }}
+        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12, gap: 4, flexGrow: 1 }}
         onScroll={event => { const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent; nearBottom.current = contentSize.height - contentOffset.y - layoutMeasurement.height < 80; if (nearBottom.current) setUnread(false); }} scrollEventThrottle={100}
         onContentSizeChange={() => {
           const latest = messages.at(-1)?.id;
@@ -83,7 +101,7 @@ function NearbyChat() {
           <AppText variant="caption" style={{ textAlign: 'center', color: theme.secondary }}>{t(online?'chatStart':'chatConnectHelp')}</AppText>
         </View>}
         ListHeaderComponent={feed?.truncated ? <AppText variant="caption">{t('chatLatest')}</AppText> : null}
-        renderItem={({ item }) => <View style={{ marginTop: item.groupStart ? 12 : 0, alignSelf: item.own ? 'flex-end' : 'flex-start', maxWidth: '90%', paddingHorizontal: 14, paddingVertical: 10, gap: 4, borderRadius: 18, borderTopRightRadius: item.own && !item.groupStart ? 6 : 18, borderTopLeftRadius: !item.own && !item.groupStart ? 6 : 18, borderBottomRightRadius: item.own && !item.groupEnd ? 6 : 18, borderBottomLeftRadius: !item.own && !item.groupEnd ? 6 : 18, backgroundColor: item.own ? theme.accent : theme.surface }}>
+        renderItem={({ item }) => <View style={{ marginTop: item.groupStart ? 12 : 0, alignSelf: item.own ? 'flex-end' : 'flex-start', maxWidth: '90%', paddingHorizontal: 12, paddingVertical: 8, gap: 4, borderRadius: 18, borderTopRightRadius: item.own && !item.groupStart ? 6 : 18, borderTopLeftRadius: !item.own && !item.groupStart ? 6 : 18, borderBottomRightRadius: item.own && !item.groupEnd ? 6 : 18, borderBottomLeftRadius: !item.own && !item.groupEnd ? 6 : 18, backgroundColor: item.own ? theme.accent : theme.surface }}>
           {!item.own && item.groupStart && <AppText variant="caption" style={{ color: theme.accent, fontWeight: '600' }}>{item.alias}</AppText>}
           <AppText style={{ color: item.own ? theme.onAccent : theme.text }}>{item.body}</AppText>
           {item.groupEnd && <AppText variant="caption" style={{ fontSize: 12, lineHeight: 16, color: item.own ? theme.onAccent : theme.secondary, opacity: .85 }} accessibilityLabel={new Date(item.createdAt).toLocaleString(i18n.language)}>{relativeTime(item.createdAt, i18n.language, now)}</AppText>}

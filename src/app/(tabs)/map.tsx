@@ -34,9 +34,10 @@ function MapContent() {
       onIncidentPress={id=>router.push({pathname:'/incident/[id]',params:{id}})} />
     <View pointerEvents="box-none" style={{position:'absolute',top:safe.top+8,left:safe.left+16,right:safe.right+16,maxHeight:height*.42}}>
       <View onLayout={event=>setHeaderHeight(event.nativeEvent.layout.height)} style={{borderRadius:24,overflow:'hidden',borderWidth:1,borderColor:theme.border,backgroundColor:theme.surface+'F5',flexShrink:1}}>
-        <ScrollView contentContainerStyle={{padding:12,gap:10}}>
+        <ScrollView contentContainerStyle={{padding:16,gap:12}}>
           <View style={{flexDirection:'row',gap:12,alignItems:'center'}}>
-            <View style={{flex:1,gap:4}}><AppText variant={minimized || expandedText?'body':'heading'} accessibilityRole="header">{minimized?(locality??t('mapCurrentArea')):t('mapWelcome')}</AppText>
+            <View accessible={false} style={{width:40,height:40,borderRadius:14,backgroundColor:theme.selection,alignItems:'center',justifyContent:'center'}}><MapPin size={21} strokeWidth={1.6} color={theme.accent}/></View>
+            <View style={{flex:1,gap:4}}><AppText variant={minimized || expandedText?'body':'heading'} style={{fontWeight:'600'}} accessibilityRole="header">{minimized?(locality??t('mapCurrentArea')):t('mapWelcome')}</AppText>
               {!minimized && <View style={{flexDirection:'row',alignItems:'center',gap:6}}><MapPin size={16} color={theme.secondary} accessible={false} /><AppText variant="caption" style={{color:theme.secondary,flex:1}}>{locality??t('mapCurrentArea')}</AppText></View>}
             </View>
             <Pressable accessibilityRole="button" accessibilityLabel={t(minimized?'expandPanel':'minimizePanel')} accessibilityState={{expanded:!minimized}} onPress={()=>setMinimized(value=>!value)} style={{minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center'}}>{minimized?<ChevronDown size={20} color={theme.secondary}/>:<ChevronUp size={20} color={theme.secondary}/>}</Pressable>

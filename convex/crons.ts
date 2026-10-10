@@ -1,9 +1,10 @@
 import { cronJobs } from 'convex/server';
+import { POLICY, MINUTE } from '../src/domain/policy';
 import { internal } from './_generated/api';
 const crons = cronJobs();
 crons.interval('resume pending alert expansion', { minutes: 1 }, internal.alertExpansion.resume, {});
 crons.interval('resume instruction translation', { minutes: 1 }, internal.translations.resume, {});
-crons.interval('poll SACHET official feed', { minutes: 2 }, internal.sachet.poll, {});
+crons.interval('poll SACHET official feed', { minutes: POLICY.feedIntervalMs / MINUTE }, internal.sachet.poll, {});
 crons.interval('expire temporary weather cache', { minutes: 10 }, internal.weather.cleanup, {});
 crons.interval('resume incident assessments', { minutes: 1 }, internal.assessments.resume, {});
 crons.interval('expire nearby chat messages', { minutes: 10 }, internal.chat.cleanup, {});
