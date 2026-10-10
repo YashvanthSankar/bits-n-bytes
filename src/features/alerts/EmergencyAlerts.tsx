@@ -1,3 +1,6 @@
+import { ChevronRight, Radio } from 'lucide-react-native';
+import { relativeTime } from '../../i18n/relativeTime';
+import { spacing } from '../../theme/tokens';
 import { EmergencyNotice } from './EmergencyNotice';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 import { router, usePathname } from 'expo-router';
@@ -14,7 +17,7 @@ import { POLICY } from '../../domain/policy';
 
 /** Mounted on a focused tourist page; dismissing attention never removes the warning. */
 export function EmergencyAlerts({ global = false, compact = false }: { global?: boolean; compact?: boolean }) {
-  const { t } = useTranslation(), theme = useTheme(), safe = useSafeAreaInsets();
+  const { t, i18n } = useTranslation(), theme = useTheme(), safe = useSafeAreaInsets();
   const { isAuthenticated } = useConvexAuth(), { fix, signedOut } = useLocationSession();
   const result = useQuery(api.alerts.active, isAuthenticated && fix && !signedOut ? {} : 'skip');
   const acknowledge = useMutation(api.alerts.dismiss);
@@ -39,9 +42,21 @@ export function EmergencyAlerts({ global = false, compact = false }: { global?: 
   }
   if (!isAuthenticated || signedOut || !fix) return null;
   return <>
-    {!global && compact && items.map(item => <Pressable key={item.id} accessibilityRole="button" onPress={()=>router.push({pathname:'/alert/[id]',params:{id:item.id}})} style={{padding:12,gap:4,borderRadius:16,backgroundColor:theme.surface,borderLeftWidth:3,borderLeftColor:theme.danger}}>
-      <AppText variant="caption" style={{color:theme.danger,fontWeight:'700'}}>{item.audience==='DEMO'?'DEMO · ':''}{t('emergencyActive')} · {t(`severity${item.severity}`)}</AppText>
-      <AppText variant="caption">{item.locality}</AppText>
+    {!global && compact && items.map(item => <Pressable key={item.id} accessibilityRole="button"
+      accessibilityLabel={`${item.audience === 'DEMO' ? 'DEMO · ' : ''}${t('emergencyActive')}, ${t(`hazard${item.hazard}`)}, ${t(`severity${item.severity}`)}, ${item.locality}`}
+      onPress={() => router.push({ pathname: '/alert/[id]', params: { id: item.id } })}
+      style={({ pressed }) => ({ minHeight: 72, paddingTop: spacing.md, paddingBottom: spacing.xs, borderTopWidth: 1, borderTopColor: theme.border,
+        flexDirection: 'row', alignItems: 'center', gap: spacing.md, opacity: pressed ? 0.65 : 1 })}>
+      <Radio size={20} strokeWidth={1.6} color={theme.text} accessible={false} />
+      <View style={{ flex: 1, gap: spacing.xs }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: spacing.sm }}>
+          <View accessible={false} style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: theme.danger }} />
+          <AppText variant="caption" style={{ color: theme.secondary }}>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t('emergencyActive')} · {t(`severity${item.severity}`)}</AppText>
+        </View>
+        <AppText style={{ fontWeight: '600' }}>{t(`hazard${item.hazard}`)}</AppText>
+        <AppText variant="caption" style={{ color: theme.secondary }}>{item.locality} · {relativeTime(item.publishedAt, i18n.language, now)}</AppText>
+      </View>
+      <ChevronRight size={18} color={theme.secondary} accessible={false} />
     </Pressable>)}
     {!global && !compact && items.map(item => <View key={item.id} style={{ padding: 14, gap: 8, borderRadius: 16, borderWidth: 1, borderColor: item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision) ? theme.danger : theme.warning, backgroundColor: theme.surface }}>
       <AppText style={{ color: theme.danger, fontWeight: '700' }}>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t('emergencyActive')}</AppText>
