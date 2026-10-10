@@ -182,3 +182,8 @@ it('delivers a quiet correction to a previously targeted account after it leaves
  const result=await actor.query(api.alerts.active,{});expect(result.items).toHaveLength(0);expect(result.updates).toHaveLength(1);expect(result.updates[0]).toMatchObject({kind:'CORRECTION',ended:true,revision:2});
  await actor.mutation(api.alerts.dismiss,{alertId:result.updates[0]!.id,revision:2});expect((await actor.query(api.alerts.active,{})).updates).toHaveLength(0);
 });
+it('fences in-flight assessments and pauses automatic re-publication after an authority false-alert correction',async()=>{
+ const {t,actor,scope}=await fixture();const declaration=(await t.run(ctx=>ctx.db.query('authorityDeclarations').collect()))[0]!;const before=(await t.run(ctx=>ctx.db.get(declaration.incidentId)))!;
+ await actor.mutation(api.declarations.end,{requestId:'false-alert-control-001',jurisdictionId:scope.jurisdictionIds[0]!,declarationId:declaration._id,expectedRevision:declaration.revision,kind:'FALSE_ALERT'});
+ const after=(await t.run(ctx=>ctx.db.get(declaration.incidentId)))!;expect(after.controlRevision).toBe(before.controlRevision+1);expect((await t.run(ctx=>ctx.db.query('suppressionRules').collect()))[0]).toMatchObject({incidentId:declaration.incidentId,agencyId:declaration.agencyId});const rule=(await t.run(ctx=>ctx.db.query('suppressionRules').collect()))[0]!;expect(rule.endsAt-rule.createdAt).toBe(30*60_000);
+});

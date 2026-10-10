@@ -25,14 +25,16 @@ export const input = internalQuery({ args: { incidentId: v.id('incidents') }, ha
     const distance = distanceM(point, area.area.center); if (distance > 10_000) continue;
     history.push({ hazard: other.hazard, lastObservedAt: other.lastObservedAt, distanceM: distance, provenance: other.provenance, verification: other.verification, lifecycle: other.lifecycle, qualification: other.qualification });
   }
-  return { incidentId: incident._id, incidentRevision: incident.revision, evidenceGeneration: incident.evidenceGeneration, controlRevision: incident.controlRevision, geometryId: incident.geometryId, point, sourceAccuracyM: geometry.sourceAccuracyM, hazard: incident.hazard, locality: incident.locality, audience: incident.audience, priorQualification: incident.qualification, counts, samples, observationsTruncated: overflow || recent.length > samples.length, history, historyPartial: candidates.length > 100, evaluatedAt: now };
+  const controls = await ctx.db.query('suppressionRules').withIndex('by_incident', q => q.eq('incidentId', incident._id)).take(33);
+  const suppressionUntil = Math.max(0, ...controls.map(rule => rule.endsAt));
+  return { suppressionUntil, incidentId: incident._id, incidentRevision: incident.revision, evidenceGeneration: incident.evidenceGeneration, controlRevision: incident.controlRevision, geometryId: incident.geometryId, point, sourceAccuracyM: geometry.sourceAccuracyM, hazard: incident.hazard, locality: incident.locality, audience: incident.audience, priorQualification: incident.qualification, counts, samples, observationsTruncated: overflow || recent.length > samples.length, history: history.slice(0, 20), historyPartial: candidates.length > 100 || history.length > 20, evaluatedAt: now };
 } });
 export const store = internalMutation({ args: { incidentId: v.id('incidents'), incidentRevision: v.number(), evidenceGeneration: v.number(), controlRevision: v.number(), json: v.string() }, handler: async (ctx, args) => {
   const incident = await ctx.db.get(args.incidentId);
   if (!incident || incident.revision !== args.incidentRevision || incident.evidenceGeneration !== args.evidenceGeneration || incident.controlRevision !== args.controlRevision || !['ACTIVE', 'STALE'].includes(incident.lifecycle)) return null;
   if (args.json.length > 40_000) throw Error('EVIDENCE_TOO_LARGE');
   const canonical = JSON.parse(JSON.stringify(JSON.parse(args.json), (key, value: unknown) => ['fetchedAt', 'checkedAt'].includes(key) ? undefined : key === 'ageMs' && typeof value === 'number' ? Math.floor(value / 300_000) * 300_000 : value));
-  const hash = payloadHash(canonical);
+  const hash = payloadHash({ canonical, incidentRevision: args.incidentRevision, evidenceGeneration: args.evidenceGeneration, controlRevision: args.controlRevision });
   const existing = await ctx.db.query('evidenceSnapshots').withIndex('by_incident_hash', q => q.eq('incidentId', args.incidentId).eq('hash', hash)).unique();
   return existing?._id ?? await ctx.db.insert('evidenceSnapshots', { incidentId: args.incidentId, incidentRevision: args.incidentRevision, evidenceGeneration: args.evidenceGeneration, controlRevision: args.controlRevision, hash, json: args.json, createdAt: Date.now(), policyVersion: POLICY_VERSION });
 } });
@@ -49,7 +51,17 @@ export const build = internalAction({ args: { incidentId: v.id('incidents') }, h
   missingInputs.push('UPSTREAM_WEATHER_UNAVAILABLE');
   // No identities, witness coordinates, health details, contacts, device tokens or chat are sent.
   const { incidentId, incidentRevision, evidenceGeneration, controlRevision, geometryId, evaluatedAt, ...facts } = input; void geometryId;
-  const json = JSON.stringify({ policyVersion: POLICY_VERSION, evaluatedAt: Math.floor(evaluatedAt / 300_000) * 300_000, incident: facts, weather, official: { ...official, items: official.items.slice(0, 10).map(({ geometries, ...notice }) => { void geometries; return { ...notice, exactGeometryMatched: true }; }), samplesTruncated: official.items.length > 10 }, missingInputs });
+  const preferred = new Map<string, typeof official.items[number]>();
+  for (const notice of official.items) { const old = preferred.get(notice.noticeId); if (!old || (!old.language.startsWith('en') && notice.language.startsWith('en'))) preferred.set(notice.noticeId, notice); }
+  const officialSamples = []; let sourceBytes = 0;
+  for (const notice of preferred.values()) {
+    const { geometries, ...original } = notice; void geometries;
+    const size = JSON.stringify(original).length;
+    if (officialSamples.length >= 10 || sourceBytes + size > 12_000) continue;
+    officialSamples.push({ ...original, exactGeometryMatched: true }); sourceBytes += size;
+  }
+  if (officialSamples.length < preferred.size) missingInputs.push('OFFICIAL_TEXT_CONTEXT_TRUNCATED');
+  const json = JSON.stringify({ policyVersion: POLICY_VERSION, evaluatedAt: Math.floor(evaluatedAt / 300_000) * 300_000, incident: facts, weather, official: { ...official, items: officialSamples, samplesTruncated: officialSamples.length < preferred.size }, missingInputs });
   const snapshotId = await ctx.runMutation(internal.evidence.store, { incidentId, incidentRevision, evidenceGeneration, controlRevision, json });
   return { snapshotId, outcome: snapshotId ? 'READY' : 'SUPERSEDED' };
 } });

@@ -7,6 +7,9 @@ import { weatherData } from './lib/weatherValidators';
 
 export default defineSchema({
   ...authTables,
+  assessmentJobs: defineTable({ incidentId: v.id('incidents'), evidenceGeneration: v.number(), controlRevision: v.number(), status: v.union(v.literal('PENDING'), v.literal('RUNNING'), v.literal('DONE'), v.literal('FAILED'), v.literal('SUPERSEDED')), attempt: v.number(), runId: v.number(), dueAt: v.number(), leaseUntil: v.number(), snapshotId: v.optional(v.id('evidenceSnapshots')), lastError: v.optional(v.string()) }).index('by_incident', ['incidentId']).index('by_status_dueAt', ['status', 'dueAt']),
+  assessments: defineTable({ incidentId: v.id('incidents'), snapshotId: v.id('evidenceSnapshots'), runId: v.number(), qualification: types.qualification, optionProbability: v.number(), confidence: v.number(), severity: types.severity, model: v.string(), rubric: v.string(), judgmentsJson: v.string(), inputTokens: v.number(), outputTokens: v.number(), latencyMs: v.number(), outcome: v.string(), createdAt: v.number() }).index('by_incident_createdAt', ['incidentId', 'createdAt']).index('by_snapshot_run', ['snapshotId', 'runId']),
+  suppressionRules: defineTable({ incidentId: v.id('incidents'), agencyId: v.id('agencies'), endsAt: v.number(), createdAt: v.number() }).index('by_incident', ['incidentId']),
   evidenceSnapshots: defineTable({ incidentId: v.id('incidents'), incidentRevision: v.number(), evidenceGeneration: v.number(), controlRevision: v.number(), hash: v.string(), json: v.string(), createdAt: v.number(), policyVersion: v.string() }).index('by_incident_hash', ['incidentId', 'hash']).index('by_incident_createdAt', ['incidentId', 'createdAt']),
   weatherCache: defineTable({ key: v.string(), requestedPoint: types.point, data: v.optional(weatherData), fetchedAt: v.optional(v.number()), expiresAt: v.number(), leaseUntil: v.number(), generation: v.number(), lastError: v.optional(v.string()), nextAttemptAt: v.number() }).index('by_key', ['key']).index('by_expiresAt', ['expiresAt']),
   providerUsage: defineTable({ provider: v.string(), day: v.string(), calls: v.number() }).index('by_provider_day', ['provider', 'day']),
@@ -48,8 +51,9 @@ export default defineSchema({
     severity: types.severity, recentWitnesses: v.number(), totalWitnesses: v.number(), lastObservedAt: v.number(), staleAt: v.number(),
     revision: v.number(), evidenceGeneration: v.number(), controlRevision: v.number(), nextAssessmentAt: v.number(), audience: types.audience,
     mergedInto: v.optional(v.id('incidents')),
+    reviewNeeded: v.optional(v.boolean()),
     authorityAgencyId: v.optional(v.id('agencies')),
-  }).index('by_audience_lifecycle', ['audience', 'lifecycle']).index('by_lifecycle_nextAssessmentAt', ['lifecycle', 'nextAssessmentAt']).index('by_hazard_lastObservedAt', ['hazard', 'lastObservedAt']).index('by_mergedInto', ['mergedInto']),
+  }).index('by_provenance_lifecycle_assessment', ['provenance', 'lifecycle', 'nextAssessmentAt']).index('by_audience_lifecycle', ['audience', 'lifecycle']).index('by_lifecycle_nextAssessmentAt', ['lifecycle', 'nextAssessmentAt']).index('by_hazard_lastObservedAt', ['hazard', 'lastObservedAt']).index('by_mergedInto', ['mergedInto']),
   observations: defineTable({
     incidentId: v.id('incidents'), authorId: v.optional(v.id('users')), alias: v.string(), capturedPoint: types.point,
     fixObservedAt: v.number(), accuracyM: v.number(), observedAt: v.number(), receivedAt: v.number(), description: v.string(),

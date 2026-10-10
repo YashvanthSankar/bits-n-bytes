@@ -5,4 +5,5 @@ crons.interval('resume pending alert expansion', { minutes: 1 }, internal.alertE
 crons.interval('resume instruction translation', { minutes: 1 }, internal.translations.resume, {});
 crons.interval('poll SACHET official feed', { minutes: 2 }, internal.sachet.poll, {});
 crons.interval('expire temporary weather cache', { minutes: 10 }, internal.weather.cleanup, {});
+crons.interval('resume incident assessments', { minutes: 1 }, internal.assessments.resume, {});
 export default crons;

@@ -19,7 +19,7 @@ function Detail() {
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 15_000); return () => clearInterval(timer); }, []);
   const fresh = value?.locationFresh && now - value.locationObservedAt <= POLICY.alertFix.maxAgeMs;
   const date = (time: number) => new Date(time).toLocaleString(i18n.language);
-  return <Screen footer={<ActionButton title={t('backToMap')} variant="secondary" onPress={() => router.replace('/map')} />}>
+  return <Screen footer={<>{value?.instructions.some(source => source.kind === 'COMMUNITY') && <ActionButton title={t('evidenceTitle')} onPress={() => router.push({pathname:'/incident/[id]',params:{id:value.incidentId}})} />}<ActionButton title={t('backToMap')} variant="secondary" onPress={() => router.replace('/map')} /></>}>
     {!value ? <LoadingState /> : <>
       <AppText variant="title">{value.audience === 'DEMO' ? 'DEMO · ' : ''}{t(value.lifecycle === 'ACTIVE' ? 'emergencyActive' : 'emergencyOriginal')}</AppText>
       <AppText variant="heading">{value.locality}</AppText><AppText>{value.severity} · {value.lifecycle}</AppText>
@@ -31,12 +31,11 @@ function Detail() {
         {(source.reviewOverdue || (source.reviewDueAt !== null && source.reviewDueAt < now)) && <AppText style={{ color: theme.warning }}>{t('emergencyReviewOverdue')}</AppText>}
         {source.appliesToCurrentLocation === false && <AppText>{t('emergencyOutside')}</AppText>}
         {source.deadlineAt !== null && <AppText style={{ fontWeight: '700' }}>{t('emergencyDeadline')}: {date(source.deadlineAt)}</AppText>}
-        <AppText variant="heading">{t('emergencyOriginal')} · {source.sourceLanguage ?? '—'}</AppText>
-        <AppText selectable>{source.originalText ?? t('emergencyNoOriginal')}</AppText>
+        {source.originalText !== null ? <><AppText variant="heading">{t('emergencyOriginal')} · {source.sourceLanguage ?? '—'}</AppText><AppText selectable>{source.originalText}</AppText></> : <AppText>{t(source.kind === 'COMMUNITY' ? 'modelEvidenceNotice' : 'emergencyNoOriginal')}</AppText>}
         {source.translation?.status === 'READY' && source.translation.language === i18n.language && source.translation.text ? <>
           <AppText variant="heading">{t('emergencyMachineTranslation')}</AppText>
           <AppText selectable>{source.translation.text}</AppText><AppText variant="caption">{t('emergencyTranslationReview')}</AppText>
-        </> : source.sourceLanguage !== i18n.language && <AppText variant="caption">{t(source.translation?.status === 'FAILED' || source.translation?.status === 'FLAGGED' ? 'emergencyTranslationUnavailable' : 'emergencyTranslationPending')}</AppText>}
+        </> : source.originalText !== null && source.sourceLanguage !== null && source.sourceLanguage !== i18n.language && <AppText variant="caption">{t(source.translation?.status === 'FAILED' || source.translation?.status === 'FLAGGED' ? 'emergencyTranslationUnavailable' : 'emergencyTranslationPending')}</AppText>}
       </View>)}
     </>}
   </Screen>;

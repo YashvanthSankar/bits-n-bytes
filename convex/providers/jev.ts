@@ -1,5 +1,5 @@
 export const JEV_MODEL = 'jev-1.13';
-export const JEV_RUBRIC = 'gudtour-crisis-v1';
+export const JEV_RUBRIC = 'gudtour-crisis-v2';
 export const QUALIFICATIONS = ['NOTIFIABLE_EMERGENCY', 'NOT_QUALIFIED', 'INSUFFICIENT_EVIDENCE'] as const;
 export const SEVERITIES = ['CRITICAL', 'HIGH', 'MODERATE', 'LOW', 'UNKNOWN'] as const;
 export type ChoiceAnswer = { choice: string; optionProbability: number; confidence: number; probabilities: Record<string, number> };
@@ -47,7 +47,7 @@ export async function assessIncident(evidence: unknown, options: Options) {
   }, options);
   // Final judgment sees first-stage answers explicitly; parallel questions do not see one another.
   const final = await request(JSON.stringify({ evidence, judgments: support.answers }), {
-    qualification: { type: 'choice', instructions: contextGuard + 'Evaluate whether current local evidence justifies immediate protective attention. Freshness, independent observations, weather, exact relevant official sources and history matter together. No minimum witness count alone qualifies or vetoes. Missing evidence is unknown. NOT_QUALIFIED never means safe.', criteria: { NOTIFIABLE_EMERGENCY: 'Evidence supports an active local hazard requiring immediate protective attention.', NOT_QUALIFIED: 'Current evidence does not justify emergency notification; this is not an all-clear.', INSUFFICIENT_EVIDENCE: 'Uncertainty prevents a justified decision.' } },
+    qualification: { type: 'choice', instructions: contextGuard + 'Evaluate whether current local evidence justifies immediate protective attention. Freshness, independent observations, weather, exact relevant official sources and history matter together. No minimum witness count alone qualifies or vetoes. Missing optional inputs alone do not force INSUFFICIENT_EVIDENCE. Select NOT_QUALIFIED when evidence is sufficient to decide that emergency notification is unjustified, including positively established minor or non-hazard conditions or a refuted report. Select INSUFFICIENT_EVIDENCE when material uncertainty prevents that decision. NOT_QUALIFIED never means safe.', criteria: { NOTIFIABLE_EMERGENCY: 'Evidence supports an active local hazard requiring immediate protective attention.', NOT_QUALIFIED: 'Current evidence does not justify emergency notification; this is not an all-clear.', INSUFFICIENT_EVIDENCE: 'Uncertainty prevents a justified decision.' } },
   }, options);
   const qualification = final.answers.qualification!, severity = support.answers.severity!;
   return { model: final.model, rubric: JEV_RUBRIC, judgments: support.answers, qualification: qualification.choice as typeof QUALIFICATIONS[number], optionProbability: qualification.optionProbability, confidence: qualification.confidence, severity: severity.optionProbability >= 0.8 ? severity.choice as typeof SEVERITIES[number] : 'UNKNOWN' as const, inputTokens: support.inputTokens + final.inputTokens, outputTokens: support.outputTokens + final.outputTokens, latencyMs: Date.now() - started };

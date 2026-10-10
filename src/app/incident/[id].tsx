@@ -15,6 +15,7 @@ function Detail() {
   const { isAuthenticated, isLoading } = useConvexAuth();
   useFocusEffect(useCallback(()=>{if(!isLoading && !isAuthenticated) router.replace('/login');},[isLoading,isAuthenticated]));
   const incident = useQuery(api.incidents.detail, isAuthenticated && id ? { incidentId:id as Id<'incidents'> } : 'skip');
+  const assessment = useQuery(api.incidents.assessment, isAuthenticated && id ? { incidentId:id as Id<'incidents'> } : 'skip');
   const eligibility = useQuery(api.observations.eligibility, isAuthenticated && id && !saved ? { incidentId:id as Id<'incidents'> } : 'skip');
   const eligibilityLabel = eligibility?.reason === 'OBSERVATION_TOO_FAR' ? 'observationTooFar' : eligibility?.reason === 'INCIDENT_CLOSED' ? 'incidentClosed' : 'locationAction';
   return <Screen footer={<>
@@ -37,7 +38,20 @@ function Detail() {
         <AppText>{t('totalWitnesses')}: {incident.totalWitnesses}</AppText>
         <AppText variant="caption">{t('witnessWindow')}: {HAZARD_POLICY[incident.hazard].witnessWindowMs/HOUR}</AppText></View>
       {incident.geometry.type === 'circle' && <AppText>{t('approximateArea')} ({incident.geometry.radiusM/1000} km)</AppText>}
-      {!incident.officialEmergency && incident.assessmentStatus === 'PENDING' && <AppText>{t('assessmentDevelopment')}</AppText>}
+      <AppText variant="heading">{t('evidenceTitle')}</AppText>
+      {assessment?.lastError && <AppText>{t('assessmentRetrying')}</AppText>}
+      {assessment?.reviewNeeded && <AppText>{t('reviewRequested')}</AppText>}
+      {!assessment?.latest ? <AppText>{t('assessmentDevelopment')}</AppText> : <View style={{gap:12}}>
+        <AppText>{t('assessedAt')}: {new Date(assessment.latest.evaluatedAt).toLocaleString(i18n.language)}</AppText>
+        <AppText>{t('assessmentLabel')}: {t(assessment.latest.outcome === 'SUPPRESSED' ? 'assessmentSuppressed' : `qualification${assessment.latest.outcome === 'QUALIFIED' ? 'NOTIFIABLE_EMERGENCY' : assessment.latest.outcome}`)}</AppText>
+        {!assessment.latest.currentEvidence && <AppText>{t('assessmentOutdated')}</AppText>}
+        <AppText>{t('modelEvidenceNotice')}</AppText>
+        <AppText>{t('weatherEvidence')}: {assessment.latest.weather ? `${assessment.latest.weather.description}${assessment.latest.weather.temperatureC === null ? '' : ` · ${assessment.latest.weather.temperatureC} °C`}` : t('unavailableEvidence')}</AppText>
+        {assessment.latest.weather && <AppText variant="caption">{new Date(assessment.latest.weather.observedAt).toLocaleString(i18n.language)}{assessment.latest.weather.stale ? ` · ${t('assessmentOutdated')}` : ''}</AppText>}
+        {assessment.latest.official.map((notice,index) => <View key={index} style={{gap:4}}><AppText>{notice.headline}</AppText><AppText variant="caption">{notice.issuer} · {new Date(notice.issuedAt).toLocaleString(i18n.language)}{notice.stale ? ` · ${t('assessmentOutdated')}` : ''}</AppText></View>)}
+        {!assessment.latest.official.length && <AppText>{t('noOfficialMatch')}</AppText>}
+        {assessment.latest.incomplete && <AppText variant="caption">{t('evidenceIncomplete')}</AppText>}
+      </View>}
       {eligibility && !eligibility.eligible && <><AppText>{t(eligibilityLabel)}</AppText>
         {(eligibility.reason === 'LOCATION_STALE' || eligibility.reason === 'LOCATION_INACCURATE') && <ActionButton title={t('refreshLocation')} variant="secondary" onPress={()=>router.replace('/location')} />}</>}
     </>}

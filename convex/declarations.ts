@@ -10,7 +10,7 @@ import { command, payloadHash } from './lib/idempotency';
 import { reject } from './lib/errors';
 import { actionKind, geometry, hazard, language, severity } from './lib/validators';
 import type { Id } from './_generated/dataModel';
-import { DAY, POLICY_VERSION } from '../src/domain/policy';
+import { DAY, MINUTE, POLICY_VERSION } from '../src/domain/policy';
 
 /** Canonical publication only; provider calls and delivery happen after this transaction. */
 export const publish = mutation({ args: {
@@ -108,6 +108,9 @@ export const end = mutation({args:{requestId:v.string(),jurisdictionId:v.id('jur
   const geometry=await ctx.db.get(declaration.geometryId);if(!geometry || !containsArea(scope.area,geometry.area))return reject('JURISDICTION_DENIED');
   if(!declaration.active || declaration.revision!==args.expectedRevision)return reject('REVISION_CONFLICT');
   const now=Date.now(),declarationRevision=declaration.revision+1;
+  const incident = await ctx.db.get(declaration.incidentId); if (!incident) return reject('CONFIGURATION_REQUIRED');
+  await ctx.db.patch(incident._id, { controlRevision: incident.controlRevision + 1, revision: incident.revision + 1, nextAssessmentAt: now });
+  if (args.kind === 'FALSE_ALERT') await ctx.db.insert('suppressionRules', { incidentId: incident._id, agencyId: scope.agency._id, endsAt: now + 30 * MINUTE, createdAt: now });
   await ctx.db.patch(declaration._id,{active:false,endedAt:now,endReason:args.kind,revision:declarationRevision});
   const source=await ctx.db.query('alertSources').withIndex('by_declaration',q=>q.eq('declarationId',declaration._id)).unique();
   if(!source)return reject('CONFIGURATION_REQUIRED');

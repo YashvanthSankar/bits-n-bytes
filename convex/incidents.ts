@@ -60,3 +60,23 @@ export const inCell = query({ args: { cell: v.string(), paginationOpts: paginati
   }
   return { items, isDone: page.isDone, continueCursor: page.continueCursor, candidatePage: true as const };
 } });
+
+/** Curated assessment evidence; never exposes witness identities, descriptions or private snapshot JSON. */
+export const assessment = query({ args: { incidentId: v.id('incidents') }, handler: async (ctx, args) => {
+  const { userId } = await requireIndiaAccess(ctx); const incident = await ctx.db.get(args.incidentId); if (!incident) return reject('NOT_FOUND');
+  if (incident.audience === 'DEMO') { const profile = await ctx.db.query('profiles').withIndex('by_user', q => q.eq('userId', userId)).unique(); if (!profile?.demoEnabled) return reject('NOT_FOUND'); }
+  const job = await ctx.db.query('assessmentJobs').withIndex('by_incident', q => q.eq('incidentId', incident._id)).unique();
+  const latest = await ctx.db.query('assessments').withIndex('by_incident_createdAt', q => q.eq('incidentId', incident._id)).order('desc').first();
+  if (!latest) return { status: job?.status ?? 'PENDING', lastError: !!job?.lastError, reviewNeeded: !!incident.reviewNeeded, latest: null };
+  const snapshot = await ctx.db.get(latest.snapshotId); if (!snapshot) return reject('CONFIGURATION_REQUIRED');
+  const bundle = JSON.parse(snapshot.json) as { weather?: { data?: { current?: { description: string; observedAt: number; temperatureC: number | null }; stale: boolean; history: unknown[] } | null }; official?: { items?: { headline: string; issuer: string; issuedAt: number; stale: boolean; checkedAt: number }[]; samplesTruncated?: boolean; geometryPending?: number; partial?: boolean }; missingInputs?: string[] };
+  const current = bundle.weather?.data?.current;
+  return { status: job?.status ?? 'DONE', lastError: !!job?.lastError, reviewNeeded: !!incident.reviewNeeded, latest: {
+    evaluatedAt: latest.createdAt, qualification: latest.qualification, outcome: latest.outcome,
+    // Publication threshold is shown as a result, not a probability of a person's safety.
+    model: latest.model, currentEvidence: snapshot.evidenceGeneration === incident.evidenceGeneration && snapshot.controlRevision === incident.controlRevision,
+    weather: current ? { description: current.description, observedAt: current.observedAt, temperatureC: current.temperatureC, stale: bundle.weather?.data?.stale || Date.now() - current.observedAt > 30 * 60_000, historySamples: bundle.weather?.data?.history.length ?? 0 } : null,
+    official: (bundle.official?.items ?? []).map(item => ({ headline: item.headline, issuer: item.issuer, issuedAt: item.issuedAt, stale: item.stale || Date.now() - item.checkedAt > 10 * 60_000 })),
+    incomplete: !!bundle.missingInputs?.length || !!bundle.official?.samplesTruncated || !!bundle.official?.partial,
+  } };
+} });

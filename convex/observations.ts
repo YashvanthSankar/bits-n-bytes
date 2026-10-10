@@ -148,6 +148,7 @@ export const submit = mutation({ args: {
     await ctx.db.patch(incident._id,{lastObservedAt:Math.max(incident.lastObservedAt,args.observedAt),staleAt:incident.provenance === 'AUTHORITY' ? incident.staleAt : Math.max(incident.lastObservedAt,args.observedAt)+HAZARD_POLICY[incident.hazard].staleAfterMs,revision:incident.revision+1,evidenceGeneration:incident.evidenceGeneration+1,nextAssessmentAt:now});
     await refresh(ctx,incident._id);
     const updated = (await ctx.db.get(incident._id))!;
+    await ctx.scheduler.runAfter(0, internal.assessments.enqueue, { incidentId: incident._id });
     await ctx.db.insert('auditEvents',{actorId:userId,actorKind:memberships.length ? 'AUTHORITY' : 'TOURIST',objectKind:'INCIDENT',objectId:incident._id,revision:updated.revision,action:previous?'UPDATE_OBSERVATION':'ADD_OBSERVATION',reason:'',createdAt:now});
     return { incidentId:incident._id,observationId,revision:updated.revision,verification:updated.verification,qualification:updated.qualification,recentWitnesses:updated.recentWitnesses,totalWitnesses:updated.totalWitnesses };
   });

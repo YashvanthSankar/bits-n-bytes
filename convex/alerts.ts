@@ -67,21 +67,22 @@ export const detail = query({ args: { alertId: v.id('alerts') }, handler: async 
   const instructions = [];
   for (const source of revision.sources) {
     const geometry = await ctx.db.get(source.geometryId);
-    if (!geometry) return reject('CONFIGURATION_REQUIRED');
+    const origin = await ctx.db.get(source.sourceId);
+    if (!geometry || !origin) return reject('CONFIGURATION_REQUIRED');
     const instruction = source.instructionVersionId ? await ctx.db.get(source.instructionVersionId) : null;
     const declaration = instruction ? await ctx.db.get(instruction.declarationId) : null;
     if (source.instructionVersionId && !instruction) return reject('CONFIGURATION_REQUIRED');
     const translation = instruction && profile && profile.language !== instruction.sourceLanguage
       ? await ctx.db.query('instructionTranslations').withIndex('by_instruction_language', q => q.eq('instructionVersionId', instruction._id).eq('targetLanguage', profile.language)).unique() : null;
     const validTranslation = translation && instruction && translation.originalHash === instruction.originalHash;
-    instructions.push({ active: source.active, translation: validTranslation ? { status: translation.status, language: translation.targetLanguage, text: translation.status === 'READY' ? translation.text ?? null : null, machineTranslated: true as const, reviewed: false as const } : null, sourceId: source.sourceId, issuer: source.issuerLabel, severity: source.severity, area: geometry.area,
+    instructions.push({ kind: origin.kind, active: source.active, translation: validTranslation ? { status: translation.status, language: translation.targetLanguage, text: translation.status === 'READY' ? translation.text ?? null : null, machineTranslated: true as const, reviewed: false as const } : null, sourceId: source.sourceId, issuer: source.issuerLabel, severity: source.severity, area: geometry.area,
       appliesToCurrentLocation: fresh ? overlapsArea(location, geometry.area) : null,
       originalText: instruction?.originalText ?? null, sourceLanguage: instruction?.sourceLanguage ?? null,
       actionKind: instruction?.actionKind ?? null, issuedAt: instruction?.issuedAt ?? revision.publishedAt,
       deadlineAt: instruction?.deadlineAt ?? null, reviewDueAt: declaration?.reviewDueAt ?? null,
       reviewOverdue: declaration ? declaration.reviewDueAt < now : false });
   }
-  return { id: alert._id, revision: alert.currentRevision, lifecycle: alert.lifecycle, audience: alert.audience,
+  return { id: alert._id, incidentId: incident._id, revision: alert.currentRevision, lifecycle: alert.lifecycle, audience: alert.audience,
     hazard: incident.hazard, locality: incident.locality, severity: revision.severity, publishedAt: revision.publishedAt,
     locationFresh: fresh, locationObservedAt: location.observedAt, proximity: fresh ? await applicable(ctx, revision, location) : null,
     instructions, serverTime: now };
