@@ -13,11 +13,11 @@ export function NearbyMap({ point, incidents = [], onIncidentPress, fullscreen =
     mapPadding={{top:topInset,bottom:bottomInset,left:16,right:16}} legalLabelInsets={{top:0,bottom:bottomInset,left:16,right:0}} initialRegion={{ ...point, latitudeDelta: 0.08, longitudeDelta: 0.08 }}>
     {incidents.map(incident => incident.geometry.type === 'circle' ? incident.verification === 'UNVERIFIED' ?
       <Polyline key={'area-'+incident.id} coordinates={circleOutline(incident.geometry.center,incident.geometry.radiusM)} lineDashPattern={[6,6]} strokeWidth={2}
-        strokeColor={incident.qualification === 'NOTIFIABLE_EMERGENCY' ? theme.danger : theme.warning} /> : <Circle key={'area-'+incident.id} center={incident.geometry.center} radius={incident.geometry.radiusM}
-      strokeColor={incident.qualification === 'NOTIFIABLE_EMERGENCY' ? theme.danger : theme.warning} fillColor="transparent" strokeWidth={2}
+        strokeColor={(incident.officialEmergency || incident.qualification === 'NOTIFIABLE_EMERGENCY') ? theme.danger : theme.warning} /> : <Circle key={'area-'+incident.id} center={incident.geometry.center} radius={incident.geometry.radiusM}
+      strokeColor={(incident.officialEmergency || incident.qualification === 'NOTIFIABLE_EMERGENCY') ? theme.danger : theme.warning} fillColor="transparent" strokeWidth={2}
        /> : null)}
     {incidents.map(incident => incident.geometry.type === 'circle' ? <Marker key={incident.id} coordinate={incident.geometry.center}
       title={t(`hazard${incident.hazard}`)} description={t(`verification${incident.verification}`)} onCalloutPress={()=>onIncidentPress?.(incident.id)}
-      pinColor={incident.qualification === 'NOTIFIABLE_EMERGENCY' ? theme.danger : theme.warning} /> : null)}
+      pinColor={(incident.officialEmergency || incident.qualification === 'NOTIFIABLE_EMERGENCY') ? theme.danger : theme.warning} /> : null)}
   </MapView></View>;
 }

@@ -8,7 +8,7 @@ export function IncidentCard({ incident, onPress }: { incident: PublicIncident; 
   const { t, i18n } = useTranslation(); const theme = useTheme();
   const content = <><AppText variant="heading">{t(`hazard${incident.hazard}`)}</AppText>
     <AppText>{t(`verification${incident.verification}`)}</AppText>
-    <AppText variant="caption">{t(`lifecycle${incident.lifecycle}`)} · {t(`qualification${incident.qualification ?? 'PENDING'}`)}</AppText>
+    <AppText variant="caption">{t(`lifecycle${incident.lifecycle}`)} · {incident.officialEmergency ? t('emergencyActive') : t(`qualification${incident.qualification ?? 'PENDING'}`)}</AppText>
     <AppText variant="caption">{t('lastObservation')}: {new Date(incident.lastObservedAt).toLocaleString(i18n.language)}</AppText>
     <AppText variant="caption">{t('recentWitnesses')}: {incident.recentWitnesses}</AppText></>;
   const style = { padding: 16, borderWidth: 1, borderColor: theme.border, borderRadius: 16, backgroundColor: theme.surface, gap: 8 };

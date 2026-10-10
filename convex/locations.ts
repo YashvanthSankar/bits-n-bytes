@@ -1,3 +1,4 @@
+import { internal } from './_generated/api';
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 import geohash from 'ngeohash';
@@ -33,6 +34,7 @@ export const update = mutation({ args: { requestId: v.string(), fix, foregroundP
     if (country === 'INSIDE_INDIA' && args.foregroundPermission === 'granted' && args.fix.accuracyM <= POLICY.alertFix.maxAccuracyM) {
       for (const precision of [4, 5]) await ctx.db.insert('geoPoints', { kind: 'USER', entityId: userId, precision, cell: geohash.encode(args.fix.point.latitude, args.fix.point.longitude, precision), point: args.fix.point, active: true, observedAt: args.fix.observedAt });
     }
+    await ctx.scheduler.runAfter(0, internal.locationAlerts.reconcile, {userId,locationRevision:revision,cursor:null});
     return { revision, countryStatus: country, admitted: entry };
   });
 } });

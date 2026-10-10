@@ -136,3 +136,24 @@ it('returns only the preferred language translation for the exact original and n
  expect((await actor.query(api.alerts.active,{})).items[0]!.needsAttention).toBe(false);
  await t.run(ctx=>ctx.db.patch(job._id,{originalHash:'different-source'}));expect((await actor.query(api.alerts.detail,{alertId})).instructions[0]!.translation).toBeNull();
 });
+it('targets entry into an already-published emergency, removes exit relevance and does not duplicate repeat GPS updates',async()=>{
+ const {t,actor,userId,drain}=await fixture();
+ await t.run(async ctx=>{const loc=await ctx.db.query('locations').withIndex('by_user',q=>q.eq('userId',userId)).unique();await ctx.db.patch(loc!._id,{point:{latitude:13.15,longitude:80.27}});});
+ await drain();expect(await t.run(ctx=>ctx.db.query('exposures').collect())).toHaveLength(0);
+ const update=await actor.mutation(api.locations.update,{requestId:'move-inside-001',fix:{point,accuracyM:10,observedAt:Date.now()},foregroundPermission:'granted',backgroundPermission:'denied',source:'FOREGROUND'});
+ await t.mutation(internal.locationAlerts.reconcile,{userId,locationRevision:update.revision,cursor:null});
+ await t.mutation(internal.locationAlerts.reconcile,{userId,locationRevision:update.revision,cursor:null});
+ expect((await actor.query(api.alerts.active,{})).items).toHaveLength(1);expect(await t.run(ctx=>ctx.db.query('userAlerts').collect())).toHaveLength(1);
+ const exit=await actor.mutation(api.locations.update,{requestId:'move-outside-001',fix:{point:{latitude:13.15,longitude:80.27},accuracyM:10,observedAt:Date.now()},foregroundPermission:'granted',backgroundPermission:'denied',source:'FOREGROUND'});
+ await t.mutation(internal.locationAlerts.reconcile,{userId,locationRevision:exit.revision,cursor:null});
+ expect((await actor.query(api.alerts.active,{})).items).toHaveLength(0);expect((await t.run(ctx=>ctx.db.query('exposures').collect()))[0]!.relevant).toBe(false);
+ // An old queued GPS task cannot restore relevance after a newer fix.
+ await t.mutation(internal.locationAlerts.reconcile,{userId,locationRevision:update.revision,cursor:null});expect((await t.run(ctx=>ctx.db.query('exposures').collect()))[0]!.relevant).toBe(false);
+});
+it('shows official emergency status in public incident reads independently of model qualification and review age',async()=>{
+ const {t,actor}=await fixture();const incident=(await t.run(ctx=>ctx.db.query('incidents').collect()))[0]!;
+ await t.run(ctx=>ctx.db.patch(incident._id,{staleAt:Date.now()-60000}));
+ const detail=await actor.query(api.incidents.detail,{incidentId:incident._id});
+ expect(detail).toMatchObject({qualification:null,officialEmergency:{severity:'HIGH',revision:1},lifecycle:'ACTIVE'});
+ const nearby=await actor.query(api.incidents.nearby,{});expect(nearby.items.find(i=>i.id===incident._id)?.officialEmergency).toMatchObject({severity:'HIGH',revision:1});
+});

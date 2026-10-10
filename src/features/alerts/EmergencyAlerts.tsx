@@ -1,7 +1,7 @@
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
-import { Modal, ScrollView, View } from 'react-native';
+import { router, usePathname } from 'expo-router';
+import { Component, type PropsWithChildren, useEffect, useState } from 'react';
+import { AppState, Modal, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../convex/_generated/api';
@@ -12,14 +12,16 @@ import { compareAlerts } from '../../domain/alertOrder';
 import { POLICY } from '../../domain/policy';
 
 /** Mounted on a focused tourist page; dismissing attention never removes the warning. */
-export function EmergencyAlerts() {
+export function EmergencyAlerts({ global = false }: { global?: boolean }) {
   const { t } = useTranslation(), theme = useTheme(), safe = useSafeAreaInsets();
   const { isAuthenticated } = useConvexAuth(), { fix, signedOut } = useLocationSession();
   const result = useQuery(api.alerts.active, isAuthenticated && fix && !signedOut ? {} : 'skip');
   const acknowledge = useMutation(api.alerts.dismiss);
-  const [focused, setFocused] = useState(false), [now, setNow] = useState(Date.now), [hidden, setHidden] = useState<Set<string>>(new Set());
+  const path = usePathname();
+  const [active, setActive] = useState(AppState.currentState === 'active'), [now, setNow] = useState(Date.now), [hidden, setHidden] = useState<Set<string>>(new Set());
   const [error, setError] = useState(false);
-  useFocusEffect(useCallback(() => { setFocused(true); return () => setFocused(false); }, []));
+  useEffect(() => { const subscription = AppState.addEventListener('change', state => { setActive(state === 'active'); setNow(Date.now()); }); return () => subscription.remove(); }, []);
+  const eligiblePage = !['/', '/login', '/location', '/profile', '/auth/callback'].includes(path) && !path.startsWith('/alert/');
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 15_000); return () => clearInterval(timer); }, []);
   const fresh = result?.locationFresh && now - result.locationObservedAt <= POLICY.alertFix.maxAgeMs;
   const items = fresh ? [...(result?.items ?? [])].sort(compareAlerts) : [];
@@ -34,22 +36,33 @@ export function EmergencyAlerts() {
   }
   if (!isAuthenticated || signedOut || !fix) return null;
   return <>
-    {items.map(item => <View key={item.id} style={{ padding: 14, gap: 8, borderRadius: 16, borderWidth: 1, borderColor: item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision) ? theme.danger : theme.warning, backgroundColor: theme.surface }}>
+    {!global && items.map(item => <View key={item.id} style={{ padding: 14, gap: 8, borderRadius: 16, borderWidth: 1, borderColor: item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision) ? theme.danger : theme.warning, backgroundColor: theme.surface }}>
       <AppText style={{ color: theme.danger, fontWeight: '700' }}>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t('emergencyActive')}</AppText>
       <AppText>{item.locality} · {t(`hazard${item.hazard}`)}</AppText>
       <AppText variant="caption">{t(item.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText>
       <ActionButton title={t('viewEmergency')} onPress={() => open(item.id)} />
     </View>)}
-    {error && <AppText style={{ color: theme.warning }}>{t('emergencyDismissFailed')}</AppText>}
-    <Modal visible={focused && !!attention} animationType="slide" onRequestClose={() => void dismiss()}>
+    {!global && error && <AppText style={{ color: theme.warning }}>{t('emergencyDismissFailed')}</AppText>}
+    <Modal visible={global && active && eligiblePage && !!attention} animationType="slide" onRequestClose={() => void dismiss()}>
       <View style={{ flex: 1, backgroundColor: theme.background, padding: 20, paddingTop: safe.top + 20, paddingBottom: safe.bottom + 20 }}>
         <View style={{ flex: 1, backgroundColor: theme.surface, borderRadius: 24, padding: 20, gap: 16 }}>
           <AppText variant="heading" style={{ color: theme.danger }}>{attention?.audience === 'DEMO' ? 'DEMO · ' : ''}{t('emergencyActive')}</AppText>
-          <ScrollView contentContainerStyle={{ gap: 12 }}><AppText>{attention?.locality}</AppText><AppText>{t(attention?.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText><AppText>{t('emergencyStillAvailable')}</AppText></ScrollView>
+          <ScrollView contentContainerStyle={{ gap: 12 }}><AppText>{attention?.locality}</AppText><AppText>{t(attention?.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText><AppText>{t('emergencyStillAvailable')}</AppText>{error && <AppText>{t('emergencyDismissFailed')}</AppText>}</ScrollView>
           <ActionButton title={t('viewEmergency')} onPress={() => { if (attention) { const id = attention.id; void dismiss(); open(id); } }} />
           <ActionButton title={t('dismissPopup')} variant="secondary" onPress={() => void dismiss()} />
         </View>
       </View>
     </Modal>
   </>;
+}
+
+/** A transient protected-read error must not replace the entire app navigation. */
+class NotificationBoundary extends Component<PropsWithChildren, { failed: boolean }> {
+ state = {failed:false};
+ static getDerivedStateFromError() {return {failed:true};}
+ render(){return this.state.failed?null:this.props.children;}
+}
+export function GlobalEmergencyNotifications() {
+ const {fix,signedOut}=useLocationSession();
+ return <NotificationBoundary key={`${signedOut}:${fix?.observedAt ?? 0}`}><EmergencyAlerts global /></NotificationBoundary>;
 }

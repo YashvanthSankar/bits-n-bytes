@@ -1,9 +1,7 @@
 import { internalMutation } from './_generated/server';
 import { internal } from './_generated/api';
 import { v } from 'convex/values';
-import { overlapsArea } from '../src/domain/geography';
-import { validateFix } from '../src/domain/eligibility';
-import { POLICY } from '../src/domain/policy';
+import { targetRecipient } from './lib/targetRecipient';
 
 /** A checkpoint is a transaction fence: duplicate scheduled invocations do no work. */
 export const page = internalMutation({ args: { jobId: v.id('jobs'), checkpoint: v.number() }, handler: async (ctx, args): Promise<void> => {
@@ -33,26 +31,7 @@ export const page = internalMutation({ args: { jobId: v.id('jobs'), checkpoint: 
   for (const candidate of candidates.page) {
     const userId = ctx.db.normalizeId('users', candidate.entityId);
     if (!userId) continue;
-    const location = await ctx.db.query('locations').withIndex('by_user', q => q.eq('userId', userId)).unique();
-    if (!location || location.admittedAt === undefined || location.foregroundPermission !== 'granted' || location.countryStatus !== 'INSIDE_INDIA' || !validateFix(location, now, POLICY.alertFix).ok) continue;
-    const profile = await ctx.db.query('profiles').withIndex('by_user', q => q.eq('userId', userId)).unique();
-    if (!profile || (alert.audience === 'DEMO' && !profile.demoEnabled)) continue;
-    const relevant = areas.some(area => overlapsArea(location, area));
-    if (!relevant) continue;
-    const inside = areas.some(area => overlapsArea({ ...location, accuracyM: 0 }, area));
-    const prior = await ctx.db.query('exposures').withIndex('by_user_incident', q => q.eq('userId', userId).eq('incidentId', alert.incidentId)).unique();
-    if (prior && prior.appliedRevision > alert.currentRevision) continue;
-    const soundEpoch = prior?.soundEpoch ?? 1;
-    // First exposure only for now; material/reentry sound policy is a separate pending task.
-    const shouldSound = !prior;
-    const exposure = { userId, incidentId: alert.incidentId, alertId: alert._id, relevant: true, proximityKind: inside ? 'INSIDE' as const : 'POSSIBLE_PROXIMITY' as const,
-      locationRevision: location.revision, lastEnteredAt: prior?.lastEnteredAt ?? now, soundEpoch,
-      dismissedRevision: prior?.dismissedRevision ?? 0, latestSeenRevision: prior?.latestSeenRevision ?? 0, appliedRevision: alert.currentRevision };
-    if (prior) await ctx.db.patch(prior._id, exposure); else await ctx.db.insert('exposures', exposure);
-    const existing = await ctx.db.query('userAlerts').withIndex('by_user_alert_revision', q => q.eq('userId', userId).eq('alertId', alert._id).eq('revision', alert.currentRevision)).unique();
-    if (!existing) await ctx.db.insert('userAlerts', { userId, alertId: alert._id, revision: alert.currentRevision,
-      eligibilityReason: inside ? 'INSIDE' : 'POSSIBLE_PROXIMITY', locationAgeMs: now - location.observedAt, accuracyM: location.accuracyM,
-      firstRelevantAt: now, shouldSound, soundEpoch });
+    await targetRecipient(ctx,userId,alert,areas,now);
   }
   const cellIndex = candidates.isDone ? job.cellIndex + 1 : job.cellIndex;
   const done = cellIndex >= job.cells.length;

@@ -9,12 +9,13 @@ import type { PropsWithChildren } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LanguageProvider } from '../i18n/LanguageProvider';
 import { useTheme } from '../theme/useTheme';
+import { GlobalEmergencyNotifications } from '../features/alerts/EmergencyAlerts';
 import { AuthorityAccessSync } from '../session/AuthorityAccessSync';
 
 const url = process.env.EXPO_PUBLIC_CONVEX_URL;
 const convex = url ? new ConvexReactClient(url, { unsavedChangesWarning: false }) : null;
 function BackendProvider({ children }: PropsWithChildren) {
-  return convex ? <ConvexAuthProvider client={convex} storage={preferenceStorage} shouldHandleCode={false}><AuthorityAccessSync /><LocationSession>{children}</LocationSession></ConvexAuthProvider> : <Screen><ErrorState /></Screen>;
+  return convex ? <ConvexAuthProvider client={convex} storage={preferenceStorage} shouldHandleCode={false}><AuthorityAccessSync /><LocationSession>{children}<GlobalEmergencyNotifications /></LocationSession></ConvexAuthProvider> : <Screen><ErrorState /></Screen>;
 }
 function Navigation() {
   const theme = useTheme();

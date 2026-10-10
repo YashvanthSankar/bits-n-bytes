@@ -1,3 +1,5 @@
+> Notification override — 2026-10-10: user explicitly chose custom in-app real-time notifications instead of native OS notifications. No notification permission, EAS/APNs/FCM setup or closed-app delivery is required for the current implementation. Publication atomically queues geographic targeting; eligible open clients receive Convex subscription updates through one global controller. Earlier push details below are future references, not current gates.
+
 # GudTour — technical stack
 
 Updated: 2026-10-10. Status: development underway. iOS entry/auth/profile and Apple Maps are working; core backend is deployed. API connectivity is verified; full crisis workflows, decision quality and release/device delivery remain pending.
@@ -20,7 +22,7 @@ Read [TECHNICAL_IMPLEMENTATION_PLAN.md](TECHNICAL_IMPLEMENTATION_PLAN.md) for th
 | Background server work | Convex actions, cron jobs, scheduled functions | Feed ingestion, weather/translation/Jev calls, targeting, delivery retries |
 | Map UI | react-native-maps | Apple Maps on iOS; Google Maps on Android; markers and hazard geometry |
 | Location | expo-location + expo-task-manager | Foreground fixes and optional background updates |
-| Notifications | expo-notifications + Expo Push Service | Device registration, foreground handling, APNs/FCM delivery |
+| Notifications | Convex real-time subscriptions + custom in-app alerts | Global foreground popup and persistent alert cards; native push deferred by user on 2026-10-10 |
 | Official disaster data | NDMA SACHET published CAP/RSS feeds | Attributed warnings, geography, revisions and cancellations |
 | Weather evidence | AccuWeather Core Weather API | Geoposition/location key, current conditions, past 24-hour conditions |
 | Decision model | TypeSafe.ai Jev 1.13 via OpenCode Zen | Bounded typed evidence judgments and emergency qualification |
@@ -42,7 +44,7 @@ Tourist destinations follow PLAN.md: Map, Incidents, Shelters, Nearby chat, Sett
 
 Google sign-in uses the system browser and the Convex Auth OAuth callback, returning through an app-specific deep link. Google OAuth establishes identity only. A server-controlled approved-authority record establishes organization, jurisdiction and permissions. No client-provided role or profile update can elevate an account.
 
-The country/foreground-location gate remains mandatory. Background permission and notification permission remain optional. Track the actual fix time and accuracy; the OS cannot guarantee the plan's desired update cadence. Use native builds for background location and push verification.
+The country/foreground-location gate remains mandatory. Background permission remains optional. Native notification permission is not requested under the latest in-app-only notification scope. Track the actual fix time and accuracy; the OS cannot guarantee the plan's desired update cadence. Use native builds for background location and push verification.
 
 Use Convex subscriptions for live incident, shelter, alert and chat read models. Keep transient forms and filters in local React state. SQLite is a separate snapshot for degraded reads, not a substitute live database or an assumption that Convex handles offline mutations automatically.
 
@@ -122,7 +124,7 @@ Reconnect by refreshing location, active alerts/corrections and shelter status b
 
 ## 7. Notifications and scheduling
 
-Commit the alert/revision and a durable expansion job atomically with accepted publication. Expansion pages create deduplicated per-user/device delivery jobs in bounded transactions. Use Expo Push Service from backend actions and record provider tickets/receipts/failures. Register APNs and Android FCM credentials through the release workflow. Provider acceptance is not human receipt. Foreground subscriptions trigger the app overlay; background notifications deep-link to the current alert.
+Commit the alert/revision and a durable expansion job atomically with accepted publication. Expansion pages create deduplicated per-user/device delivery jobs in bounded transactions. Native Expo Push Service delivery is deferred by the 2026-10-10 user override. Current expansion creates private recipient exposures; subscribed open clients present custom in-app alerts. Register APNs and Android FCM credentials through the release workflow. Provider acceptance is not human receipt. Foreground subscriptions trigger the app overlay; background notifications deep-link to the current alert.
 
 Apply PLAN.md's location eligibility: up to 30 minutes old, accuracy <=1 km, uncertainty overlap included, visibly stale after 15 minutes. Entering an existing emergency is an eligibility event. Apply revision/material-change sound rules independently of delivery retry.
 

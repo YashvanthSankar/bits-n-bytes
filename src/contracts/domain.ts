@@ -56,6 +56,7 @@ export interface ChoiceAssessment {
   policyVersion: string;
 }
 export interface PublicIncident {
+  officialEmergency: { severity: Severity; revision: number } | null;
   id: string;
   hazard: HazardCode;
   locality: string;

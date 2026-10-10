@@ -1,3 +1,5 @@
+> Latest notification scope (2026-10-10): user requested in-app custom notifications only. When an emergency is published, queued geographic targeting updates eligible accounts and Convex real-time subscriptions present a global popup in open foreground clients. Native notification permission, APNs/FCM/Expo push and closed-app delivery are deferred. Other core incident, authority, translation and location requirements remain unchanged.
+
 # GudTour — detailed technical implementation plan
 
 Date: 2026-10-10. Revision: 3. Status: design specification with dated implementation checkpoints; incomplete workflows remain planned.

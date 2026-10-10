@@ -29,7 +29,7 @@ function Detail() {
       <View style={{gap:12}}>
         <AppText>{t('verificationLabel')}: {t(`verification${incident.verification}`)}</AppText>
         <AppText>{t('lifecycleLabel')}: {t(`lifecycle${incident.lifecycle}`)}</AppText>
-        <AppText>{t('assessmentLabel')}: {t(`qualification${incident.qualification ?? 'PENDING'}`)}</AppText>
+        {incident.officialEmergency ? <AppText>{t('emergencyActive')} · {t(`severity${incident.officialEmergency.severity}`)}</AppText> : <AppText>{t('assessmentLabel')}: {t(`qualification${incident.qualification ?? 'PENDING'}`)}</AppText>}
         <AppText>{t('sourceLabel')}: {t(`source${incident.provenance}`)}</AppText>
       </View>
       <AppText>{t('lastObservation')}: {new Date(incident.lastObservedAt).toLocaleString(i18n.language)}</AppText>
@@ -37,7 +37,7 @@ function Detail() {
         <AppText>{t('totalWitnesses')}: {incident.totalWitnesses}</AppText>
         <AppText variant="caption">{t('witnessWindow')}: {HAZARD_POLICY[incident.hazard].witnessWindowMs/HOUR}</AppText></View>
       {incident.geometry.type === 'circle' && <AppText>{t('approximateArea')} ({incident.geometry.radiusM/1000} km)</AppText>}
-      {incident.assessmentStatus === 'PENDING' && <AppText>{t('assessmentDevelopment')}</AppText>}
+      {!incident.officialEmergency && incident.assessmentStatus === 'PENDING' && <AppText>{t('assessmentDevelopment')}</AppText>}
       {eligibility && !eligibility.eligible && <><AppText>{t(eligibilityLabel)}</AppText>
         {(eligibility.reason === 'LOCATION_STALE' || eligibility.reason === 'LOCATION_INACCURATE') && <ActionButton title={t('refreshLocation')} variant="secondary" onPress={()=>router.replace('/location')} />}</>}
     </>}
