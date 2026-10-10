@@ -61,7 +61,7 @@ External operations are asynchronous. Publishing succeeds when the incident/aler
 The tree is a design, not existing application source. Keep one root Expo application to avoid unnecessary monorepo packaging during the hackathon; deploy the static landing separately.
 
 ```text
-app/
+src/app/
   _layout.tsx
   (entry)/                 language, location gate, login, onboarding
   (tourist)/(tabs)/        map, incidents, shelters, chat, settings

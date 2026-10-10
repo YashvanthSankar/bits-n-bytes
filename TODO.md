@@ -75,9 +75,9 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 
 **Design reference:** Technical plan §§3–4, 6–9, 18, 22.
 
-- [ ] F01 Initialize Expo TypeScript app, Router and dedicated Convex project; pin SDK/native-compatible dependencies. Owner A.
-- [ ] F02 Establish light/dark tokens, native chrome, safe areas, readable large-text controls and six-language resource structure. Owner B.
-- [ ] F03 Define shared geometry, timestamp, language, policy, error and version/idempotency contracts. Owner A.
+- [x] F01 Initialize Expo TypeScript app, Router and dedicated Convex project; pin SDK/native-compatible dependencies. Owner A.
+- [x] F02 Establish light/dark tokens, native chrome, safe areas, readable large-text controls and six-language resource structure. Owner B.
+- [x] F03 Define shared geometry, timestamp, language, policy, error and version/idempotency contracts. Owner A.
 - [ ] F04 Create the core identity/incident/location schema and bounded geographic indexes first; add shelter/alert/chat tables with their milestones using technical-plan section 6. Owner A.
 - [ ] F05 Define privacy-filtered public read models separate from private observations, locations and devices. Owner A.
 - [ ] F06 Implement Google OAuth through Convex Auth; prove native redirect, session restore and sign-out on both platforms. Owner A, D verifies.

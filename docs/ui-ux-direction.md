@@ -1,90 +1,57 @@
-# GudTour — map-first native UI/UX contract
+# GudTour — native UI/UX contract
 
-> **Latest scope:** [PLAN.md](../PLAN.md), [tech-stack.md](../tech-stack.md) and [TODO.md](../TODO.md) supersede conflicting behavior/stack assignments below. In particular: India-only mandatory foreground location, six languages, automatic typed Jev decisions, Convex, no news, five tourist destinations, and online-first operation. Earlier branding is historical.
+Updated 2026-10-10. PLAN.md is the core behavior specification. tech-stack.md and TECHNICAL_IMPLEMENTATION_PLAN.md control the selected integrations and online-first override. This document describes implementation intent; screenshots and device evidence must prove the resulting UI.
 
-**Controlling scope:** [final user requirements](product-requirements.md) and [implementation plan](winning-strategy.md). This supersedes the old Briefings/Saved navigation. Design instructions, not rendered or verified UI.
+## Direction and visual system
 
-## Direction
+Calm, precise, mobile-native crisis communication. The map is the primary working surface. Use system typography, semantic light/dark colors, 4-point spacing, 20-unit content insets, separators and grouped rows. Status must use words and a pattern/icon alongside color. Never paint unknown areas green, invent trust percentages, display fake agency seals or imply a route is safe. Brand: **GudTour — Local alerts. Your language.**
 
-Calm, precise, mobile-native wayfinding. The map is the working surface, not a decorative hero. No AI chatbot, editorial layout, oversized slogan, purple gradient, glass-card grid, dashboard metrics, emoji navigation, fake trust percentage or “safe” green map. Brand: **GudTour — Local alerts. Your language.**
+Use native stack/back behavior, sheets and tabs with safe areas. Interactive targets are at least 48 units. Text scales with the operating system; screens scroll instead of hiding primary controls at large font sizes. Motion explains changes and respects reduced motion. Every critical error remains visible beside the affected action.
 
-Loaded guidance: product-engineering, Expo overview/design-system/native-ui/UI/router/animation/data-fetching, Vercel React Native guidance and web interface guidelines. SDK-specific APIs still need checking against the pinned project; loaded skills are not evidence that an app works. Resolve style guidance into one consistent token system rather than two competing themes.
+## Entry and navigation
 
-## Visual system
+Entry: choose en/hi/ta/fr/de/es → explain/request foreground location → validate a fresh, accurate fix wholly inside India's country polygon → Google sign-in → consent-based profile. Denied, disabled, stale, inaccurate, outside-India and uncertain-boundary outcomes each explain recovery. No manual destination or pin bypasses country admission. Notifications and background location are optional requests after the core app is usable; denied permissions do not loop prompts.
 
-- One theme entry point, system sans typography, tabular numerals for times/distances, 4-point spacing scale and consistent 20-unit content inset where appropriate.
-- Platform semantic backgrounds/text/separators with explicit light/dark brand accent pairs. Starting brand references: warm near-white `#F6F7F4`, ink `#182321`, secondary `#53615C`, cobalt `#244BC4`. These are direction, not certified contrast combinations.
-- Severity uses text + icon + zone pattern, never color alone. Reserve warning/destructive color for meaningful status, not all page furniture.
-- Hairline rows and grouped sections rather than every item in a rounded shadow card. Shadows only when overlay depth needs explanation.
-- Native headers, tabs, back behavior, menus and sheets; inspect `@expo/ui` availability for the actual SDK before picking controls. Virtualized feeds use FlatList/FlashList, not a native grouped-settings List.
-- SF Symbols on iOS and corresponding Material/vector icons on Android. Shared semantics, platform-fit chrome.
-- Minimum 48-unit interactive target; meaningful pressed state. Motion explains navigation/state, never delays an alert. Reduced motion supported; no animated tab slides or ceremonial screen entrances.
+Tourist tabs: **Map · Incidents · Shelters · Nearby chat · Settings**. Alert history and emergency contacts are reachable from the app. Report incident is a prominent bottom-center action on the map, not a tab. Approved authority mode adds incident review/publishing, shelters/contacts and moderation; a client role picker never grants access.
 
-## Navigation
+## Main map and incident reporting
 
-Tourist destinations: **Map · Alerts · Profile**. Home opens Map after onboarding. Incident, original notice/translation and shelter detail are sheets or stack screens. Bottom-center **Report incident** floats above map/tab safe areas; it is an action, not a fourth tab.
+Render Apple basemap on iOS and Google basemap on Android. Show actual hazard geography, dashed unverified community zones and attributed shelters; provide a usable list alternative. Map camera movement never updates the tourist's location or notification eligibility. The compact freshness strip exposes stale location, disconnected data and source age. Empty areas say that no listed incidents does not establish safety.
 
-Authority mode: operational map, incidents/review, shelters/contacts and account. Mode reflects a server-approved role; an arbitrary role picker cannot unlock authority. Shared primitives, not a disconnected dashboard theme.
+Incident detail separates verification, activity and emergency qualification. Authority verification is not an emergency declaration; model qualification is not authority verification. Show phenomenon, source/issuer, locality, original observed time, recent independent witness count and evidence availability. A failed provider call is unavailable evidence, never a negative or all-clear.
 
-## Screens and primary journeys
+Reporting uses eight phenomenon choices, a timestamped device location, observed time and bounded optional description. Any permitted adjustment must retain location eligibility checks. Submit is pending until server acknowledgment; double taps share a command key. Preserve failed drafts with explicit resend. Offline drafts say **not submitted** and never post automatically. Updating an observation does not create another independent witness.
 
-### 1. Login and pre-arrival onboarding
+## Emergency alerts and translation
 
-Tourist signup/login and clearly separate **Authority sign in**. Authority copy explains approved accounts only; no self-verified signup. Restore persisted auth before routing or handling a deep link.
+Foreground eligible emergencies show a full-screen overlay with brief sound/vibration. Background push is best effort; the app cannot guarantee delivery or override Do Not Disturb. Seen/acknowledged means seen, not safe or resolved. Material changes follow cooldown and Critical-exception rules; routine updates, language changes, short re-entry and endings are silent.
 
-Tourist steps: choose preferred language → destination subscription → explain/request foreground location → explain optional background access → notification permission. Keep each short. Manual destination selection works if permissions are denied. Explain that current home location differs from the trip destination. Never trap users in repeated permission prompts.
+Hierarchy: current activity and attribution → preferred-language instruction → original official notice and issuing authority → effective time/deadline/prohibitions → applicable authority guidance or eligible shelter CTA → source/evidence freshness. Original text stays readable with the translation. Translation failure shows the original plus a fallback label; automated entity checks do not establish perfect translation.
 
-### 2. Live map — main page
+Source withdrawals and endings remain attached to the source they affect. Expiry, disappearance from a feed or model failure never becomes an all-clear. Opening an old alert resolves its current incident version and visibly labels history.
 
-Full-bleed map with native contextual header (destination selector), hazard zones, shelter markers, recenter and an accessible list alternative. Map controls respect top/bottom safe areas and the Report action.
+## Shelters and contacts
 
-Keep a compact freshness/location strip: connection state, last successful update and last location age when relevant. Legend explicitly distinguishes **Authority-issued**, **Community-confirmed**, approximate radius and shelter status. Unverified community reports are not displayed as confirmed public hazards. Do not paint unknown areas green.
+Show current status, issuing authority, last confirmation, approximate distance and location age, contact, capacity and step-free status when known. Only eligible shelters appear in the nearest recommendation: current/open, within 50 km, not full, accessibility eligible, and outside active hazard geometry unless a recorded authority override applies. Stay-put or named-shelter authority instructions take precedence.
 
-Selecting a zone opens its attributed detail. Selecting a shelter opens name/status/source age/distance/contact. Zones must remain readable over the chosen basemap at both themes. If tiles fail, saved incident/shelter list remains usable. Empty copy: “No published incidents for this area. This does not mean conditions are safe.”
+Copy: **Closest eligible listed shelter — route safety not verified.** External Google Maps directions, copy-location and dialer actions are real platform operations, not claimed rescue dispatch. No eligible shelter shows the contact fallback and reason rather than an invented recommendation.
 
-### 3. Report incident
+## Nearby chat and settings
 
-Native sheet/full-height form with phenomenon buttons, selected state, location pin/manual position, observed time and optional short description. No social-post composer or panic illustration. Make the label **Report incident** discoverable with one tap from home.
+Nearby chat uses a fixed private GPS origin and 15 km radius, fresh location, plain text and bounded structured incident links. Chat messages and structured incident links never count as corroborating observations. Display loading, empty, disconnected, location-ineligible, restricted, removed-message and appeal states. Moderation is authorized and records a reason.
 
-Confirmation explains “Your report is unverified and will not alert others until confirmed.” Submission is pending until server acknowledgment. Disable double-submit, preserve draft on failure and expose retry. Offline copy says **Draft — not submitted**. Never show a success toast instead of persisted submission.
+Settings expose preferred language, accessibility preference, foreground/background and notification status, private location freshness, sign-out and account deletion. No trip-destination subscription or decorative statistics. Explain data retention and accurately show when background sharing is unavailable. Deletion clears private local state and anonymizes retained public evidence.
 
-### 4. Alerts inbox and incident detail
+## Authority workflows
 
-Dense readable rows: phenomenon/title, provenance, confirmation/lifecycle, area, issuer/source and issued time. Updates/withdrawals visibly reference earlier notices; neither stale history nor cancelled instructions looks like the current action.
+Publishing captures phenomenon, jurisdiction-bound geometry, times, severity, original instructions and protection/evacuation guidance. Explain the notification consequence before confirmation. A successful response means the canonical publication and durable targeting job committed; it does not mean all phones received alerts. Verify and declare-emergency actions are separate, versioned and auditable. Failed forms preserve drafts.
 
-Detail hierarchy: current lifecycle warning → official or community attribution → current original/translated instruction → issued/effective/expiry and fetch metadata → nearest eligible listed shelter CTA → source and evidence summary. Evidence summarizes report recency/weather/news and model uncertainty without reporter PII or fake authority seals.
+Review shows independent witness recency, weather freshness, SACHET attribution and typed model result/error. Shelter/contact editing confirms real saves and handles revision conflicts. Authorities cannot inspect private tourist locations or identities through operational lists.
 
-Translation and original are accessible on the same screen (stacked on phones; side-by-side on wide layout when useful). Label language/translation origin; no “accuracy verified” badge based only on entity checks. Missing translation displays original plus clear fallback. Withdrawn instructions remain readable as history, not rendered illegibly under strike-through.
+## Required quality evidence
 
-### 5. Shelter detail
+For each primary screen, verify content/loading/error/empty and cached/offline states on both native platforms. Check screen-reader labels/focus, 200% text, long translations, light/dark contrast, reduced motion, keyboard avoidance, small-screen safe areas and native back behavior. Test real permissions and recovery. Save actual screenshots; simulator compilation alone is not push/background or release-device evidence.
 
-Name, status, issuer, last-confirmed time, approximate distance from timestamped location, accessibility/capacity if known and contact. Copy: “Closest listed shelter — route safety not verified.” **Call contact** and optional external directions; no fake “Navigate safely.” No eligible shelter yields an honest contact fallback.
+## Public landing
 
-### 6. Authority publishing and review
-
-Publish form: phenomenon, zone/radius, observed/issued/validity times, original instructions, jurisdiction and source. Explain the consequence: “Publishing sends alerts to eligible users.” Consequential confirmation is appropriate; successful publish must actually persist and enqueue delivery.
-
-Review screen separates community evidence from official publication, shows recent unique reporter count, timestamps, weather/news provenance and model result/error. Accept/reject/correct actions are authorized, versioned and auditable. Shelter/contact forms preserve failed drafts and show saved state only after acknowledgment.
-
-### 7. Profile and preferences
-
-Language, trip destination, location sharing/background permissions, notification status, saved-data age, privacy controls and signout. Settings must affect real behavior. No irrelevant account statistics or decorative profile badges.
-
-## Required states
-
-Design loading, error, empty, content and cached/offline independently. Cached content survives a failed refresh; last-success time does not advance. Include denied location/notifications, stale location, unavailable model/weather/news, disputed incident, expired/withdrawn alert, missing translation, no eligible shelter, storage failure and unsent draft states. Inline errors belong near the action; no toast-only critical information.
-
-Notifications use the chosen language and issuer/area context, without exact tourist coordinates. Opening one navigates to the referenced current incident version; expired/withdrawn links do not revive old actions.
-
-## Quality gates before calling a screen complete
-
-1. Walk primary task + failure/recovery on iOS and Android; save, call, recenter, filters and settings genuinely work.
-2. Screen reader labels and logical focus; accessible hazard/shelter list so map manipulation is not compulsory.
-3. 200% system text without missing actions, contrast measured, color-independent status, long translated strings tested.
-4. Keyboard never covers report/publish controls; native back/dismiss preserves drafts appropriately.
-5. Safe areas and Report button work on small screens and gesture-navigation devices; light/dark and reduced motion checked.
-6. Screenshot actual loading/content/offline/withdrawal/report/shelter states; release-device testing required for gesture/performance/background/push claims.
-
-## Web landing
-
-Concise mobile-friendly product page: name, real screenshot when available, short use case, actual install/access instructions, source/safety limitations and privacy summary. No fictional store badges, agency logos, download counts, testimonials or mock “live” map. Pending artifacts are labeled pending. Review against fresh web interface guidelines before deployment.
+A concise static page links only real Android release artifacts and an actually available iOS distribution option. Include current screenshots, installation instructions, privacy and source limitations. Pending artifacts remain labeled pending. No fictional store badges, agency logos, download counts, testimonials or simulated data presented as live.

@@ -17,7 +17,9 @@ TravelTech project for the Bits and Bytes CS Week hackathon: a map-first crisis-
 
 ## Status and setup
 
-**Planning only.** There is no application source, package manifest, runnable setup, backend, APK, iOS artifact, deployed landing page or demo video yet. Do not treat proposed behavior as implemented. A live OpenCode Zen Jev connectivity test passed; decision quality and app workflows remain unverified. Setup commands and real release links will be added after implementation and verification during the permitted window.
+**Development underway.** Expo SDK 57/TypeScript source, six-language entry resources, theme/control foundations, shared domain contracts and a dedicated Convex development backend now exist. The backend is in the **Denoise Labs** team, project **gudtour**. The initial iOS development build compiles and installs on the simulator; runtime and both-platform workflow verification remain pending. Incident/alert workflows, Android/iOS distribution, public landing and demo video are not complete. See [development evidence](docs/progress/2026-10-10-development.md).
+
+For local development, install dependencies with `npm ci`, copy `.env.example` to private `.env.local`, and configure a development deployment with `npx convex dev`. Existing team members should select the Denoise Labs GudTour project. Run `npm run start`, then `npm run ios` or `npm run android` with a configured native device. `npm run check` runs typechecking, lint and domain tests. Native development builds are required; a successful bundle export does not prove push or background behavior. Provider secrets belong on Convex, never in the public client environment.
 
 ## Documentation
 
