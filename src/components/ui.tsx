@@ -9,7 +9,7 @@ import { useNavigationInset } from '../navigation/NavigationInset';
 
 export function AppText({ variant = 'body', style, ...props }: TextProps & { variant?: keyof typeof typography }) {
   const theme = useTheme();
-  return <Text {...props} style={[typography[variant], { color: theme.text }, style]} />;
+  return <Text {...props} style={[typography[variant], { color: theme.text, fontFamily: Platform.OS === 'android' ? 'Inter' : undefined }, style]} />;
 }
 export function Screen({ children, footer }: PropsWithChildren<{ footer?: ReactNode }>) {
   const theme = useTheme();

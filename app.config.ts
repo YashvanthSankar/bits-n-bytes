@@ -13,6 +13,14 @@ const config: ExpoConfig = {
   web: { output: 'static' },
   plugins: [
     'expo-router', 'expo-secure-store', 'expo-localization',
+    ['expo-font', {
+      android: { fonts: [{ fontFamily: 'Inter', fontDefinitions: [
+        { path: './node_modules/@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf', weight: 400 },
+        { path: './node_modules/@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf', weight: 500 },
+        { path: './node_modules/@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf', weight: 600 },
+        { path: './node_modules/@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf', weight: 700 },
+      ] }] },
+    }],
     ['expo-splash-screen', {
       image: './assets/brand/gudtour-logo.png', imageWidth: 200, resizeMode: 'contain',
       backgroundColor: '#F6F7F4',

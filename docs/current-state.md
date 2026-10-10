@@ -77,3 +77,9 @@ Jev periodic reassessment is **60 minutes** per eligible community incident; new
 Use [TODO.md](../TODO.md) for task IDs, [acceptance-ledger.md](acceptance-ledger.md) for pending scenarios, and [context.md](../context.md) for agent continuity. Historical progress notes remain dated evidence rather than current-state claims.
 
 2026-10-10 UI hotfix: native runtime lacks Intl.RelativeTimeFormat; relative timestamps now use localized templates without that API. Missing-Intl regression passes; native populated-screen retry remains pending.
+
+
+## 2026-10-10 — Android typography and nearby chat request
+- Android shared text and inputs now use bundled Inter regular/medium/semibold/bold through the Expo 57 font plugin; iOS keeps native system typography. Inter by Rasmus Andersson is distributed under SIL OFL 1.1; license bundled with @expo-google-fonts/inter (LICENSE_FONT).
+- Verification: strict TypeScript, lint and 280 tests / 46 files pass. Local signed production APK build running (exec42630), ignored output tmp/release-artifacts/GudTour-0.1.0-rc.4.apk and private log tmp/inter-local-build.log. Prior no-font build exec67777 canceled. No GitHub publication authorized. Artifact verification pending.
+- User now explicitly authorizes nearby proximity chat without moderation. This overrides prior moderation/report/appeal requirements; implement authenticated geographic chat, not moderation machinery. Existing private profile/location and official-emergency boundaries remain.
