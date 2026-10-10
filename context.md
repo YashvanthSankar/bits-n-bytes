@@ -1,5 +1,11 @@
 # Latest handoff — 2026-10-10
 
+## 2026-10-10 — returning-user startup
+- StartupGate waits for language/preferences/auth/profile hydration before choosing the first screen. Existing authenticated profiles migrate automatically to completed setup and quietly refresh GPS plus backend location admission, then open Map for tourist and authority accounts.
+- Only a setup-completed flag is persisted in existing secure preference storage; precise location remains in memory and must pass the existing fresh India/accuracy checks. First-time users retain onboarding; completed users needing authentication go to Login. Explicit language changes remain available via the location screen and Settings.
+- Unmounted restoration attempts cannot navigate or restore a fix. Permission denial or failed GPS/India admission returns to location recovery. Sign-out remains explicit and is not undone by restored auth state.
+- Verification: strict TypeScript/lint and 274 tests/45 files pass. Added eight startup cases and two persistence/error cases; existing location/logout tests pass. Authenticated physical cold-start acceptance remains pending. UI checkpoint 8252dde is pushed; no APK/build/upload requested or started. Metro local preview remains on port8081 (exec23133); preserve independent web/.
+
 ## 2026-10-10 — compact mobile UI upgrade
 - Replaced the unimplemented Chat tab with SACHET, removed duplicate shortcuts, and added a minimize/expand control to the map welcome panel. Active emergency banners remain visible when minimized. SACHET now has one tab route; detail deep links remain available.
 - Added vector icons to shared buttons, semantic icons to core actions and hazard choices, compact incident status/time/witness rows, localized relative timestamps, and grouped incident detail cards with an accessible evidence disclosure. Verification, emergency state, stale assessments, DEMO and approximate-area cautions remain distinct.

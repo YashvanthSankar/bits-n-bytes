@@ -18,7 +18,7 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 | Android | rc.1 public but reported map initialization crash. rc.2 local production APK built/verified with fix, versionCode 4; physical retest pending. |
 | Distribution | rc.2 GitHub upload STOPPED by user; draft checksum only. No active upload/build. iOS simulator uses dev; APK uses prod. Physical iOS delivery pending. |
 | Not implemented | Nearby chat/moderation and full recovery/privacy/retention/deletion. Contacts explicitly deferred. |
-| Verification |263 tests / 43 files, strict TypeScript/lint and local release build pass. These do not establish full native acceptance. |
+| Verification |274 tests / 45 files, strict TypeScript/lint and local release build pass. These do not establish full native acceptance. |
 | DEMO Jev evidence notices | Implemented backend/UI test workflow: active DEMO authority creates a contained circle notice with a two-hour default/24-hour cap, review and early withdrawal. It is stored outside official SACHET records and enters only overlapping DEMO incident evidence. Physical two-account acceptance remains pending. |
 
 ### Requested UI checkpoint — 2026-10-10
@@ -26,7 +26,7 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 - [x] UI01 Compact/collapsible map panel and SACHET tab replacing Chat; duplicate shortcuts removed. Simulator route/tab smoke check and TypeScript/lint pass.
 - [x] UI02 Icon buttons/hazard choices and compact incident/shelter metadata with relative timestamps. TypeScript/lint and existing workflow tests pass; populated native visual matrix remains pending.
 - [x] UI03 Group incident detail facts and disclose secondary assessment evidence. Disclosure regression plus existing submission tests pass; full suite 264 tests/43 files.
-- [ ] UI04 Remember completed setup and open returning users on the map, preserving fresh permission/geography checks.
+- [x] UI04 Remember completed setup and open returning users on the map after quiet fresh permission/geography checks. Startup/persistence regression checks plus strict TypeScript/lint and 274 tests/45 files pass; authenticated physical cold-start acceptance pending.
 
 ### Next executable work
 

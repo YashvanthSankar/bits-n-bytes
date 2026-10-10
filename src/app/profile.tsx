@@ -1,3 +1,4 @@
+import { rememberCompletedSetup } from '../services/onboarding';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 import { randomUUID } from 'expo-crypto';
@@ -29,6 +30,7 @@ export default function ProfileScreen() {
     setBusy(true); setError(null);
     try {
       await save({ requestId: randomUUID(), expectedRevision: own?.profile?.revision ?? 0, name, language, ...(blood.trim() ? { bloodGroup: blood.trim().toUpperCase() } : {}), ...((contactName.trim() || phone.trim()) ? { emergencyContact: { name: contactName.trim(), phone: phone.trim() } } : {}), stepFreeNeeded: stepFree });
+      await rememberCompletedSetup();
       router.replace('/map');
     } catch (err) { setError(errorTranslationKey(err)); } finally { setBusy(false); }
   }

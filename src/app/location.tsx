@@ -60,7 +60,7 @@ export default function LocationScreen() {
   }, [ready, signedOut]));
   return <Screen footer={<>
     <ActionButton title={t('locationAction')} busy={busy} disabled={isLoading || (!signedOut && isAuthenticated && own === undefined)} onPress={() => void locate()} />
-    <ActionButton title={t('languageTitle')} variant="secondary" disabled={busy} onPress={() => router.replace('/')} />
+    <ActionButton title={t('languageTitle')} variant="secondary" disabled={busy} onPress={() => router.replace({pathname:'/',params:{language:'1'}})} />
   </>}><View style={{ paddingTop: spacing.page, gap: spacing.lg }}>
     <AppText variant="title" accessibilityRole="header">{t('locationTitle')}</AppText>
     <AppText>{t('locationDescription')}</AppText>

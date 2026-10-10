@@ -1,3 +1,5 @@
+import { StartupGate } from '../components/StartupGate';
+import { ReadBoundary } from '../components/ReadBoundary';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
@@ -9,7 +11,7 @@ import { languageNames } from '../i18n/resources';
 import { spacing } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
 
-export default function LanguageScreen() {
+function LanguageScreen() {
   const { t } = useTranslation(); const theme = useTheme();
   const { language, ready, changeLanguage } = useLanguage();
   const [busy, setBusy] = useState(false); const [error, setError] = useState(false);
@@ -19,7 +21,7 @@ export default function LanguageScreen() {
   }
   return <Screen footer={<>
     {error && <AppText accessibilityLiveRegion="polite" style={{ color: theme.danger }}>{t('saveError')}</AppText>}
-    <ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => router.push('/location')} />
+    <ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => { setBusy(true); void changeLanguage(language).then(() => router.push('/location')).catch(() => setError(true)).finally(() => setBusy(false)); }} />
   </>}>
     <View style={{ paddingTop: spacing.section, gap: spacing.sm }}>
       <AppText variant="heading" style={{ color: theme.accent }}>GudTour</AppText>
@@ -36,3 +38,5 @@ export default function LanguageScreen() {
     </View>}
   </Screen>;
 }
+
+export default function EntryScreen() { return <ReadBoundary><StartupGate><LanguageScreen /></StartupGate></ReadBoundary>; }
