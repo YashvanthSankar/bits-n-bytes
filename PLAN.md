@@ -1,3 +1,5 @@
+> Assessment cadence override — 2026-10-10: periodic Jev reassessment is now hourly (60 minutes). New/updated observations still queue immediately; outage retries remain 1/5/15 minutes.
+
 > Reporting clarification — 2026-10-10: normal Report incident records a personal COMMUNITY observation for every account, including authorities. It never grants official verification from account membership. Official publication is an explicit authority-workspace action with audience and jurisdiction authorization.
 
 > Shelter override — 2026-10-10: user explicitly requested raw nearest listed shelter by straight-line distance, without eligibility filtering. Preserve visible status, age, source, DEMO attribution and official instructions. Older suitable-shelter selection/exclusion requirements below are superseded for the current implementation. DEMO shelters appear only with explicit DEMO opt-in.

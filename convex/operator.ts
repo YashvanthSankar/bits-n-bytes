@@ -1,6 +1,7 @@
 import geohash from 'ngeohash';
 import { internalMutation, internalQuery } from './_generated/server';
 import { v } from 'convex/values';
+import { internal } from './_generated/api';
 import { reject } from './lib/errors';
 import { authorityEmails } from './lib/authorityAllowlist';
 
@@ -77,3 +78,21 @@ export const repairOfficialMapIndex = internalMutation({args:{incidentId:v.id('i
  for(const precision of [4,5])if(!entries.some(e=>e.precision===precision))await ctx.db.insert('geoPoints',{kind:'INCIDENT',entityId:incident._id,precision,cell:geohash.encode(geometry.area.center.latitude,geometry.area.center.longitude,precision),point:geometry.area.center,active:incident.lifecycle==='ACTIVE',observedAt:incident.lastObservedAt});
  return {indexed:true};
 }});
+
+
+/** Trusted CLI only; reset the current UTC-day reservation counter, never provider billing. */
+export const resetTodayJevBudget = internalMutation({ args: {}, handler: async ctx => {
+  const now = Date.now(), day = new Date(now).toISOString().slice(0, 10);
+  const usage = await ctx.db.query('providerUsage').withIndex('by_provider_day', q => q.eq('provider', 'JEV').eq('day', day)).unique();
+  const previousCalls = usage?.calls ?? 0;
+  if (usage) await ctx.db.patch(usage._id, { calls: 0 });
+  const pending = await ctx.db.query('assessmentJobs').withIndex('by_status_dueAt', q => q.eq('status', 'PENDING')).take(100);
+  let resumed = 0;
+  for (const job of pending) if (job.lastError === 'MODEL_DAILY_LIMIT') {
+    await ctx.db.patch(job._id, { dueAt: now, lastError: undefined });
+    await ctx.scheduler.runAfter(0, internal.assessments.run, { jobId: job._id });
+    resumed++;
+  }
+  await ctx.db.insert('auditEvents', { actorKind:'OPERATOR', objectKind:'PROVIDER_USAGE', objectId:'JEV:'+day, revision:now, action:'RESET_DAILY_BUDGET', reason:'Requested testing reset; previous reserved calls: '+previousCalls, createdAt:now });
+  return { day, previousCalls, calls: 0, resumed };
+} });

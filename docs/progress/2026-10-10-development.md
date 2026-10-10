@@ -308,3 +308,10 @@ Final verification:254tests/41files, strictTypeScript/lint and git diff check pa
 - 256 tests/41 files, strict TypeScript and lint pass. Development and production backend deployments running in exec30458; logs tmp/normal-authority-report-dev.log and tmp/normal-authority-report-prod.log. Installed APK needs no rebuild for this backend-only fix. Android after-location crash remains a separate unresolved report awaiting device crash logs.
 
 Deployment verified: development basic-newt-690 ready14:52:42 IST; production jovial-eagle-875 deployment completed successfully with schema validation. Backend-only normal-report fix is live for existing APK clients. Physical-device retry remains user acceptance.
+
+
+## 2026-10-10 — hourly assessment, requested budget reset and reports text fix
+- User changed periodic Jev assessment from5 to60minutes; policy now HOUR. Observation-triggered immediate assessments and1/5/15-minute transient retry unchanged. Dev/prod deployments both succeeded. Already scheduled work may run once before its next hourly due time.
+- User requested today's budget reset. Trusted internal operator.resetTodayJevBudget resets only today's UTC JEV reservation row and resumes MODEL_DAILY_LIMIT pending jobs, with operator audit record. Dev reset100→0 and resumed3jobs; follow-up all3DONE with no lastError, usage6/100 after two calls each. Production unused counter not reset. Historical/provider billing usage is not erased; AccuWeather unaffected by reset.
+- Fixed authority reports React Native raw-text error: removed inline JSX space between load-more conditional elements. Simulator uses dev basic-newt-690; GitHubAPK uses prod jovial-eagle-875. Reload Metro simulator for frontend correction; existing release APK does not contain this UI change and would need a new build to acquire it.
+-257tests/41files, strictTypeScript/lint pass. Added regression for hourly next due time and reset preserving other providers/historical usage. No physical-device acceptance claim. Existing APK after-location crash remains unresolved awaiting adb logs. Preserve independentweb/.

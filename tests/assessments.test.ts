@@ -75,3 +75,24 @@ it('exposes only curated evidence to an admitted tourist and enforces DEMO conse
  await t.run(ctx=>ctx.db.patch(incidentId,{evidenceGeneration:2}));expect((await actor.query(api.incidents.assessment,{incidentId})).latest!.currentEvidence).toBe(false);
  await t.run(async ctx=>{const profile=(await ctx.db.query('profiles').withIndex('by_user',q=>q.eq('userId',userId)).unique())!;await ctx.db.patch(profile._id,{demoEnabled:false});});await expect(actor.query(api.incidents.assessment,{incidentId})).rejects.toThrow();
 });
+
+it('schedules successful assessments an hour ahead and resets only today’s Jev reservations', async () => {
+ const {t,incidentId,...ids}=await fixture();
+ const before=Date.now();
+ await t.mutation(internal.assessments.apply,{...ids,runId:1,result});
+ const incident=await t.run(ctx=>ctx.db.get(incidentId));
+ expect(incident!.nextAssessmentAt).toBeGreaterThanOrEqual(before+60*60_000);
+ expect(incident!.nextAssessmentAt).toBeLessThanOrEqual(Date.now()+60*60_000);
+ const day=new Date().toISOString().slice(0,10);
+ await t.run(async ctx=>{
+  await ctx.db.insert('providerUsage',{provider:'JEV',day,calls:100});
+  await ctx.db.insert('providerUsage',{provider:'JEV',day:'2026-01-01',calls:70});
+  await ctx.db.insert('providerUsage',{provider:'ACCUWEATHER',day,calls:39});
+  await ctx.db.patch(ids.jobId,{status:'PENDING',lastError:'MODEL_DAILY_LIMIT',dueAt:Date.now()+900_000});
+ });
+ expect(await t.mutation(internal.operator.resetTodayJevBudget,{})).toMatchObject({day,previousCalls:100,calls:0,resumed:1});
+ const usage=await t.run(ctx=>ctx.db.query('providerUsage').collect());
+ expect(usage.map(x=>[x.provider,x.day,x.calls])).toEqual(expect.arrayContaining([['JEV',day,0],['JEV','2026-01-01',70],['ACCUWEATHER',day,39]]));
+ expect(await t.run(ctx=>ctx.db.get(ids.jobId))).toMatchObject({status:'PENDING'});
+ expect((await t.run(ctx=>ctx.db.get(ids.jobId)))!.lastError).toBeUndefined();
+});

@@ -27,7 +27,7 @@ export const POLICY = {
   maxObservationAgeMs: DAY,
   corroboratedWitnessCount: 2,
   qualificationProbability: 0.9,
-  assessmentIntervalMs: 5 * MINUTE,
+  assessmentIntervalMs: HOUR,
   assessmentRetryMs: [MINUTE, 5 * MINUTE, 15 * MINUTE] as readonly number[],
   feedIntervalMs: 2 * MINUTE,
   feedStaleMs: 10 * MINUTE,

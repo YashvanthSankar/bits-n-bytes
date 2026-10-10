@@ -22,7 +22,7 @@ function Reports(){
     {report.assessment&&<AppText variant="caption">{t('assessedAt')}: {new Date(report.assessment.assessedAt).toLocaleString(i18n.language)}</AppText>}
     {report.reviewNeeded&&<AppText style={{color:theme.warning}}>{t('reviewRequested')}</AppText>}
     <ActionButton title={t('viewDecisionContext')} variant="secondary" onPress={()=>router.push({pathname:'/authority/reports/[id]',params:{id:report.id,jurisdictionId:scope.id,audience}})}/>
-   </View>)}{status==='CanLoadMore'&&<ActionButton title={t('loadMore')} variant="secondary" onPress={()=>loadMore(15)}/>} {status==='LoadingMore'&&<LoadingState/>}
+   </View>)}{status==='CanLoadMore'&&<ActionButton title={t('loadMore')} variant="secondary" onPress={()=>loadMore(15)}/>}{status==='LoadingMore'&&<LoadingState/>}
   </>}
  </Screen>;
 }

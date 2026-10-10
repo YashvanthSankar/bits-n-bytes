@@ -1,3 +1,5 @@
+> Assessment cadence override — 2026-10-10: periodic Jev reassessment is now hourly (60 minutes). New/updated observations still queue immediately; outage retries remain 1/5/15 minutes.
+
 > Reporting clarification — 2026-10-10: normal Report incident records a personal COMMUNITY observation for every account, including authorities. It never grants official verification from account membership. Official publication is an explicit authority-workspace action with audience and jurisdiction authorization.
 
 > Shelter override — 2026-10-10: user explicitly requested raw nearest listed shelter by straight-line distance, without eligibility filtering. Preserve visible status, age, source, DEMO attribution and official instructions. Older suitable-shelter selection/exclusion requirements below are superseded for the current implementation. DEMO shelters appear only with explicit DEMO opt-in.
@@ -424,7 +426,7 @@ Snapshot includes hazard/area/locality/evaluation time; distinct recent observat
 
 Bound evidence without silently distorting counts. Compute counts over all eligible indexed observations; include bounded representative recent samples and state that truncation occurred. Prioritize newest, distinct, geographically relevant samples rather than duplicate descriptions. External descriptions and notice text are untrusted evidence; they cannot redefine decision instructions.
 
-Canonical evidence hash excludes fetch-only noise when content is unchanged, but includes observation ages/time-window generation, source material revisions, effective/expiry changes, policy version and authority control. A five-minute reassessment can legitimately change freshness even when source text is identical.
+Canonical evidence hash excludes fetch-only noise when content is unchanged, but includes observation ages/time-window generation, source material revisions, effective/expiry changes, policy version and authority control. A hourly reassessment can legitimately change freshness even when source text is identical.
 
 ### 13.3 Bounded judgment design
 
@@ -454,7 +456,7 @@ Severity is separate. Proposed presentation default: label Unknown when the seve
 
 Claim job → build snapshot → external evaluations → validate response → apply internal mutation if incident/control/evidence generations still match. The apply mutation stores result and either publishes/coalesces emergency, records valid non-qualification/insufficient evidence, or marks invalid/pending. Superseded results remain diagnostic only.
 
-Use a proposed 15-second per-call deadline. Missing key/401 is configuration-pending, invalid rubric/422 is a development error, rate-limit/overload/timeout retries follow job policy. Persist last error/time and next retry; do not retry malformed fixed requests forever. Reassess on new observations, withdrawals/moderation, source/weather changes and five-minute target. Unchanged acceptance never replays a first alert.
+Use a proposed 15-second per-call deadline. Missing key/401 is configuration-pending, invalid rubric/422 is a development error, rate-limit/overload/timeout retries follow job policy. Persist last error/time and next retry; do not retry malformed fixed requests forever. Reassess on new observations, withdrawals/moderation, source/weather changes and hourly target. Unchanged acceptance never replays a first alert.
 
 Authority suppression blocks app qualification publication until its deadline, with reason visible. New Critical result or official emergency flags urgent review; genuine official emergency publication still proceeds. A valid new NOT_QUALIFIED on an existing emergency sets authority-review-needed but does not cancel it. Jev has no mutation permission of its own.
 
@@ -572,7 +574,7 @@ Reconnection order: recover session → obtain eligible location where permissio
 | Worker | Trigger/cadence | Recovery and boundary |
 | --- | --- | --- |
 | SACHET ingestion | Two-minute target per enabled feed | Per-feed backoff and last-success time; outage is not empty data |
-| Assessment | Evidence events + five-minute candidate target | Coalesce generation keys; 1/5/15-minute outage retry then 15-minute intervals |
+| Assessment | Evidence events + hourly candidate target | Coalesce generation keys; 1/5/15-minute outage retry then 15-minute intervals |
 | Weather | Due incident/location-key context | Shared allowed cache and provider budget; unavailable fields remain unknown |
 | Translation | New original/language revision | Hash/language dedup, exact-version apply and original fallback |
 | Targeting | Publication, relevant revision, location entry | Paginated idempotent expansion and latest-location check |
