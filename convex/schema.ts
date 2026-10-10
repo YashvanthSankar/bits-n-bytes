@@ -10,12 +10,14 @@ export default defineSchema({
     bloodGroup: v.optional(v.string()), emergencyContact: v.optional(v.object({ name: v.string(), phone: v.string() })),
     stepFreeNeeded: v.boolean(), demoEnabled: v.boolean(), onboardingCompletedAt: v.number(), revision: v.number(),
   }).index('by_user', ['userId']),
-  agencies: defineTable({ name: v.string(), sourceLabel: v.string(), active: v.boolean(), audience: types.audience }).index('by_active', ['active']),
-  jurisdictions: defineTable({ agencyId: v.id('agencies'), name: v.string(), geometryId: v.id('geometries'), coverageVersion: v.number(), active: v.boolean() }).index('by_agency', ['agencyId']),
+  agencies: defineTable({ name: v.string(), sourceLabel: v.string(), active: v.boolean(), audience: types.audience, configKey: v.optional(v.string()) }).index('by_active', ['active']).index('by_configKey', ['configKey']),
+  jurisdictions: defineTable({ agencyId: v.id('agencies'), name: v.string(), geometryId: v.id('geometries'), coverageVersion: v.number(), active: v.boolean(), configKey: v.optional(v.string()) }).index('by_agency', ['agencyId']).index('by_configKey', ['configKey']),
   authorityMemberships: defineTable({
     userId: v.id('users'), agencyId: v.id('agencies'), jurisdictionIds: v.array(v.id('jurisdictions')),
     status: v.union(v.literal('ACTIVE'), v.literal('REVOKED')), approvedBy: v.string(), approvedAt: v.number(), revokedAt: v.optional(v.number()),
-  }).index('by_user_status', ['userId', 'status']).index('by_agency', ['agencyId']),
+    approvalSource: v.optional(v.union(v.literal('OPERATOR'), v.literal('EMAIL_ALLOWLIST'))), allowlistEmail: v.optional(v.string()),
+    revocationSource: v.optional(v.union(v.literal('OPERATOR'), v.literal('EMAIL_ALLOWLIST'))),
+  }).index('by_user_status', ['userId', 'status']).index('by_user_source_status', ['userId', 'approvalSource', 'status']).index('by_agency', ['agencyId']),
   locations: defineTable({
     userId: v.id('users'), point: types.point, observedAt: v.number(), receivedAt: v.number(), accuracyM: v.number(), countryStatus: types.country,
     foregroundPermission: types.permission, backgroundPermission: types.permission, source: v.union(v.literal('FOREGROUND'), v.literal('BACKGROUND')),
@@ -94,7 +96,7 @@ export default defineSchema({
     statusConfirmedAt: v.number(), capacity: v.union(v.number(), v.null()), remaining: v.union(v.number(), v.null()), accessibility: types.accessibility,
     facilities: v.array(v.string()), phone: v.string(), accessInstruction: v.string(), accessRestricted: v.boolean(), revision: v.number(),
     archivedAt: v.optional(v.number()), audience: types.audience,
-  }).index('by_jurisdiction_status', ['jurisdictionId', 'status']).index('by_audience_archivedAt', ['audience', 'archivedAt']).index('by_statusConfirmedAt', ['statusConfirmedAt']),
+  }).index('by_jurisdiction_status', ['jurisdictionId', 'status']).index('by_jurisdiction_archivedAt', ['jurisdictionId', 'archivedAt']).index('by_audience_archivedAt', ['audience', 'archivedAt']).index('by_statusConfirmedAt', ['statusConfirmedAt']),
   contacts: defineTable({
     agencyId: v.id('agencies'), jurisdictionId: v.id('jurisdictions'), name: v.string(), purpose: v.string(), phone: v.string(), source: v.string(),
     level: v.union(v.literal('LOCAL'), v.literal('STATE'), v.literal('NATIONAL')), confirmedAt: v.number(), revision: v.number(), archivedAt: v.optional(v.number()), audience: types.audience,

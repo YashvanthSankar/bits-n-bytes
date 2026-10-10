@@ -22,6 +22,7 @@ function Shelters() {
         {shelter.stale && <AppText style={{color:theme.warning}}>{t('stale')}</AppText>}
         {shelter.accessInstruction && <AppText>{shelter.accessInstruction}</AppText>}
         {shelter.phone && <AppText>{shelter.phone}</AppText>}
+        <ActionButton title={t('shelterDetails')} variant="secondary" onPress={()=>router.push({pathname:'/shelter/[id]',params:{id:shelter.id}})} />
       </View>)}
     </>}
   </Screen>;

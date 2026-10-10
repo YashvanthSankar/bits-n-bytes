@@ -18,6 +18,8 @@ export function errorTranslationKey(error: unknown): string {
     case 'INVALID_INPUT': return 'inputError';
     case 'INCIDENT_CLOSED': return 'incidentClosed';
     case 'OBSERVATION_TOO_FAR': return 'observationTooFar';
+    case 'AUTHORITY_REQUIRED': return 'authorityDenied';
+    case 'JURISDICTION_DENIED': return 'jurisdictionDenied';
     default: return 'serviceUnavailable';
   }
 }

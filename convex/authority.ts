@@ -1,8 +1,25 @@
 import { query } from './_generated/server';
 import { v } from 'convex/values';
-import { requireAuthorityForCircle, requireUser } from './lib/authorization';
+import { activeMemberships, requireAuthorityForCircle, requireIndiaAccess, requireUser } from './lib/authorization';
 import { reject } from './lib/errors';
 import { freshIncidentDTO } from './lib/publicModels';
+
+/** Own approved scope labels only; never returns tourist positions or membership operators. */
+export const scopes = query({ args: {}, handler: async ctx => {
+  const { userId } = await requireIndiaAccess(ctx);
+  const memberships = await activeMemberships(ctx, userId);
+  if (!memberships.length) return reject('AUTHORITY_REQUIRED');
+  const result = new Map<string, { id: typeof memberships[number]['membership']['jurisdictionIds'][number]; name: string; agencyName: string; issuer: string; audience: 'LIVE' | 'DEMO' }>();
+  for (const { membership, agency } of memberships) {
+    if (membership.jurisdictionIds.length > 32) return reject('CONFIGURATION_REQUIRED');
+    for (const id of membership.jurisdictionIds) {
+      if (result.has(id)) continue;
+      const jurisdiction = await ctx.db.get(id);
+      if (jurisdiction?.active && jurisdiction.agencyId === agency._id) result.set(id, { id, name: jurisdiction.name, agencyName: agency.name, issuer: agency.sourceLabel, audience: agency.audience });
+    }
+  }
+  return [...result.values()];
+} });
 
 export const reviewIncident = query({ args: { incidentId: v.id('incidents') }, handler: async (ctx, args) => {
   await requireUser(ctx);

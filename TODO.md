@@ -173,10 +173,10 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 - [ ] N04 Atomic alert/source/revision publication with expansion job, then paginated deduplicated recipient jobs; no logical duplicates from retries/merge aliases. Owner A.
 - [ ] A05 Implement timed suppression (30-minute default, two-hour maximum), urgent-review flags and resumption. Owner A.
 - [ ] A06 Source-specific withdrawal/resolution/false-alert correction; reject after alert requires explicit correction atomically. Owner A.
-- [ ] A07 Shelter maintenance: open/closed/full/unknown, fresh confirmation, capacity, accessibility, facilities, contact and archive. Owners A/D.
+- [ ] A07 Shelter maintenance: open/closed/full/unknown, fresh confirmation, capacity, accessibility, facilities, contact and archive. Owners A/D. Backend and authority forms implemented; 14 backend + 5 form checks pass (09:55). Approved-account native workflow remains pending; no LIVE shelter was fabricated.
 - [ ] A08 Contact maintenance with jurisdiction/source and over-30-day age label. Owners A/D.
 - [ ] A09 Select nearest eligible open shelter: <=2-hour confirmation, <=50 km, outside known hazard areas, instruction/accessibility precedence. Owner A.
-- [ ] A10 Shelter list/detail shows excluded reasons, status ages and distance; external Google Maps/copy/dialer fallbacks. Owner B.
+- [ ] A10 Shelter list/detail shows excluded reasons, status ages and distance; external Google Maps/copy/dialer fallbacks. Owner B. Detail/actions implemented and backend/component checks pass (142 total tests at 10:00); iOS clipboard rebuild running. Known status/access limitations are shown; full hazard-based recommendation exclusions depend on A09 and remain pending.
 - [ ] A11 Audit authority changes; reject revoked/cross-jurisdiction access and stale concurrent writes. Owner A, D verifies.
 
 **Done when:** Publish with Jev unavailable: the official alert/source/revision and expansion job commit immediately. Reject a cross-jurisdiction edit. Demonstrate stay-put, no eligible shelter, and full/stale/unsafe shelter exclusions. Delivery becomes visible in M5.
@@ -317,3 +317,14 @@ Downloaded basemaps, offline routing, automatically queued offline reports and a
 For each task record: **task ID → behavior demonstrated → check/result → build/commit/device → blocker or limitation → next action**. Record provider access, model decision quality, server publication, push ticket/receipt and human app-open as different claims. A failed milestone stays open.
 
 Do not commit keys, .env.local or private tourist data. Do not lower the Jev threshold, fake weather, bypass location rules or relabel fixtures to make a demonstration pass. Only an explicit user decision changes the core product scope.
+
+### Authority email configuration checkpoint — 2026-10-10 10:12 IST
+
+- [x] Add backend-only comma-separated verified Google authority emails, audited scoped synchronization, removal/revocation enforcement, login refresh and manual Settings refresh. Six new backend tests pass; complete suite 148 tests, strict TypeScript and lint pass. Configuration helper applied empty email list and isolated Chennai DEMO scope to Denoise Labs GudTour deployment. User adds their emails privately using docs/api-setup.md.
+- [ ] Approved-account iOS authority/shelter acceptance: pending user-provided allowlist emails and fresh Google sign-in. A07/A10 remain partial; hazard recommendation A09 is unfinished.
+
+### Session UX fixes — 2026-10-10 10:18 IST
+
+- [x] F11 Stop reactive profile updates from restarting “Stay informed nearby” GPS/navigation. Two component regression checks cover repeated query updates and explicit permission action.
+- [x] F12 Complete sign-out before clearing in-memory location; route to login without onboarding bounce. Settings ends with a red scrolling Sign out button (not pinned), retaining shared measured navbar clearance. Three component checks cover both logout entry points, ordering and storage failure. Actual user-device interaction remains to be rechecked.
+- A04/N04 backend publication progress: declarations.publish atomically stores original instruction/hash, attributed source, immutable revision and bounded union-area targeting job, bypassing Jev. Four backend tests cover exact retries, forbidden/invalid publication, concurrent sources and revision conflict. UI, updates/withdrawal and recipient worker remain unfinished; these composite tasks stay open.

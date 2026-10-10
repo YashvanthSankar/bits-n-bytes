@@ -136,3 +136,31 @@ Previous onboarding/API checkpoint `fb94df7` was committed and pushed to main.
 - Ordinary incident detail retains deliberate contribution access. Eligibility returns only a session-owned hasObservation boolean; existing contributors see Update my observation while other tourists see the first-contribution action. No private witness record is returned.
 - Added actual detail-component regression tests for completion exit, deliberate later update and another tourist's contribution. Backend tests assert the own-observation boolean differs between authenticated authors. Six locale dictionaries include the completion/update labels; human linguistic review remains pending.
 - Verification: TypeScript, lint and 114 tests/14 files passed; iOS export passed; Convex development deployed at 09:41:45. Actual iOS capture tmp/ios-observation-saved-fixed.png shows the saved screen with only Back to map. This display check opened the receipt route explicitly against an existing incident; no new LIVE report was fabricated and it does not replace the pending two-account native acceptance gate.
+
+### Authority shelter maintenance — A07 in progress, 09:55 IST
+
+- Submission-loop checkpoint 4a24fb1 is committed and pushed. Shelter maintenance adds exact assigned-jurisdiction authorization, scope labels, bounded paginated management queries and atomic save/archive commands with revision checks, idempotent receipts and audit reasons.
+- Shelter status/capacity/availability/location changes require explicit actual confirmation. Unrelated edits preserve statusConfirmedAt. Unknown capacity stays null; contradictory or malformed capacity is rejected. Archives retain records/audits and remove tourist indexes; inactive agencies no longer supply active tourist listings.
+- Settings exposes an authority workspace only for server-approved membership. New authority routes support assigned-area selection, shelter create/edit, archive confirmation and deliberate review of a concurrent server version while preserving draft fields. Unknown transport freezes and retries the original command.
+- TypeScript, lint and 133 tests/16 files pass, including 14 shelter backend checks and 5 form interaction tests. Six locale label sets are present; human review pending. Approved-account native management acceptance remains pending, so A07 is not checked complete.
+
+### Tourist shelter details — A10 in progress, 10:00 IST
+
+- Protected public shelter detail adds source, address/coordinates, status/capacity/accessibility/facilities/contact, status confirmation age and distance/location freshness. Known closed/full/unknown/stale/access-restriction/step-free limitations are derived from maintained facts and the requesting user's private preference. Full hazard screening/recommendations remain unavailable and are stated honestly; this does not complete A09.
+- Google Maps uses a universal destination URL, falling back to the browser without requiring the Google Maps app or another API key. Directions/calling revalidate the selected record and stop for revision changes or removed listings. Copy uses the visible address/coordinates even if live networking is unavailable. External routes are explicitly unverified; opening the dialer does not claim a successful call.
+- Added SDK-compatible expo-clipboard through Expo install. iOS CNG prebuild completed; native compile/install is running in session 84937, log tmp/ios-shelter-native-build.log. Do not claim clipboard works in the old binary.
+- TypeScript/lint and 142 tests/18 files pass, including backend detail privacy/limitations and real detail-component revalidation, fallback copying and dialer tests. Native listed-shelter/approved-authority interaction remains pending; no fake LIVE data was inserted.
+
+## 10:12 IST — configured authority emails
+
+Implemented the requested backend comma-separated AUTHORITY_EMAILS setting with exact verified Google OAuth identity matching, audited scope-bound membership synchronization, immediate configuration checks and explicit operator-revocation precedence. Client syncs on sign-in/session restore and offers Settings refresh. The private configuration helper successfully provisioned/reused Chennai DEMO scope and applied an empty email list; no real account was granted authority and no LIVE records were fabricated. Six allowlist backend tests pass; full verification reached 148 tests/19 files, strict TypeScript and lint. Setup instructions and controlling plans updated. Native clipboard build/install completed successfully earlier; approved-account native acceptance remains pending actual configured emails.
+
+### Authority allowlist activated
+
+Applied the user's three supplied Google account emails privately to the existing Chennai DEMO scope. Configuration command succeeded and backend read-back matched all three local authority variables. Users must authenticate/refresh access before membership synchronization; no claim of completed sign-in or authority UI acceptance. No email list or credential added to tracked documentation.
+
+## 10:18 IST — session loop fixes and official publication foundation
+
+Fixed location auto-restore dependency loop: reactive profile updates no longer trigger repeated GPS/navigation; automatic permission check runs only when readiness changes. Sign-out now awaits auth token removal before clearing location, preventing map redirect during live authentication. Settings exposes red Sign out at the end of its scroll, not in a pinned footer, with the shared measured navbar inset. Existing profile logout ordering also fixed. Five component regression tests added; total157/22 files plus strict TypeScript and lint pass. Native user interaction has not been automated or claimed.
+
+Added canonical declarations.publish with assigned jurisdiction/agency/audience checks, immutable exact original instructions, source-specific attributed records, revision concurrency, atomic alert revision and durable bounded union-area expansion job. Four backend tests pass. This is publication foundation; declaration editing/withdrawal, review UI, recipient worker and actual delivery remain unfinished. No LIVE or DEMO incident was published to the shared backend by these isolated tests.

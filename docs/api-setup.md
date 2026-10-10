@@ -36,3 +36,21 @@ Do not copy a developer gcloud refresh token into Convex. The Translation key is
 6. Keep backend-only keys out of EXPO_PUBLIC_ variables and app.config.extra. Never commit the private env file or paste it into a public issue.
 
 Native Google callback: `gudtour://auth/callback`. Registered Google Web OAuth redirect: `https://basic-newt-690.convex.site/api/auth/callback/google`. The existing GCP project's shared consent branding also applies to this client.
+
+## Authority emails — 2026-10-10 user decision
+
+Authority access is configured on the backend using a comma-separated exact email allowlist. In the ignored root `.env.local`, set:
+
+```dotenv
+AUTHORITY_EMAILS='first@example.com,second@example.com'
+```
+
+Then run from the repository root:
+
+```bash
+npm run authority:configure -- --demo
+```
+
+This provisions/reuses the clearly labeled **DEMO Chennai 50-km jurisdiction**, saves its `AUTHORITY_AGENCY_ID` and `AUTHORITY_JURISDICTION_IDS` privately, and applies all three settings to the selected Convex deployment. It does not grant LIVE government authority. For an operator-approved LIVE agency, set those two IDs explicitly and run `npm run authority:configure` without `--demo`.
+
+Sign in with the listed Google account. Existing accounts should sign out and sign in once so Google email verification is recorded. Access refreshes on login/session restoration; Settings → **Refresh account access** retries it while signed in. No app role picker is needed. Addresses match after trimming/lowercasing; plus-addresses and dots are not rewritten. Removing an address disables its configured authority privileges; refreshing records the revocation. Operator revocation cannot be undone by app refresh. Backend checks still enforce assigned area, agency, audience and current India access. The list is never shipped as an `EXPO_PUBLIC_` variable or committed.

@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
-import { AppState, Linking, View } from 'react-native';
+import { Linking, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../convex/_generated/api';
 import { ActionButton, AppText, Screen } from '../components/ui';
@@ -43,18 +43,18 @@ export default function LocationScreen() {
       } else setError(errorTranslationKey(err));
     } finally { running.current = false; setBusy(false); }
   }, [isAuthenticated, setFix, update, own, language, saveProfile]);
+  const locateRef = useRef(locate);
+  useEffect(() => { locateRef.current = locate; }, [locate]);
+  const ready = !isLoading && (!isAuthenticated || own !== undefined);
   useEffect(() => {
-    if (isLoading || (isAuthenticated && own === undefined)) return;
-    async function restore() {
-      try {
-        const permission = await Location.getForegroundPermissionsAsync();
-        if (permission.granted) await locate();
-      } catch { setError('serviceUnavailable'); }
-    }
-    void restore();
-    const subscription = AppState.addEventListener('change', state => { if (state === 'active') void restore(); });
-    return () => subscription.remove();
-  }, [isLoading, isAuthenticated, own, locate]);
+    if (!ready) return;
+    let active = true;
+    // Profile/location mutations update reactive queries. They must not restart GPS/navigation.
+    void Location.getForegroundPermissionsAsync().then(permission => {
+      if (active && permission.granted) return locateRef.current();
+    }).catch(() => { if (active) setError('serviceUnavailable'); });
+    return () => { active = false; };
+  }, [ready]);
   return <Screen footer={<>
     <ActionButton title={t('locationAction')} busy={busy} disabled={isLoading || (isAuthenticated && own === undefined)} onPress={() => void locate()} />
     <ActionButton title={t('languageTitle')} variant="secondary" disabled={busy} onPress={() => router.replace('/')} />

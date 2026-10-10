@@ -17,6 +17,7 @@
     "eslint-config-expo": "~57.0.2",
     "expo": "~57.0.27",
     "expo-blur": "~57.0.3",
+    "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.21",
     "expo-crypto": "~57.0.3",
     "expo-dev-client": "~57.0.19",
@@ -71,7 +72,8 @@
     "check": "npm run typecheck && npm run lint && npm test",
     "backend": "convex dev",
     "backend:check": "convex dev --once",
-    "export": "expo export --platform all"
+    "export": "expo export --platform all",
+    "authority:configure": "node scripts/configure-authority.mjs"
   },
   "private": true
 }

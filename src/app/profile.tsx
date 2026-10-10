@@ -33,8 +33,8 @@ export default function ProfileScreen() {
     } catch (err) { setError(errorTranslationKey(err)); } finally { setBusy(false); }
   }
   async function logout() {
-    setBusy(true); setFix(null);
-    try { await signOut(); router.replace('/'); } catch { setError('serviceUnavailable'); } finally { setBusy(false); }
+    setBusy(true); setError(null);
+    try { await signOut(); setFix(null); router.replace('/login'); } catch { setError('serviceUnavailable'); } finally { setBusy(false); }
   }
   if (isLoading || (isAuthenticated && own === undefined)) return <Screen><LoadingState /></Screen>;
   return <Screen footer={<>

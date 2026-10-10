@@ -154,3 +154,7 @@ Do not create a paid service, purchase an API plan, or deploy application code a
 ## 10. Remaining implementation inputs
 
 OpenCode Zen key deployment and remaining Jev contract/quality checks (connectivity passed); AccuWeather endpoint entitlement (key locally supplied); approved authority organizations/jurisdictions; initial shelter/contact data; dedicated Convex development/production deployments; authorized Google OAuth setup; Apple signing/EAS and judge distribution access; landing host. These are setup inputs, not reasons to reopen the chosen stack. Track them in TODO.md. The user authorized application implementation on 2026-10-10; unfinished acceptance checks remain pending.
+
+### Authority assignment update — 2026-10-10
+
+Backend-only `AUTHORITY_EMAILS` is a comma-separated list of exact verified Google account emails. Convex synchronizes audited scoped memberships using configured agency/jurisdiction IDs; tourist accounts cannot select authority roles. The setup helper defaults to isolated Chennai DEMO scope. See docs/api-setup.md for private environment setup and refresh instructions.

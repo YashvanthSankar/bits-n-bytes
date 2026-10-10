@@ -542,3 +542,7 @@ Reviewed 9 October 2026. These references inform capability boundaries, not clai
 - [NDMA SACHET CAP Feed page](https://sachet.ndma.gov.in/CapFeed) and [SACHET portal](https://sachet.ndma.gov.in/): official warning distribution and feed discovery. The plan requires actual published coverage, original notices, freshness, revisions and cancellations rather than state-name matching alone.
 
 No cited source establishes that the selected Jev cutoff, hazard radii, freshness intervals, or shelter freshness rule are operationally validated for emergencies. They are explicit prototype behavior defaults, to be changed only through a deliberate product revision.
+
+### Confirmed authority onboarding decision — 2026-10-10
+
+The user chose a backend comma-separated authority email allowlist. Verified Google accounts matching that list receive the configured scoped authority membership automatically; other users remain tourists. Agency/jurisdiction enforcement, audit history and DEMO/LIVE separation still apply. Email configuration and setup are documented in docs/api-setup.md.
