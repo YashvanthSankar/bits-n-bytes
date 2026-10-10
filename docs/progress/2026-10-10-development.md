@@ -28,3 +28,18 @@ Verification: npm run check passes typecheck/lint and 38 domain/resource tests. 
 Dependency review: patched @auth/core to 0.41.3. npm audit still reports 30 transitive/native-toolchain findings (11 moderate, 19 high), including Metro-related chains. Its suggested broad downgrades/SDK-major changes are incompatible with the chosen SDK and have not been forced. Development Metro is localhost-only. Compatibility-preserving remediation/release dependency audit remains pending.
 
 Review: foundation contracts match core behavior; original instructions and independent state dimensions preserved. Location route currently stops before app admission; no synthetic report or login is presented as working. Application acceptance scenarios remain pending. Credentials, .env.local, downloads, generated native builds and tmp diagnostics are excluded from Git.
+
+
+Batch 2 final verification: Expo Doctor 21/21; Google OAuth initiation returned HTTP 302 to accounts.google.com with PKCE and the correct team callback; public JWKS endpoint returned HTTP 200 with one signing key. Commit b4e1c22 was reviewed and pushed to origin/main.
+
+## Batch 3: F04, F05, F07
+
+Implemented the core identity, latest-location, authority/jurisdiction, incident/observation, geometry, idempotency, audit and precision-4/5 geographic index schema. Shelter/alert/job/chat tables will be added with their workflows rather than unused stubs. Candidate APIs cap pages at 100 and explicitly label them candidate pages; complete nearby area expansion is later incident-map work.
+
+Private profile/location queries accept no target user ID. Profiles cannot assign roles or demo access. Mutations derive the actor from the authenticated context, deduplicate a canonical SHA-256 payload and reject changed-key payloads/stale revisions. Initial onboarding requires a prior eligible country admission. Locations preserve observed time, maintain one latest row and remove targeting indexes for outside-India/ineligible updates; full location-triggered targeting and native consent/revocation work remain pending.
+
+Public incident DTOs explicitly include only public fields, excluding profiles, private observations, witness origins and device data. Approved active memberships derive authority status; agency inactivity and revocation remove access. Authority review checks the complete affected circle within its assigned jurisdiction and separates LIVE/DEMO agency access. Polygon authority commands and broader operational workflows are not exposed yet. Internal operator approval validates agency/jurisdiction associations and records approval/revocation audits; ordinary tourists cannot call a public approval endpoint.
+
+Verification: strict application and Convex typechecking, lint and 51 tests pass. Backend integration checks anonymous denial, wrong-account reads, role injection, required admission, stale/coarse/future fix rejection, retry/body conflicts, latest-location replay/outside-country handling, public DTO redaction, authority radius/scope/inactivity/revocation, demo isolation, bounded candidate pages and operator approval/audit. Deployed core schema/handlers to Denoise Labs development deployment basic-newt-690. These checks do not claim a real Google session or completed incident/alert workflow.
+
+User requested an open iOS simulator and frequent TODO updates. The live checkpoint table now distinguishes completed backend foundations from pending native workflows. The installed iOS app process is running; a new CLI launch is using 127.0.0.1 to match localhost-only Metro. Device Hub/CUA runtime capture remains problematic and visible UI is not yet verified.
