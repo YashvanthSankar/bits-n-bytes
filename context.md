@@ -72,6 +72,11 @@ Private .env.local is ignored, mode 600. Do not quote values. docs/api-setup.md 
 - The record is explicitly DEMO authority-created evidence, not NDMA/SACHET. It stays out of `officialNotices`, source freshness and LIVE incidents/users, and cannot publish an alert itself. Evidence construction includes only active overlapping DEMO notices for DEMO incidents; Jev still applies its normal qualification rules.
 - Strict TypeScript/lint and 263 automated tests/43 files pass; Convex functions/schema were deployed to the selected development target. Physical two-account DEMO acceptance remains required before claiming device verification.
 
+### 2026-10-10 development authority configuration repair
+
+- The Expo-connected development deployment had an allowlisted email but no configured authority agency/jurisdiction values and no agency/jurisdiction records, causing `authorityAccess.sync` to return `CONFIGURATION_REQUIRED`.
+- Seeded the idempotent repository DEMO Chennai authority scope on that deployment and set its active DEMO agency/jurisdiction configuration privately. One allowlisted, verified Google account is present; it has no membership until the user taps **Settings → Refresh account access** (or signs in again). No LIVE authority or emergency was created.
+
 ### 2026-10-10 Android hotfix follow-up
 
 - Pulled `origin/main` through `c37efd0`. The included Android map fix gates native map padding and camera calls on `onMapReady`; 259 tests/42 files, strict TypeScript and lint passed after the pull.

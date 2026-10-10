@@ -38,6 +38,11 @@ Latest automated checkpoint: **263 tests / 43 files**, strict TypeScript/lint pa
 - These records are explicitly labelled “DEMO authority-created test evidence,” are never `officialNotices`, never contribute to SACHET feed freshness or tourist official-source presentation, and cannot directly publish alerts. Jev includes only geographically overlapping active records in a DEMO incident snapshot; LIVE incidents always receive none.
 - Automated typecheck/lint/backend tests cover creation, withdrawal, authorization/containment, expiry/overlap exclusion and evidence labels. The UI is typechecked/linted; the required physical two-account test—DEMO authority injects → DEMO tourist reports in circle → Jev evidence view confirms label and normal qualification behavior—remains pending.
 
+## 2026-10-10 — development authority access repair
+
+- The Expo-connected development backend had the email allowlist but lacked configured agency/jurisdiction values and matching records, so account refresh returned `CONFIGURATION_REQUIRED`.
+- A repository-managed DEMO Chennai authority scope was seeded and configured privately. One allowlisted verified Google account has been detected; the pending device action is **Settings → Refresh account access**, which should create its DEMO membership and reveal the Authority workspace. No LIVE authority, official SACHET record, incident, or emergency was created.
+
 ## 2026-10-10 — Android hotfix follow-up
 
 - Synced the checkout to `origin/main` through commit `c37efd0`. The pulled map fix waits for native `onMapReady` before supplying `mapPadding` or issuing a camera animation; its component regression test covers both initial mount and remount.
