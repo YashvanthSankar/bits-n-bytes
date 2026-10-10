@@ -20,7 +20,7 @@ Built for **Bits and Bytes CS Week, IIITDM Kancheepuram.**
 | Resource | Link |
 | --- | --- |
 | Website / Android download page | https://gudtour.zapdos.me |
-| Demo video, Android + iOS walkthrough | |
+| Demo video, Android + iOS walkthrough | https://drive.google.com/drive/folders/1O6Q8Cfs1UXP0nRU4mV6cVA-V32AseBHX |
 | Direct public final Android APK | Available on the website |
 | Repository | https://github.com/YashvanthSankar/bits-n-bytes |
 | iOS access | Native iOS demonstration in the video |
