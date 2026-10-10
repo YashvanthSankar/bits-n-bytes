@@ -45,3 +45,4 @@ it('keeps location and displays failure if token removal fails', async () => {
   expect(state.setFix).not.toHaveBeenCalled(); expect(state.replace).not.toHaveBeenCalled();
   expect(JSON.stringify(screen.toJSON())).toContain('serviceUnavailable');
 });
+vi.mock('../src/services/preferences', () => ({ preferenceStorage: { getItem: vi.fn(), setItem: vi.fn() } }));

@@ -10,6 +10,7 @@ import { api } from '../../../convex/_generated/api';
 import { ActionButton, AppText, LoadingState, Screen } from '../../components/ui';
 import { Choice } from '../../components/Choice';
 import { JourneyHeader } from '../../components/JourneyHeader';
+import { AppearanceSetting } from '../../theme/AppearancePreference';
 import { ReadBoundary } from '../../components/ReadBoundary';
 import { useLanguage } from '../../i18n/LanguageProvider';
 import { languageNames } from '../../i18n/resources';
@@ -78,6 +79,7 @@ function Settings() {
         <SettingsRow icon={FlaskConical} title="DEMO" detail={t(own.profile?.demoEnabled ? 'disableDemoMode' : 'enableDemoMode')} onPress={()=>void toggleDemo()} disabled={busy || uncertain} />
         <AppText variant="caption" style={{ paddingHorizontal: 16, paddingBottom: 16, color: theme.secondary }}>{t('demoShortHelp')}</AppText>
       </View>
+      <AppearanceSetting />
       {busy && <LoadingState />}
       {error && <AppText style={{color:theme.danger}} accessibilityLiveRegion="polite">{t(error)}</AppText>}
       {uncertain && !busy && <ActionButton icon={RefreshCw} title={t('retry')} onPress={()=>{if(pending.current)void select(pending.current.language);}} />}

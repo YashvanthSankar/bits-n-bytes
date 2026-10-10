@@ -1,4 +1,5 @@
 vi.mock('../src/services/onboarding', () => ({ rememberCompletedSetup: vi.fn().mockResolvedValue(undefined) }));
+vi.mock('../src/services/preferences', () => ({ preferenceStorage: { getItem: vi.fn(), setItem: vi.fn() } }));
 import React, { useState, createContext, type PropsWithChildren, type ReactNode } from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';

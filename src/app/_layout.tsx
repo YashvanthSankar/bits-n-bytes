@@ -11,6 +11,7 @@ import { LanguageProvider } from '../i18n/LanguageProvider';
 import { useTheme } from '../theme/useTheme';
 import { GlobalEmergencyNotifications } from '../features/alerts/EmergencyAlerts';
 import { AuthorityAccessSync } from '../session/AuthorityAccessSync';
+import { AppearancePreferenceProvider } from '../theme/AppearancePreference';
 
 const url = process.env.EXPO_PUBLIC_CONVEX_URL;
 const convex = url ? new ConvexReactClient(url, { unsavedChangesWarning: false }) : null;
@@ -22,5 +23,5 @@ function Navigation() {
   return <><StatusBar style="auto" /><Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: theme.background } }} /></>;
 }
 export default function RootLayout() {
-  return <SafeAreaProvider><LanguageProvider><BackendProvider><Navigation /></BackendProvider></LanguageProvider></SafeAreaProvider>;
+  return <SafeAreaProvider><AppearancePreferenceProvider><LanguageProvider><BackendProvider><Navigation /></BackendProvider></LanguageProvider></AppearancePreferenceProvider></SafeAreaProvider>;
 }
