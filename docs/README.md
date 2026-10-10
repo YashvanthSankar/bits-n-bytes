@@ -29,4 +29,4 @@ Historical document order:
 
 **Precedence:** organizer brief governs official eligibility/deliverables; final user requirements govern requested product; controlling plan/UI contract interpret implementation and safety; research is non-authoritative. Do not silently shrink the final request using old MVP exclusions.
 
-Everything remains **planning documentation**. No app, deployment, tests, notification, submission or video is completed. OpenCode Zen Jev 1.13 connectivity was verified on 2026-10-10; all application workflows and remaining integrations still need working evidence. GudTour is the selected name; no brand-clearance claim is made.
+Development is authorized and underway. App functionality, deployment, device delivery and submission are not yet verified. See [development progress](progress/2026-10-10-development.md) and [acceptance ledger](acceptance-ledger.md). OpenCode Zen Jev 1.13 connectivity was verified on 2026-10-10; all application workflows and remaining integrations still need working evidence. GudTour is the selected name; no brand-clearance claim is made.

@@ -1,6 +1,6 @@
 # GudTour — architecture entry point
 
-Updated: 2026-10-10. Documentation complete; application implementation pending.
+Updated: 2026-10-10. Documentation complete; application development authorized on 2026-10-10.
 
 Read [docs/README.md](README.md), [PLAN.md](../PLAN.md), [tech-stack.md](../tech-stack.md), [TECHNICAL_IMPLEMENTATION_PLAN.md](../TECHNICAL_IMPLEMENTATION_PLAN.md) and [TODO.md](../TODO.md) before implementing. PLAN.md is the core product behavior specification. The latest explicit online-first/no-news/provider decisions override only the conflicting portions described in its banner; the technical design must not silently reduce its core workflows.
 
@@ -32,4 +32,4 @@ Selected model gateway: OpenCode Zen `/zen/v1/systemone`, model `jev-1.13`, serv
 | Scheduling, retention, secrets, budgets and deployment | 21–22 |
 | Failure handling, verification, build gates and inputs | 23–26 |
 
-The TODO file assigns acceptance checks and dependencies to proposed team owners. Older strategy/research documents remain historical input. Follow [agent-execution-policy.md](agent-execution-policy.md) and obtain the user's explicit implementation go-ahead before application coding. GitHub remote and local progress are recorded in [the dated progress note](progress/2026-10-10-technical-plan-and-migration.md).
+The TODO file assigns acceptance checks and dependencies to proposed team owners. Older strategy/research documents remain historical input. Follow [agent-execution-policy.md](agent-execution-policy.md) and the user authorized application coding on 2026-10-10. GitHub remote and local progress are recorded in [the dated progress note](progress/2026-10-10-technical-plan-and-migration.md).

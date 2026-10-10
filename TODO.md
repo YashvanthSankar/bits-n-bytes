@@ -1,6 +1,6 @@
 # GudTour — feasible implementation TODOs
 
-Updated: 2026-10-10. **Application implementation has not started.** This backlog organizes the approved product design; it does not authorize coding or claim working features.
+Updated: 2026-10-10. **Development authorized and started on 2026-10-10.** Completed items require recorded evidence; remaining checkboxes stay pending. Review each group of three completed todos before committing and pushing it, as requested by the user.
 
 Source of truth: [PLAN.md](PLAN.md) for core behavior, [tech-stack.md](tech-stack.md) for selected services, and [TECHNICAL_IMPLEMENTATION_PLAN.md](TECHNICAL_IMPLEMENTATION_PLAN.md) for contracts and mechanisms. Stack: Expo Android/iOS, Convex, Google OAuth, Apple/Google basemaps, SACHET, AccuWeather, Jev 1.13 through OpenCode Zen and Google Cloud Translation. News and full offline maps are excluded by the user.
 
@@ -52,15 +52,15 @@ The Jev check above proves only one synthetic Noul request succeeded. Choice map
 
 **Design reference:** Technical plan §§1–4, 22, 26.
 
-- [ ] P03 Confirm the user has authorized application coding and the organizer development window is open. Record the actual deadline. Owner A.
-- [ ] P04 Create an access checklist for Convex, EAS/Apple signing, GCP, OpenCode Zen and AccuWeather. Record available/pending access without credentials. Owners A/C/D.
+- [x] P03 Confirm the user has authorized application coding and the organizer development window is open. Record the actual deadline. Owner A.
+- [x] P04 Create an access checklist for Convex, EAS/Apple signing, GCP, OpenCode Zen and AccuWeather. Record available/pending access without credentials. Owners A/C/D.
 - [ ] P05 Verify AccuWeather current + 24-hour history endpoint entitlement, quota and allowed retention. Owner C.
 - [ ] P06 Inspect a real SACHET feed and one CAP notice; document geographic coverage/update/cancellation fields. Owner C.
 - [ ] P07 Verify live Jev Choice responses, selected-option probabilities and confidence; check Score only if used. Record timeout/auth/rate-limit/malformed behavior and run labeled incident evaluations before automatic publication. Owner C.
 - [ ] P08 Verify Google OAuth first, then Android Maps and Translation before their dependent features. Record enabled services, billing, restrictions and deployed credential flow. Owner A.
 - [ ] P09 Agree initial approved demo authorities/jurisdictions and sourced or DEMO-labeled shelters/contacts. Owners A/D.
 - [ ] P10 Confirm Android install and signed iOS judge-access paths before screen-heavy work; choose landing hosting before release. Owner D.
-- [ ] Q01 Create a pass/fail ledger from PLAN.md section 18 before feature work. Replace only the user-deferred full-offline cases with online-first recovery checks; review the ledger at every milestone. Owner D.
+- [x] Q01 Create a pass/fail ledger from PLAN.md section 18 before feature work. Replace only the user-deferred full-offline cases with online-first recovery checks; review the ledger at every milestone. Owner D.
 
 Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and P08 is completed per Google feature. They are not reasons to block unrelated foundation work.
 
