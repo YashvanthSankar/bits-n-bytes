@@ -19,6 +19,7 @@ import type * as lib_idempotency from "../lib/idempotency.js";
 import type * as lib_publicModels from "../lib/publicModels.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as locations from "../locations.js";
+import type * as observations from "../observations.js";
 import type * as operator from "../operator.js";
 import type * as profiles from "../profiles.js";
 
@@ -40,6 +41,7 @@ declare const fullApi: ApiFromModules<{
   "lib/publicModels": typeof lib_publicModels;
   "lib/validators": typeof lib_validators;
   locations: typeof locations;
+  observations: typeof observations;
   operator: typeof operator;
   profiles: typeof profiles;
 }>;

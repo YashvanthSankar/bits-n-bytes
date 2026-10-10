@@ -73,3 +73,15 @@ AccuWeather Bearer credential returned 200 for fixed Chennai test-coordinate loo
 Read SACHET's actual directory and official three-page ETag guide. Verified all-India RSS at /cap_public_website/rss/rss_india.xml (99 entries, 77,586 bytes), one Actual/Public/Alert flood CAP (1,657 bytes), and real conditional 200→304 with zero body bytes and reusable cached XML. A Polygon URL parameter led to separate polygon XML; the original area had no inline polygon. Recorded source fields, geography handling, reference/cancellation requirements, no-all-clear rules and mandatory XML/ETag caching in docs/research/sachet-feed-contract.md. Update/Cancel reconciliation and the production parser remain pending.
 
 Backend provider configuration/credentials are set on Denoise Labs basic-newt-690. docs/api-setup.md describes private team setup, signing restrictions, supported credential flow and remaining APNs/FCM/native delivery gaps. Technical plan now matches implemented error/command/DTO contracts and current access evidence. .env.local, key-fetch output, XML diagnostics, generated native projects and all private files remain excluded from Git.
+
+
+### Incident backend checkpoint — I01, I02, I07
+
+Previous onboarding/API checkpoint `fb94df7` was committed and pushed to main.
+
+- I01: all eight PLAN.md hazard radii/windows/stale thresholds are implemented. Tests cover each exact witness/stale boundary and the next millisecond; scheduled generation-guarded refresh maintains stored state.
+- I02: verification, lifecycle and emergency qualification stay independent. Two recent authors yield Corroborated without emergency qualification; old evidence loses current corroboration; age/outage never ends an existing emergency. Public reads calculate current recency/state even when a scheduler job runs late.
+- I07: session-derived identity, acknowledged current fix binding, five-minute/200-metre eligibility, one-kilometre witness proximity including uncertainty, 24-hour observation validity, five new incidents per rolling hour and ten-minute contribution cooldown. Exact accepted retries return the original receipt and do not consume another report allowance. DEMO access is denied to ordinary profiles.
+- Validation: `npm run check` passes strict TypeScript, lint and **86 tests** across 10 files. `npx convex dev --once` deploys successfully to Denoise Labs GudTour development. Tests use isolated test data, not live crisis reports.
+- Current explicit pilot bound: aggregating more than 500 active observations fails with CONFIGURATION_REQUIRED instead of claiming a complete count. Larger-scale paginated/incremental aggregates remain part of I06. I08 withdrawal/restriction/history and M3 two-device acceptance are not complete.
+- No emergency notification is emitted by observation submission. Provider assessment and publication workers remain pending. Native report/detail UI is under development; it is not yet accepted as complete.

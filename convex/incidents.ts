@@ -2,7 +2,7 @@ import { query } from './_generated/server';
 import { v } from 'convex/values';
 import { paginationOptsValidator } from 'convex/server';
 import { requireIndiaAccess } from './lib/authorization';
-import { incidentDTO } from './lib/publicModels';
+import { freshIncidentDTO } from './lib/publicModels';
 import { reject } from './lib/errors';
 
 export const detail = query({ args: { incidentId: v.id('incidents') }, handler: async (ctx, args) => {
@@ -15,7 +15,7 @@ export const detail = query({ args: { incidentId: v.id('incidents') }, handler: 
   }
   const geometry = await ctx.db.get(incident.geometryId);
   if (!geometry) return reject('NOT_FOUND');
-  return incidentDTO(incident, geometry);
+  return freshIncidentDTO(ctx, incident, geometry);
 } });
 
 /** Bounded cell pages are candidate pages, never an asserted complete nearby list. */
@@ -30,7 +30,7 @@ export const inCell = query({ args: { cell: v.string(), paginationOpts: paginati
     const incident = id ? await ctx.db.get(id) : null;
     if (!incident || (incident.audience === 'DEMO' && !profile?.demoEnabled)) continue;
     const geometry = await ctx.db.get(incident.geometryId);
-    if (geometry) items.push(incidentDTO(incident, geometry));
+    if (geometry) items.push(await freshIncidentDTO(ctx, incident, geometry));
   }
   return { items, isDone: page.isDone, continueCursor: page.continueCursor, candidatePage: true as const };
 } });

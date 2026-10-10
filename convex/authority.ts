@@ -2,7 +2,7 @@ import { query } from './_generated/server';
 import { v } from 'convex/values';
 import { requireAuthorityForCircle, requireUser } from './lib/authorization';
 import { reject } from './lib/errors';
-import { incidentDTO } from './lib/publicModels';
+import { freshIncidentDTO } from './lib/publicModels';
 
 export const reviewIncident = query({ args: { incidentId: v.id('incidents') }, handler: async (ctx, args) => {
   await requireUser(ctx);
@@ -11,5 +11,5 @@ export const reviewIncident = query({ args: { incidentId: v.id('incidents') }, h
   const geometry = await ctx.db.get(incident.geometryId);
   if (!geometry || geometry.area.type !== 'circle') return reject('CONFIGURATION_REQUIRED');
   await requireAuthorityForCircle(ctx, geometry.area, incident.audience);
-  return incidentDTO(incident, geometry);
+  return freshIncidentDTO(ctx, incident, geometry);
 } });

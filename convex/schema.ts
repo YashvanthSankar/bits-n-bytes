@@ -34,6 +34,8 @@ export default defineSchema({
     fixObservedAt: v.number(), accuracyM: v.number(), observedAt: v.number(), receivedAt: v.number(), description: v.string(),
     status: v.union(v.literal('ACTIVE'), v.literal('WITHDRAWN'), v.literal('REMOVED')), revision: v.number(), lastContributionAt: v.number(), provenance: types.provenance,
   }).index('by_incident_author', ['incidentId', 'authorId']).index('by_incident_status_observedAt', ['incidentId', 'status', 'observedAt']).index('by_author_receivedAt', ['authorId', 'receivedAt']),
+  postingRates: defineTable({ userId: v.id('users'), kind: v.literal('NEW_INCIDENT'), createdAt: v.number() }).index('by_user_kind_at', ['userId', 'kind', 'createdAt']),
+  observationOrigins: defineTable({ incidentId: v.id('incidents'), observationId: v.id('observations'), cell: v.string(), point: types.point, accuracyM: v.number(), observedAt: v.number(), active: v.boolean() }).index('by_incident_cell', ['incidentId', 'cell']).index('by_observation', ['observationId']),
   geoPoints: defineTable({
     kind: v.union(v.literal('USER'), v.literal('INCIDENT'), v.literal('SHELTER'), v.literal('CHAT')),
     entityId: v.string(), precision: v.number(), cell: v.string(), point: types.point, active: v.boolean(), observedAt: v.optional(v.number()),
