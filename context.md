@@ -569,3 +569,8 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 - PhysicalAndroidrelaunch/chatlatency, two-client geographic chat, appearancepersistence/device switching and full language/a11y matrix still unverified.
 
 2026-10-10 final logo APK: user asked full final APK with updated logo. Supplied1024px `assets/brand/gudtour-ios-icon.png` reviewed; it was only wired to iOS. Shared it through top-level icon, Android adaptive foreground and both splash modes on matching warm-white background; included current bold GudTour entry title. Existing full UI/chat/location/Jev/SACHET changes retained, backend already deployed.308tests/54files+lint/typecheck pass. Final localAPK build from committed mobile snapshot next; web edits in parallel are outside this mobile release.
+
+## 2026-10-10 — Final logo APK verified
+- Built mobile snapshot8059adf: `tmp/release-artifacts/GudTour-0.1.0-final.apk`, version0.1.0/versionCode13/minSDK24. Updated launcher/adaptive and splash logo extracted from APK and visually verified.
+- Signaturev2 matches expected certificatea280f5b4f25df90198d303cf58848cfdefec8862921b3fc6eb99c27dda488527; ZIP integrity, production backend/no dev backend and no configured server credentials/env files pass. SHA256`b5d69141da4daeca32d869b048a1d694a9c578905e2f401627fb81315bb522d2`.308tests/54files+lint/typecheck pass before build.
+- Local APK delivery only; backend already deployed. Full physical-device and accessibility acceptance remain outstanding. Concurrent web work preserved outside this mobile snapshot.
