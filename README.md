@@ -8,7 +8,7 @@ GudTour answers one question for a visitor under stress: **“What is happening 
 
 It connects nearby community observations, official weather context, official SACHET notices, approved-authority instructions, multilingual alerts, shelter information, and nearby community chat in one mobile workflow.
 
-Built for **Bits and Bytes CS Week, IIITDM Kancheepuram, TravelTech, October 2026.**
+Built for **Bits and Bytes CS Week, IIITDM Kancheepuram.**
 
 ---
 
