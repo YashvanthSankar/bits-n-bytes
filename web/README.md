@@ -6,7 +6,7 @@ Standalone static site. All landing source and public assets live in `web/`; it 
 
 From this folder: `python3 -m http.server 4173 --bind 127.0.0.1`
 
-Open http://localhost:4173. Deploy **only `web/`** to any static host, not the repository root. No publication has been performed.
+Open http://localhost:4173. Deploy **only `web/`** to any static host, not the repository root. Published at https://gudtour.zapdos.me — see Deployment below.
 
 ## Downloads
 
@@ -20,7 +20,18 @@ Set `ios` and `android` in `downloads.js` to the real public HTTPS release URLs.
 - Screenshot is decorative presentation around an actual captured screen; phone frame/compass logo are CSS/SVG. Do not describe the decorative compass as the released app icon.
 - Plain semantic HTML, responsive CSS, keyboard focus, skip link, reduced-motion behavior and readable failure states for missing downloads.
 
-Complete Q08 still requires public hosting, verified release links and release-capability checks; building this page alone does not complete that task.
+Complete Q08 still requires verified release links and release-capability checks; building and hosting this page alone does not complete that task.
+
+## Deployment — 2026-10-10
+
+Live at **https://gudtour.zapdos.me** (Cloudflare-proxied DNS → Oracle VPS origin, Caddy → PM2 `gudtour-web` → `127.0.0.1:3104`).
+
+- Origin `/home/ubuntu/gudtour-web`; selection is the `current` symlink → `releases/20261010T115344Z-ccec0b7`. PM2 app `gudtour-web`, interpreter the installed Node 26.5.0, `max_memory_restart 128M`, saved in the PM2 dump.
+- Served by `server.cjs`: a zero-dependency static server with an explicit six-file allowlist, `/` mapped to `index.html`, no directory listings, and non-GET/HEAD rejected with 405. Only `web/` content is published; no repository, Expo, Convex or environment file is reachable.
+- Served bytes are identical to commit `ccec0b7` for all six files, checked by sha256 over the public URL. `Cache-Control: no-store` so a new release is never masked by the Cloudflare cache.
+- Cloudflare injects its own zone-level RUM beacon; the page itself still contains no analytics, third-party script or remote font.
+- Caddy route in `/etc/caddy/Caddyfile` (`encode zstd gzip` + `reverse_proxy 127.0.0.1:3104`); pre-change backup `/etc/caddy/Caddyfile.backup-gudtour-20261010T123722Z`, staged candidate `/home/ubuntu/gudtour-web/staging/Caddyfile.gudtour-candidate`.
+- Update: stage a new `releases/<ts>-<sha>` directory, repoint `current`, `pm2 reload gudtour-web`. Roll back the same way, or restore the Caddy backup and `systemctl reload caddy`.
 
 ## Verification — 2026-10-10
 
