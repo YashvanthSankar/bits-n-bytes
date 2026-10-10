@@ -1,5 +1,6 @@
 import { useQuery } from 'convex/react';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import { ShieldCheck, TriangleAlert, House, ChevronRight, MapPin } from 'lucide-react-native';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +12,7 @@ import { useTheme } from '../../theme/useTheme';
 function Overview() {
   const { t } = useTranslation(), theme = useTheme();
   const scopes = useQuery(api.authority.scopes, {});
+  const [demoToolsOpen, setDemoToolsOpen] = useState(false);
   return <Screen footer={<ActionButton title={t('backToMap')} variant="secondary" onPress={() => router.replace('/map')} />}>
     <View style={{flexDirection:'row',alignItems:'center',gap:12}}>
       <View style={{width:48,height:48,borderRadius:16,backgroundColor:theme.selection,alignItems:'center',justifyContent:'center'}}><ShieldCheck size={24} color={theme.accent} /></View>
@@ -28,11 +30,6 @@ function Overview() {
         <TriangleAlert size={26} color={theme.onAccent} />
         <View style={{gap:6}}><View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="heading" style={{color:theme.onAccent,flex:1}}>{scope.audience === 'DEMO' ? t('authorityPublishDemoEmergency') : t('declareEmergency')}</AppText><ChevronRight size={22} color={theme.onAccent} /></View><AppText style={{color:theme.onAccent}}>{t('authorityPublishEmergencyHelp')}</AppText></View>
       </Pressable>
-      {scope.audience === 'DEMO' && <Pressable accessibilityRole="button" accessibilityLabel={t('authorityCreateDemoEvidence')} onPress={() => router.push({pathname:'/authority/demo-notices',params:{jurisdictionId:scope.id}})}
-        style={({pressed})=>({padding:20,borderRadius:22,borderWidth:1,borderColor:theme.border,backgroundColor:pressed?theme.muted:theme.surface,gap:10})}>
-        <View style={{flexDirection:'row',alignItems:'center',gap:12}}><ShieldCheck size={24} color={theme.accent} /><AppText variant="heading" style={{flex:1}}>{t('authorityCreateDemoEvidence')}</AppText><ChevronRight size={22} color={theme.secondary} /></View>
-        <AppText style={{color:theme.secondary}}>{t('authorityCreateDemoEvidenceHelp')}</AppText>
-      </Pressable>}
       <ActionButton title={t('viewReports')} variant="secondary" onPress={()=>router.push({pathname:'/authority/reports',params:{jurisdictionId:scope.id}})} />
       <ActionButton title={t('manageEmergencies')} variant="secondary" onPress={()=>router.push({pathname:'/authority/emergencies',params:{jurisdictionId:scope.id}})} />
       <Pressable accessibilityRole="button" accessibilityLabel={t('manageShelters')} onPress={() => router.push({pathname:'/authority/shelters',params:{jurisdictionId:scope.id}})}
@@ -40,6 +37,10 @@ function Overview() {
         <View style={{padding:12,borderRadius:14,backgroundColor:theme.selection}}><House size={24} color={theme.accent} /></View>
         <AppText style={{fontWeight:'600',flex:1}}>{t('manageShelters')}</AppText><ChevronRight size={20} color={theme.secondary} />
       </Pressable>
+      {scope.audience === 'DEMO' && <View style={{gap:10}}>
+        <ActionButton title={t(demoToolsOpen ? 'authorityHideDemoTools' : 'authorityDemoTools')} variant="secondary" onPress={() => setDemoToolsOpen(value => !value)} />
+        {demoToolsOpen && <View style={{padding:14,borderRadius:14,backgroundColor:theme.muted,gap:8}}><AppText variant="caption">{t('authorityDemoToolsHelp')}</AppText><ActionButton title={t('authorityCreateTestNotice')} variant="secondary" onPress={() => router.push({pathname:'/authority/demo-notices',params:{jurisdictionId:scope.id}})} /></View>}
+      </View>}
     </View>)}
   </Screen>;
 }

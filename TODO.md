@@ -31,7 +31,7 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 - [x] UI05 Fix native relative timestamp constructor crash; dependency-free localized formatter and missing-Intl regression pass (277 tests/46 files, TypeScript/lint).
 
 - [x] UI06 Display emergency notice, issuer, severity, DEMO and nearest shelter details in the first popup/card; remove read-step buttons and generic filler. TypeScript/lint and 280 tests/46 files pass; native first-popup acceptance pending.
-- [x] UI07 Simplify the DEMO authority workspace: clearly separate immediate DEMO emergency publication from Jev-only evidence, move specialist declaration controls behind More options, add radius presets/inline validation and localize the DEMO-notice workflow. Full suite (290 tests/48 files), strict TypeScript and lint pass; physical two-account DEMO acceptance remains pending.
+- [x] UI07 Simplify the DEMO authority workspace: keep immediate DEMO emergency publication as the only primary action; tuck optional test-notice tooling behind DEMO testing tools. Move specialist declaration controls behind More options, add radius presets/inline validation and localize the DEMO-notice workflow. Full suite (290 tests/48 files), strict TypeScript and lint pass; physical two-account DEMO acceptance remains pending.
 
 ### Next executable work
 

@@ -1,7 +1,7 @@
 # Latest handoff — 2026-10-10
 
 ## 2026-10-10 — streamlined DEMO authority workflow
-- The authority workspace now explains the two DEMO paths before a user starts: **Publish DEMO emergency now** immediately creates an authorized DEMO emergency and bypasses Jev; **Add DEMO Jev test evidence** adds only evidence for a later, geographically overlapping DEMO tourist report and can never publish an emergency directly.
+- The authority workspace is now alert-first: **Publish DEMO emergency now** immediately creates an authorized DEMO emergency and bypasses Jev. The Jev evidence notice is optional DEMO tooling, tucked behind **DEMO testing tools** rather than competing with the alert action; it adds evidence for a later, geographically overlapping DEMO tourist report and can never publish an emergency directly.
 - Both forms now foreground essential public information, selected map circle, radius presets and clear review. Existing server authorization, jurisdiction/containment, audit, expiry, idempotency and publication safeguards are unchanged. Source language, action/review timing and DEMO urgency/certainty remain available under More options.
 - DEMO notice wording moved into the shared localization resources. New-label fallback is English until six-language review; no credentials or backend deployment changed. The full suite (290 tests/48 files), strict TypeScript and lint pass. Physical two-account DEMO validation remains required before calling device acceptance complete.
 

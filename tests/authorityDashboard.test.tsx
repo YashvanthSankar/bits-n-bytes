@@ -11,20 +11,21 @@ vi.mock('../src/features/authority/AuthorityGate',()=>({AuthorityGate:({children
 vi.mock('../src/theme/useTheme',()=>({useTheme:()=>({})}));
 vi.mock('../src/components/ui',()=>({Screen:({children,footer}:PropsWithChildren<{footer:ReactNode}>)=><>{children}{footer}</>,AppText:({children}:PropsWithChildren)=><>{children}</>,EmptyState:()=>null,LoadingState:()=>null,ActionButton:(props:object)=>React.createElement('button',props)}));
 import Dashboard from '../src/app/authority';
-it('clearly separates immediate DEMO emergency publication from Jev-only test evidence',async()=>{
+it('keeps the authority workspace alert-first and places test tooling behind DEMO tools',async()=>{
  Object.assign(globalThis,{IS_REACT_ACT_ENVIRONMENT:true});let screen!:ReactTestRenderer;
  await act(async()=>{screen=create(<Dashboard/>);});
  try{
   const actions=screen.root.findAllByType('Pressable' as React.ElementType);
-  expect(actions.map(a=>a.props.accessibilityLabel)).toEqual(['authorityPublishEmergency','authorityCreateDemoEvidence','manageShelters']);
+  expect(actions.map(a=>a.props.accessibilityLabel)).toEqual(['authorityPublishEmergency','manageShelters']);
   await act(async()=>actions[0]!.props.onPress());
   expect(state.push).toHaveBeenLastCalledWith({pathname:'/authority/declare',params:{jurisdictionId:'assigned-scope'}});
-  await act(async()=>actions[1]!.props.onPress());
-  expect(state.push).toHaveBeenLastCalledWith({pathname:'/authority/demo-notices',params:{jurisdictionId:'assigned-scope'}});
+  expect(JSON.stringify(screen.toJSON())).not.toContain('authorityCreateDemoEvidence');
   expect(JSON.stringify(screen.toJSON())).toContain('authorityPublishEmergencyHelp');
-  expect(JSON.stringify(screen.toJSON())).toContain('authorityCreateDemoEvidenceHelp');
-  await act(async()=>actions[2]!.props.onPress());
+  await act(async()=>actions[1]!.props.onPress());
   expect(state.push).toHaveBeenLastCalledWith({pathname:'/authority/shelters',params:{jurisdictionId:'assigned-scope'}});
+  await act(async()=>screen.root.findAllByType('button').find(b=>b.props.title==='authorityDemoTools')!.props.onPress());
+  await act(async()=>screen.root.findAllByType('button').find(b=>b.props.title==='authorityCreateTestNotice')!.props.onPress());
+  expect(state.push).toHaveBeenLastCalledWith({pathname:'/authority/demo-notices',params:{jurisdictionId:'assigned-scope'}});
   expect(JSON.stringify(screen.toJSON())).toContain('DEMO');
   await act(async()=>screen.root.findAllByType('button').find(b=>b.props.title==='manageEmergencies')!.props.onPress());
   expect(state.push).toHaveBeenLastCalledWith({pathname:'/authority/emergencies',params:{jurisdictionId:'assigned-scope'}});
