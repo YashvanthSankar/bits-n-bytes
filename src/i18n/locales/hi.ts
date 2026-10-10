@@ -69,6 +69,8 @@ export const hi: Translation = {
   submitReport: "रिपोर्ट सबमिट करें",
   submitObservation: "अवलोकन प्रस्तुत करें",
   submissionUncertain: "पुष्टि उपलब्ध नहीं है। डुप्लिकेट होने से बचने के लिए कृपया दोबारा प्रयास करें। आपकी रिपोर्ट का विवरण अपरिवर्तित रहेगा।",
+  updateObservation: "मेरी जानकारी अपडेट करें",
+  reportSavedHelp: "आपकी जानकारी सहेज ली गई है। आपको इसे दोबारा सबमिट करने की ज़रूरत नहीं है।",
   reportAccepted: "आपकी टिप्पणी सहेज ली गई है।",
   detailTitle: "घटना का विवरण",
   backToMap: "मानचित्र पर वापस जाएँ",

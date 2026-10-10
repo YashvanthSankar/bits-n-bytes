@@ -57,8 +57,8 @@ it('keeps the public nearby list private and allows immediate contribution updat
  const nearby=await actor(second).query(api.incidents.nearby,{});
  expect(nearby.items).toHaveLength(1);expect(nearby).toMatchObject({radiusM:5000,partial:false});
  expect(JSON.stringify(nearby)).not.toContain('Test-only observation');expect(JSON.stringify(nearby)).not.toContain(first);
- expect(await actor(second).query(api.observations.eligibility,{incidentId:receipt.incidentId})).toMatchObject({eligible:true});
- expect(await actor(first).query(api.observations.eligibility,{incidentId:receipt.incidentId})).toMatchObject({eligible:true,reason:null});
+ expect(await actor(second).query(api.observations.eligibility,{incidentId:receipt.incidentId})).toMatchObject({eligible:true,hasObservation:false});
+ expect(await actor(first).query(api.observations.eligibility,{incidentId:receipt.incidentId})).toMatchObject({eligible:true,reason:null,hasObservation:true});
 });
 it('suggests a candidate rather than silently attaching the second new report',async()=>{
  await actor(first).mutation(api.observations.submit,report(await admit(first)));

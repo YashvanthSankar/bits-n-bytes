@@ -69,6 +69,8 @@ export const es: Translation = {
   submitReport: "Enviar informe",
   submitObservation: "Enviar observación",
   submissionUncertain: "No se puede obtener confirmación. Vuelva a intentar el envío para evitar duplicarlo. Los detalles de su informe se mantienen sin cambios.",
+  updateObservation: "Actualizar mi observación",
+  reportSavedHelp: "Tu observación se ha guardado. No necesitas enviarla de nuevo.",
   reportAccepted: "Tu observación fue guardada",
   detailTitle: "Detalles del incidente",
   backToMap: "Volver al mapa",

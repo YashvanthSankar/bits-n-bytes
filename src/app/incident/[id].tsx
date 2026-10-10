@@ -11,17 +11,18 @@ import { HAZARD_POLICY, HOUR } from '../../domain/policy';
 
 function Detail() {
   const { t, i18n } = useTranslation(); const { id, accepted } = useLocalSearchParams<{ id: string; accepted?: string }>();
+  const saved = accepted === '1';
   const { isAuthenticated, isLoading } = useConvexAuth();
   useEffect(()=>{if(!isLoading && !isAuthenticated) router.replace('/location');},[isLoading,isAuthenticated]);
   const incident = useQuery(api.incidents.detail, isAuthenticated && id ? { incidentId:id as Id<'incidents'> } : 'skip');
-  const eligibility = useQuery(api.observations.eligibility, isAuthenticated && id ? { incidentId:id as Id<'incidents'> } : 'skip');
+  const eligibility = useQuery(api.observations.eligibility, isAuthenticated && id && !saved ? { incidentId:id as Id<'incidents'> } : 'skip');
   const eligibilityLabel = eligibility?.reason === 'OBSERVATION_TOO_FAR' ? 'observationTooFar' : eligibility?.reason === 'INCIDENT_CLOSED' ? 'incidentClosed' : 'locationAction';
   return <Screen footer={<>
-    <ActionButton title={t('corroborate')} disabled={!incident || !eligibility?.eligible} onPress={() => incident && router.push({pathname:'/report',params:{incidentId:incident.id,hazard:incident.hazard,audience:incident.audience}})} />
-    <ActionButton title={t('backToMap')} variant="secondary" onPress={() => router.replace('/map')} />
+    {!saved && <ActionButton title={t(eligibility?.hasObservation ? 'updateObservation' : 'corroborate')} disabled={!incident || !eligibility?.eligible} onPress={() => incident && router.push({pathname:'/report',params:{incidentId:incident.id,hazard:incident.hazard,audience:incident.audience}})} />}
+    <ActionButton title={t('backToMap')} variant={saved ? 'primary' : 'secondary'} onPress={() => router.replace('/map')} />
   </>}>
-    <AppText variant="title" accessibilityRole="header">{t('detailTitle')}</AppText>
-    {accepted === '1' && <AppText accessibilityLiveRegion="polite">{t('reportAccepted')}</AppText>}
+    <AppText variant="title" accessibilityRole="header" accessibilityLiveRegion={saved ? 'polite' : 'none'}>{t(saved ? 'reportAccepted' : 'detailTitle')}</AppText>
+    {saved && <AppText>{t('reportSavedHelp')}</AppText>}
     {!incident ? <LoadingState /> : <>
       {incident.audience === 'DEMO' && <AppText>DEMO</AppText>}
       <AppText variant="heading">{t(`hazard${incident.hazard}`)}</AppText>

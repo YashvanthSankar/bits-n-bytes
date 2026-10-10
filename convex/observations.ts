@@ -77,7 +77,8 @@ export const eligibility = query({ args: { incidentId: v.id('incidents') }, hand
     if (error instanceof ConvexError && typeof error.data === 'object' && error.data && 'code' in error.data && error.data.code === 'OBSERVATION_TOO_FAR') return { eligible:false,reason:'OBSERVATION_TOO_FAR' as const,retryAfterMs:0 };
     throw error;
   }
-  return { eligible:true,reason:null,retryAfterMs:0 };
+  const own = await ctx.db.query('observations').withIndex('by_incident_author', q => q.eq('incidentId', incident._id).eq('authorId', userId)).unique();
+  return { eligible:true,reason:null,retryAfterMs:0,hasObservation:own?.status === 'ACTIVE' };
 } });
 
 export const candidates = query({ args: { hazard, audience: v.optional(audience) }, handler: async (ctx, args) => {

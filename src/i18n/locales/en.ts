@@ -69,6 +69,8 @@ export const en = {
   submitReport: "Submit report",
   submitObservation: "Submit observation",
   submissionUncertain: "Confirmation is unavailable. Retry the same submission to avoid creating a duplicate. Your report details are held unchanged.",
+  updateObservation: "Update my observation",
+  reportSavedHelp: "You’re done. Your observation is saved; you don’t need to submit it again.",
   reportAccepted: "Your observation was saved",
   detailTitle: "Incident details",
   backToMap: "Back to map",

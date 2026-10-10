@@ -69,6 +69,8 @@ export const de: Translation = {
   submitReport: "Bericht einreichen",
   submitObservation: "Beobachtung einreichen",
   submissionUncertain: "Eine Bestätigung ist nicht verfügbar. Bitte wiederholen Sie den Vorgang, um ein Duplikat zu vermeiden. Ihre Berichtsdaten bleiben unverändert.",
+  updateObservation: "Meine Beobachtung aktualisieren",
+  reportSavedHelp: "Ihre Beobachtung wurde gespeichert. Sie müssen sie nicht erneut einreichen.",
   reportAccepted: "Ihre Beobachtung wurde gespeichert",
   detailTitle: "Details zum Vorfall",
   backToMap: "Zurück zur Karte",

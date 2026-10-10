@@ -156,3 +156,18 @@ These updates supersede earlier working-state notes in this handoff.
 - I14 popup implemented in src/features/incidents/IncidentMatchesModal.tsx. checkMatches opens it automatically for candidates or partial results; choice is explicit; dismissal cannot silently create a new incident; Review similar incidents reopens it. Selection closes to a compact form summary; submission still waits for explicit submit/server receipt. Native popup exercise is pending.
 
 - Final checkpoint validation includes the popup/Screen/locality changes: 111 tests, strict typecheck/lint, all-platform Expo export, no whitespace errors, exact configured-secret scan of 354 eligible files. Checkpoint I13/F10/DOC01 is ready to commit; I14 remains native-verification pending.
+
+## Latest popup verification — 2026-10-10 09:36 IST
+
+- Checkpoint **71976bd** is committed and pushed to main. This supersedes the earlier uncommitted checkpoint notes.
+- Latest user requirement: show similar incidents in an attention-grabbing popup rather than append suggestions below the report form. Existing IncidentMatchesModal implementation satisfies that presentation: dimmed backdrop, explicit existing observation/new event controls, Close and Review similar incidents reopening.
+- Actual iOS screenshot **tmp/ios-modal-check-start.png** now confirms the native modal renders with a nearby flash-flood suggestion and Continue disabled before selection. The app was already displaying the popup when captured; do not claim automation clicked through the full flow or submitted a report.
+- I14 remains open for selection/dismiss/reopen and draft-preservation interaction checks; only the native-rendering uncertainty is resolved. Default fonts and iOS-first/functionality-first priorities remain in force.
+
+## Latest submission UX fix — 2026-10-10 09:42 IST
+
+- User reported a loop and clarified: successful detail page had another contribution button; clicking it restarted reporting. This was a confusing success-state CTA, not evidence of failed server persistence or automatic popup recursion.
+- I15 implemented: receipt route accepted=1 now shows a prominent saved title, explicit completion explanation and only primary Back to map. Ordinary detail uses session-private eligibility.hasObservation to label existing contributions Update my observation. Other tourists retain the contribution action. Exact retry/independent-witness rules are unchanged.
+- Three component regression tests in tests/incidentCompletion.test.tsx cover actual detail rendering/navigation. Added react-test-renderer 19.2.3 and types through Expo install; vitest now includes TSX test files. Backend test checks own-observation boolean per authenticated user. All six dictionaries have new labels (human review pending).
+- Checks: typecheck/lint, 114 tests/14 files, iOS export pass. Convex deployed 09:41:45. Screenshot tmp/ios-observation-saved-fixed.png verifies saved-screen layout only via explicit receipt-route display; no new incident submitted. I14 full popup interactions and I05 two-account native acceptance remain open.
+- User explicitly requested commit for this fix; review and commit/push it with these updated TODO/progress/context documents. Authority shelter work has not started; resume it after this fix checkpoint.

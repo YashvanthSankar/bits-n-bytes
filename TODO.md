@@ -146,7 +146,8 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 - [ ] I05 Idempotent submit persists observation; acknowledged response opens unverified/pending detail. Owner A. Backend receipt/replay tests pass and native routing is connected; device submit/open confirmation remains pending.
 - [ ] I06 Count one independent witness per person; refresh observation time without incrementing count. Owner A.
 - [x] I07 Enforce proximity/fix quality and <=24-hour observed-time validation. Incident creation/updates have no rate limit or cooldown per 2026-10-10 user override. Owner A.
-- [ ] I14 Present similar incident suggestions automatically in a popup, require existing/new-event choice, and allow reviewing again without losing the report draft. Owner B. Implemented; native popup confirmation pending.
+- [ ] I14 Present similar incident suggestions automatically in a popup, require existing/new-event choice, and allow reviewing again without losing the report draft. Owner B. Implemented; actual iOS popup rendering verified at 09:36 (tmp/ios-modal-check-start.png). Selection, dismissal/reopen and draft-preservation interaction checks remain pending.
+- [x] I15 End successful submissions with a clear saved screen and primary Back to map action; remove repeat-contribution CTA from that receipt screen. On ordinary detail, identify an authenticated user's existing contribution as Update my observation. Owner B. Component regression tests, per-user backend eligibility test and iOS saved-screen rendering verified; see 2026-10-10 progress note.
 - [x] I13 Remove all incident creation/corroboration rate limits and submission cooldowns; prove >5 reports/hour and immediate repeated updates, preserving one witness per person and exact command replay. Owner A.
 - [ ] I08 Corrections/withdrawals/flags and merge redirects preserve history and independent counts. Owners A/D.
 - [ ] I09 Map overlays include active unverified reports with dashed uncertainty, official areas and shelters; recenter/filter/grouped marker list. Owner B.
@@ -302,7 +303,7 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 
 ## Next development actions
 
-1. Fix and verify unobscured Report actions above floating navigation on iOS; keep simulator default fonts. Functionality precedes extended responsiveness/accessibility polish per user instruction.
+1. Finish I14 native selection, dismissal/reopen and draft-preservation checks. Report actions above floating navigation are verified on iOS; keep simulator default fonts. Functionality precedes extended responsiveness/accessibility polish per user instruction.
 2. Verify I05/I11 on iOS: submit/open receipt, two-account contribution and source/evidence detail.
 3. Finish I06/I08/I12: scalable independent counts, correction/withdrawal/history and lifecycle checks.
 4. Continue M4 official publication/shelters and M5 delivery; focus iOS native checks now; Android runtime is deferred by user instruction.

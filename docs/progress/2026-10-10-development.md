@@ -122,3 +122,17 @@ Previous onboarding/API checkpoint `fb94df7` was committed and pushed to main.
 - I14: similar incidents now appear in an automatic native modal with explicit existing/new-event choice, dismiss/reopen controls and a compact form summary. Native modal exercise is still pending, not marked complete from code alone.
 
 - Final checkpoint verification: 111 tests/13 files, TypeScript/lint and all-platform export pass with the popup/Screen/locality changes included. Exact configured-secret scan passed for 354 Git-eligible files. Completed checkpoint IDs: I13, F10 (current iOS scope), DOC01. I14 remains pending native exercise.
+
+### Similar incident popup — 09:36 IST
+
+- Checkpoint 71976bd is committed and pushed to main, including the native similar-incident modal.
+- Actual iPhone simulator capture tmp/ios-modal-check-start.png shows a centered, dimmed-backdrop popup containing the nearby flash-flood suggestion, Add my observation, disabled Continue before selection, Report a different event and Close. Similar incident cards are no longer appended to the report form.
+- This confirms native rendering, not a completed interaction suite. Dismiss/reopen, explicit selection and preservation of entered draft text remain pending I14 checks. No incident was submitted by this verification.
+
+### Submission completion loop — I15, 09:42 IST
+
+- User confirmed the apparent loop was the successful incident-detail page presenting another contribution button, rather than the matching modal reopening or a failed backend write.
+- Accepted receipt navigation now presents Your observation was saved, an explicit completion explanation and one primary Back to map action. It neither queries contribution eligibility nor offers another report action on the completion screen.
+- Ordinary incident detail retains deliberate contribution access. Eligibility returns only a session-owned hasObservation boolean; existing contributors see Update my observation while other tourists see the first-contribution action. No private witness record is returned.
+- Added actual detail-component regression tests for completion exit, deliberate later update and another tourist's contribution. Backend tests assert the own-observation boolean differs between authenticated authors. Six locale dictionaries include the completion/update labels; human linguistic review remains pending.
+- Verification: TypeScript, lint and 114 tests/14 files passed; iOS export passed; Convex development deployed at 09:41:45. Actual iOS capture tmp/ios-observation-saved-fixed.png shows the saved screen with only Back to map. This display check opened the receipt route explicitly against an existing incident; no new LIVE report was fabricated and it does not replace the pending two-account native acceptance gate.

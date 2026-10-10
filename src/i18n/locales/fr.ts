@@ -69,6 +69,8 @@ export const fr: Translation = {
   submitReport: "Soumettre un rapport",
   submitObservation: "Soumettre une observation",
   submissionUncertain: "La confirmation est indisponible. Veuillez réessayer pour éviter un doublon. Les détails de votre rapport restent inchangés.",
+  updateObservation: "Mettre à jour mon observation",
+  reportSavedHelp: "Votre observation est enregistrée. Vous n’avez pas besoin de la soumettre à nouveau.",
   reportAccepted: "Votre observation a été enregistrée.",
   detailTitle: "Détails de l'incident",
   backToMap: "Retour à la carte",
