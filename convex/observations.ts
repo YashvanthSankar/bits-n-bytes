@@ -4,7 +4,7 @@ import { mutation, query, internalMutation, type QueryCtx, type MutationCtx } fr
 import type { Id, Doc } from './_generated/dataModel';
 import { internal } from './_generated/api';
 import type { PublicIncident } from '../src/contracts/domain';
-import { requireUser, requireIndiaAccess, requireEligibleFix, activeMemberships, requireAuthorityForCircle, containsCircle } from './lib/authorization';
+import { requireUser, requireIndiaAccess, requireEligibleFix, containsCircle } from './lib/authorization';
 import { command, payloadHash } from './lib/idempotency';
 import { reject } from './lib/errors';
 import { hazard, fix, audience } from './lib/validators';
@@ -122,7 +122,6 @@ export const submit = mutation({ args: {
     if (!profile) return reject('INVALID_INPUT');
     const selectedAudience = args.audience ?? 'LIVE';
     if (selectedAudience === 'DEMO' && !profile.demoEnabled) return reject('NOT_FOUND');
-    const memberships = await activeMemberships(ctx, userId);
     let incident: Doc<'incidents'>;
     if (args.incidentId) {
       incident = await resolve(ctx, args.incidentId);
@@ -131,15 +130,16 @@ export const submit = mutation({ args: {
       await mayObserve(ctx, incident, location);
     } else {
       const area = { type: 'circle' as const, center: location.point, radiusM: HAZARD_POLICY[args.hazard].radiusM };
-      if (memberships.length) await requireAuthorityForCircle(ctx, area, selectedAudience);
-      const provenance = memberships.length ? 'AUTHORITY' as const : 'COMMUNITY' as const;
+      // This endpoint records personal observations, regardless of account role.
+      // Official declarations use the separately authorized authority workspace.
+      const provenance = 'COMMUNITY' as const;
       const geometryId = await ctx.db.insert('geometries', { area, source: 'APPROXIMATE_REPORT_AREA', sourceAccuracyM: location.accuracyM, version: 1, geometryHash: payloadHash(area) });
-      const id = await ctx.db.insert('incidents', { hazard: args.hazard, locality: 'Address unavailable', geometryId, provenance, verification: provenance === 'AUTHORITY' ? 'AUTHORITY_VERIFIED' : 'UNVERIFIED', lifecycle: 'ACTIVE', qualification: null, assessmentStatus: 'PENDING', severity: 'UNKNOWN', recentWitnesses: 0, totalWitnesses: 0, lastObservedAt: args.observedAt, staleAt: provenance === 'AUTHORITY' ? now + 6 * HOUR : args.observedAt + HAZARD_POLICY[args.hazard].staleAfterMs, revision: 1, evidenceGeneration: 1, controlRevision: 1, nextAssessmentAt: now, audience: selectedAudience });
+      const id = await ctx.db.insert('incidents', { hazard: args.hazard, locality: 'Address unavailable', geometryId, provenance, verification: 'UNVERIFIED', lifecycle: 'ACTIVE', qualification: null, assessmentStatus: 'PENDING', severity: 'UNKNOWN', recentWitnesses: 0, totalWitnesses: 0, lastObservedAt: args.observedAt, staleAt: args.observedAt + HAZARD_POLICY[args.hazard].staleAfterMs, revision: 1, evidenceGeneration: 1, controlRevision: 1, nextAssessmentAt: now, audience: selectedAudience });
       incident = (await ctx.db.get(id))!;
       for (const precision of [4,5]) await ctx.db.insert('geoPoints',{ kind: 'INCIDENT', entityId: id, precision, cell: geohash.encode(location.point.latitude,location.point.longitude,precision),point:location.point,active:true,observedAt:args.observedAt });
     }
     const previous = await ctx.db.query('observations').withIndex('by_incident_author', q => q.eq('incidentId',incident._id).eq('authorId',userId)).unique();
-    const observation = { incidentId: incident._id, authorId: userId, alias: profile.alias, capturedPoint: location.point, fixObservedAt: location.observedAt, accuracyM: location.accuracyM, observedAt: args.observedAt, receivedAt: now, description, status: 'ACTIVE' as const, revision: (previous?.revision ?? 0)+1, lastContributionAt: now, provenance: !args.incidentId && memberships.length ? 'AUTHORITY' as const : 'COMMUNITY' as const };
+    const observation = { incidentId: incident._id, authorId: userId, alias: profile.alias, capturedPoint: location.point, fixObservedAt: location.observedAt, accuracyM: location.accuracyM, observedAt: args.observedAt, receivedAt: now, description, status: 'ACTIVE' as const, revision: (previous?.revision ?? 0)+1, lastContributionAt: now, provenance: 'COMMUNITY' as const };
     const observationId = previous?._id ?? await ctx.db.insert('observations', observation);
     if (previous) await ctx.db.patch(observationId, observation);
     const oldOrigins = await ctx.db.query('observationOrigins').withIndex('by_observation', q => q.eq('observationId',observationId)).take(2);
@@ -149,7 +149,7 @@ export const submit = mutation({ args: {
     await refresh(ctx,incident._id);
     const updated = (await ctx.db.get(incident._id))!;
     await ctx.scheduler.runAfter(0, internal.assessments.enqueue, { incidentId: incident._id });
-    await ctx.db.insert('auditEvents',{actorId:userId,actorKind:memberships.length ? 'AUTHORITY' : 'TOURIST',objectKind:'INCIDENT',objectId:incident._id,revision:updated.revision,action:previous?'UPDATE_OBSERVATION':'ADD_OBSERVATION',reason:'',createdAt:now});
+    await ctx.db.insert('auditEvents',{actorId:userId,actorKind:'TOURIST',objectKind:'INCIDENT',objectId:incident._id,revision:updated.revision,action:previous?'UPDATE_OBSERVATION':'ADD_OBSERVATION',reason:'',createdAt:now});
     return { incidentId:incident._id,observationId,revision:updated.revision,verification:updated.verification,qualification:updated.qualification,recentWitnesses:updated.recentWitnesses,totalWitnesses:updated.totalWitnesses };
   });
 } });

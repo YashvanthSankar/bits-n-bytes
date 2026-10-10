@@ -300,3 +300,11 @@ Verified continuation: live session-scoped shelters.nearby reads for both existi
 - Live SACHET query returned15 newest notices including Rajasthan-SDMA and IMD-Chennai, feed healthy. Final LIVE authority report read verification logged separately; inspect its result before claiming actual cyclone visibility.
 
 Final verification:254tests/41files, strictTypeScript/lint and git diff check pass. Live DEMO-authority LIVE view returns CYCLONE and FLASH_FLOOD; cyclone decision INSUFFICIENT_EVIDENCE, saved counts2recent/2total, currentEvidence=true, canDeclare=false. Source feed/read-only decision inspection caused no incident or profile mutations. Native interactions remain unverified. Three requested-page increments ready for reviewed commit/push.
+
+
+## 2026-10-10 — authority normal-report permission fix
+- Production APK user reported JURISDICTION_DENIED from the normal report form. Cause: observations.submit auto-promoted any authority membership into an official report, then required matching audience/full jurisdiction; DEMO-only membership could not submit ordinary LIVE reports.
+- Normal observation submissions are now COMMUNITY for all account roles. Authority workspace remains the explicit official action and preserves jurisdiction/audience restrictions. No bypass or automatic official verification was introduced. Existing published incidents remain unchanged. Regression tests cover LIVE and DEMO authorities outside assigned geography, unverified COMMUNITY creation, replay and denied official review.
+- 256 tests/41 files, strict TypeScript and lint pass. Development and production backend deployments running in exec30458; logs tmp/normal-authority-report-dev.log and tmp/normal-authority-report-prod.log. Installed APK needs no rebuild for this backend-only fix. Android after-location crash remains a separate unresolved report awaiting device crash logs.
+
+Deployment verified: development basic-newt-690 ready14:52:42 IST; production jovial-eagle-875 deployment completed successfully with schema validation. Backend-only normal-report fix is live for existing APK clients. Physical-device retry remains user acceptance.

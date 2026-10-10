@@ -106,3 +106,21 @@ it('labels truncated nearby/candidate results and preserves continuation for bou
  const page=await actor(first).query(api.incidents.inCell,{cell,paginationOpts:{numItems:100,cursor:null}});expect(page.items).toHaveLength(30);expect(page.isDone).toBe(false);
  const next=await actor(first).query(api.incidents.inCell,{cell,paginationOpts:{numItems:100,cursor:page.continueCursor}});expect(next.items).toHaveLength(2);expect(next.isDone).toBe(true);
 });
+
+
+it.each(['LIVE', 'DEMO'] as const)('allows a %s authority to submit a normal LIVE observation without official privileges', async agencyAudience => {
+ await t.run(async ctx => {
+  const geometryId = await ctx.db.insert('geometries', {area:{type:'circle',center:{latitude:12.8,longitude:80.1},radiusM:1000},source:'OPERATOR',sourceAccuracyM:null,version:1,geometryHash:'remote-authority-scope'});
+  const agencyId = await ctx.db.insert('agencies', {name:'Test authority',sourceLabel:'Test authority',active:true,audience:agencyAudience});
+  const jurisdictionId = await ctx.db.insert('jurisdictions', {agencyId,name:'Other area',geometryId,coverageVersion:1,active:true});
+  await ctx.db.insert('authorityMemberships', {userId:first,agencyId,jurisdictionIds:[jurisdictionId],status:'ACTIVE',approvedBy:'TEST_OPERATOR',approvedAt:Date.now()});
+ });
+ expect((await actor(first).query(api.profiles.me,{})).role).toBe('AUTHORITY');
+ const args=report(await admit(first));
+ const receipt=await actor(first).mutation(api.observations.submit,args);
+ expect(receipt).toMatchObject({verification:'UNVERIFIED',qualification:null,recentWitnesses:1,totalWitnesses:1});
+ expect(await actor(first).mutation(api.observations.submit,args)).toEqual(receipt);
+ expect(await t.run(ctx=>ctx.db.get(receipt.incidentId))).toMatchObject({provenance:'COMMUNITY',verification:'UNVERIFIED',audience:'LIVE'});
+ expect(await t.run(ctx=>ctx.db.get(receipt.observationId))).toMatchObject({provenance:'COMMUNITY'});
+ await expect(actor(first).query(api.authority.reviewIncident,{incidentId:receipt.incidentId})).rejects.toThrow('JURISDICTION_DENIED');
+});
