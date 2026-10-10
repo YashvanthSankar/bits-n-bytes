@@ -1,4 +1,9 @@
 export const en = {
+  relativeNow: "Just now",
+  relativeMinutes: "{{count}} min ago",
+  relativeHours: "{{count}} hr ago",
+  relativeDays: "{{count}} d ago",
+
   expandPanel: "Expand map panel",
   minimizePanel: "Minimize map panel",
   witnessSummary: "{{recent}} recent · {{total}} total witnesses · {{hours}}h window",

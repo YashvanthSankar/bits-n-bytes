@@ -1,3 +1,4 @@
+import { relativeTime } from '../i18n/relativeTime';
 import { Clock3, Users, ShieldCheck, ShieldQuestion, Radio, type LucideIcon } from 'lucide-react-native';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -6,11 +7,6 @@ import type { PublicIncident } from '../contracts/domain';
 import { AppText } from './ui';
 import { useTheme } from '../theme/useTheme';
 
-export function relativeTime(timestamp: number, language: string, now = Date.now()) {
-  const seconds = Math.max(0, (now - timestamp) / 1000);
-  const [value, unit] = seconds < 60 ? [0, 'minute'] : seconds < 3600 ? [Math.floor(seconds / 60), 'minute'] : seconds < 86400 ? [Math.floor(seconds / 3600), 'hour'] : [Math.floor(seconds / 86400), 'day'];
-  return new Intl.RelativeTimeFormat(language, { numeric: 'auto', style: 'short' }).format(-Number(value), unit as Intl.RelativeTimeFormatUnit);
-}
 export function RelativeTime({ timestamp }: { timestamp: number }) {
   const { i18n } = useTranslation(); const [now, setNow] = useState(() => Date.now());
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 60_000); return () => clearInterval(timer); }, []);

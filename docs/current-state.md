@@ -1,6 +1,6 @@
 # GudTour current implementation state
 
-Latest UI/startup checkpoint (2026-10-10): compact collapsible map panel, SACHET tab in place of unimplemented Chat, icon controls, relative incident timestamps and expandable assessment details. Returning-user root startup remembers completed setup, restores authentication and quietly refreshes location before Map. Strict TypeScript/lint and 274 tests/45 files pass; authenticated native cold-start and populated UI/device matrix still require acceptance. Existing APK artifacts do not contain these source changes.
+Latest UI/startup checkpoint (2026-10-10): compact collapsible map panel, SACHET tab in place of unimplemented Chat, icon controls, relative incident timestamps and expandable assessment details. Returning-user root startup remembers completed setup, restores authentication and quietly refreshes location before Map. Strict TypeScript/lint and 277 tests/46 files pass; authenticated native cold-start and populated UI/device matrix still require acceptance. Existing APK artifacts do not contain these source changes.
 
 Updated: 2026-10-10. Source checkpoint `0a3443d`; later documentation-only commits do not change the APK. This page supersedes older status summaries. PLAN.md remains the core product contract with its dated user overrides. Implementation, automated checks and physical-device acceptance are separate.
 
@@ -73,3 +73,5 @@ Jev periodic reassessment is **60 minutes** per eligible community incident; new
 - Do not restart GitHub upload: user explicitly stopped it. Do not claim full app completion or a precise completion percentage from legacy checkbox counts.
 
 Use [TODO.md](../TODO.md) for task IDs, [acceptance-ledger.md](acceptance-ledger.md) for pending scenarios, and [context.md](../context.md) for agent continuity. Historical progress notes remain dated evidence rather than current-state claims.
+
+2026-10-10 UI hotfix: native runtime lacks Intl.RelativeTimeFormat; relative timestamps now use localized templates without that API. Missing-Intl regression passes; native populated-screen retry remains pending.

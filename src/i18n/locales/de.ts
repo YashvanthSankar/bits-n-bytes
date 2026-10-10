@@ -1,5 +1,10 @@
 import type { Translation } from './en';
 export const de: Translation = {
+  relativeNow: "Gerade eben",
+  relativeMinutes: "vor {{count}} Min.",
+  relativeHours: "vor {{count}} Std.",
+  relativeDays: "vor {{count}} T.",
+
   expandPanel: "Kartenfeld öffnen",
   minimizePanel: "Kartenfeld minimieren",
   witnessSummary: "{{recent}} aktuell · {{total}} Zeugen insgesamt · {{hours}} Std.",

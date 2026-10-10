@@ -1,5 +1,9 @@
 # Latest handoff — 2026-10-10
 
+## 2026-10-10 — native relative timestamp crash fix
+- User supplied `undefined cannot be used as a constructor` at IncidentSummary relativeTime; Metro confirms Intl.RelativeTimeFormat is absent in the native runtime. Replaced it with dependency-free localized minute/hour/day templates for all six languages. No polyfill/native rebuild needed.
+- Regression runs with Intl.RelativeTimeFormat absent, checks time boundaries/future skew/invalid values and locale fallback. Strict TypeScript/lint and 277 tests/46 files pass. Populated native user retry still required; simulator preview itself is currently unauthenticated.
+
 ## 2026-10-10 — returning-user startup
 - StartupGate waits for language/preferences/auth/profile hydration before choosing the first screen. Existing authenticated profiles migrate automatically to completed setup and quietly refresh GPS plus backend location admission, then open Map for tourist and authority accounts.
 - Only a setup-completed flag is persisted in existing secure preference storage; precise location remains in memory and must pass the existing fresh India/accuracy checks. First-time users retain onboarding; completed users needing authentication go to Login. Explicit language changes remain available via the location screen and Settings.

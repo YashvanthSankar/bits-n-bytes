@@ -1,5 +1,10 @@
 import type { Translation } from './en';
 export const fr: Translation = {
+  relativeNow: "À l’instant",
+  relativeMinutes: "il y a {{count}} min",
+  relativeHours: "il y a {{count}} h",
+  relativeDays: "il y a {{count}} j",
+
   expandPanel: "Agrandir le panneau",
   minimizePanel: "Réduire le panneau",
   witnessSummary: "{{recent}} récents · {{total}} témoins au total · {{hours}} h",

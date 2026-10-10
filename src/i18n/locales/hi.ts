@@ -1,5 +1,10 @@
 import type { Translation } from './en';
 export const hi: Translation = {
+  relativeNow: "अभी",
+  relativeMinutes: "{{count}} मिनट पहले",
+  relativeHours: "{{count}} घंटे पहले",
+  relativeDays: "{{count}} दिन पहले",
+
   expandPanel: "मानचित्र पैनल खोलें",
   minimizePanel: "मानचित्र पैनल छोटा करें",
   witnessSummary: "{{recent}} हाल के · {{total}} कुल गवाह · {{hours}} घंटे",

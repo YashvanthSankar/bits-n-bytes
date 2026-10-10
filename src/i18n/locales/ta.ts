@@ -1,5 +1,10 @@
 import type { Translation } from './en';
 export const ta: Translation = {
+  relativeNow: "இப்போது",
+  relativeMinutes: "{{count}} நிமிடம் முன்பு",
+  relativeHours: "{{count}} மணி முன்பு",
+  relativeDays: "{{count}} நாள் முன்பு",
+
   expandPanel: "வரைபடப் பலகையை விரி",
   minimizePanel: "வரைபடப் பலகையைச் சுருக்கு",
   witnessSummary: "{{recent}} சமீபத்திய · {{total}} மொத்த சாட்சிகள் · {{hours}} மணி",
