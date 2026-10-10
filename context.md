@@ -1,5 +1,7 @@
 # Latest handoff — 2026-10-10
 
+- Recording polish: onboarding GudTour wordmark now uses title typography and explicit700 bold in `src/app/index.tsx`; TypeScript and lint pass. Prior simulator reset cleared only GudTour local container, scoped keychain entries and app permissions for first-launch recording.
+
 ## 2026-10-10 — streamlined DEMO authority workflow
 - The authority workspace is now alert-first: **Publish DEMO emergency now** immediately creates an authorized DEMO emergency and bypasses Jev. The Jev evidence notice is optional DEMO tooling, tucked behind **DEMO testing tools** rather than competing with the alert action; it adds evidence for a later, geographically overlapping DEMO tourist report and can never publish an emergency directly.
 - Both forms now foreground essential public information, selected map circle, radius presets and clear review. Existing server authorization, jurisdiction/containment, audit, expiry, idempotency and publication safeguards are unchanged. Source language, action/review timing and DEMO urgency/certainty remain available under More options.
@@ -557,3 +559,9 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 - rc.7 public upload canceled after repeated slow transfer; draft contains checksum only, do not publish. New rc.8 build must be from this committed snapshot.
 
 2026-10-10 release freeze: user explicitly stopped further work and requested a new APK from the current workspace, including latest UI/appearance control plus committed chat/location/Jev/SACHET work. rc.8 completed from650bb49 but is superseded by rc.9 snapshot with current System/Light/Dark preference. Full check308tests/54files + lint/typecheck passes before freeze; no further feature work authorized in this release turn. Backend already dev/prod deployed; rc.9 local production build next.
+
+## 2026-10-10 — Frozen rc.9 APK delivered locally
+- Built fromcommittedeafce80 (pushed); all current UI including appearance controls, compact typography/bold Chat, chat/location optimization, Jev v3 and30minSACHET changes included. Further feature work stopped at user's instruction.
+- Local signed productionAPK`tmp/release-artifacts/GudTour-0.1.0-rc.9.apk`, packagecom.bitsnbytes.gudtour/version0.1.0/versionCode12/minSDK24. Build succeeded; expected signaturev2certSHA256a280f5b4f25df90198d303cf58848cfdefec8862921b3fc6eb99c27dda488527; ZIP and productionbackend/no configuredservercredentials/envfiles checks pass. APK SHA256`3b62573809ffa6ebd88e3a6854f4b1b8f2e83176baefef1a4f482de68443e863`.
+-308tests/54files+lint/typecheck verified at freeze; backenddev/prod already deployed. rc.9 is local distribution, not Play Store or public GitHub publication. Old rc.7 draft upload canceled; leave unpublished. User's APK-size question was interrupted and they asked to continue; no size/config changes were made to this frozen universal build.
+- PhysicalAndroidrelaunch/chatlatency, two-client geographic chat, appearancepersistence/device switching and full language/a11y matrix still unverified.
