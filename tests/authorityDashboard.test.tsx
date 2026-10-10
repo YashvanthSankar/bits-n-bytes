@@ -22,7 +22,9 @@ it('offers clean scoped declaration and shelter actions with an explicit map exi
   await act(async()=>actions[1]!.props.onPress());
   expect(state.push).toHaveBeenLastCalledWith({pathname:'/authority/shelters',params:{jurisdictionId:'assigned-scope'}});
   expect(JSON.stringify(screen.toJSON())).toContain('DEMO');
-  await act(async()=>screen.root.findByType('button').props.onPress());
+  await act(async()=>screen.root.findAllByType('button').find(b=>b.props.title==='manageEmergencies')!.props.onPress());
+  expect(state.push).toHaveBeenLastCalledWith({pathname:'/authority/emergencies',params:{jurisdictionId:'assigned-scope'}});
+  await act(async()=>screen.root.findAllByType('button').find(b=>b.props.title==='backToMap')!.props.onPress());
   expect(state.replace).toHaveBeenCalledWith('/map');
  }finally{await act(async()=>screen.unmount());}
 });

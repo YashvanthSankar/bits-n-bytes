@@ -29,21 +29,27 @@ export const active = query({ args: {}, handler: async ctx => {
   const { userId, location } = await requireIndiaAccess(ctx);
   const now = Date.now(), locationFresh = validateFix(location, now, POLICY.alertFix).ok;
   const profile = await ctx.db.query('profiles').withIndex('by_user', q => q.eq('userId', userId)).unique();
-  const exposures = await ctx.db.query('exposures').withIndex('by_user_relevant', q => q.eq('userId', userId).eq('relevant', true)).take(21);
-  const items = [];
-  if (locationFresh) for (const exposure of exposures.slice(0, 20)) {
+  const exposures = await ctx.db.query('exposures').withIndex('by_user_relevant', q => q.eq('userId', userId)).order('desc').take(21);
+  const items = [], updates = [];
+  for (const exposure of exposures.slice(0, 20)) {
     const alert = await ctx.db.get(exposure.alertId);
-    if (!alert || alert.lifecycle !== 'ACTIVE' || (alert.audience === 'DEMO' && !profile?.demoEnabled)) continue;
-    const revision = await snapshot(ctx, alert), proximity = await applicable(ctx, revision, location);
-    if (proximity === 'OUTSIDE') continue;
-    const incident = await ctx.db.get(alert.incidentId);
+    if (!alert || (alert.audience === 'DEMO' && !profile?.demoEnabled)) continue;
+    const revision = await snapshot(ctx, alert), incident = await ctx.db.get(alert.incidentId);
     if (!incident) continue;
+    if (['ENDING','CORRECTION'].includes(revision.materialReason) && exposure.dismissedRevision < alert.currentRevision) {
+      updates.push({ exposureId: exposure._id, id: alert._id, revision: alert.currentRevision, locality: incident.locality, audience: alert.audience,
+        kind: revision.materialReason === 'CORRECTION' ? 'CORRECTION' as const : 'ENDING' as const, ended: alert.lifecycle === 'ENDED', publishedAt: revision.publishedAt });
+    }
+    if (!locationFresh || !exposure.relevant || alert.lifecycle !== 'ACTIVE') continue;
+    const proximity = await applicable(ctx, revision, location);
+    if (proximity === 'OUTSIDE') continue;
     items.push({ exposureId: exposure._id, id: alert._id, incidentId: incident._id, revision: alert.currentRevision, hazard: incident.hazard, locality: incident.locality,
       severity: revision.severity, audience: alert.audience, publishedAt: revision.publishedAt, proximity,
       needsAttention: exposure.dismissedRevision < alert.currentRevision && revision.urgency !== 'SILENT' });
   }
   items.sort(compareAlerts);
-  return { items, partial: exposures.length > 20, locationFresh, locationObservedAt: location.observedAt, serverTime: now };
+  updates.sort((a,b)=>b.publishedAt-a.publishedAt);
+  return { items, updates, partial: exposures.length > 20, locationFresh, locationObservedAt: location.observedAt, serverTime: now };
 } });
 
 /** Original notices are attributed separately; no invented combined instruction or translation. */
@@ -59,7 +65,7 @@ export const detail = query({ args: { alertId: v.id('alerts') }, handler: async 
   if (!incident) return reject('NOT_FOUND');
   const now = Date.now(), fresh = validateFix(location, now, POLICY.alertFix).ok;
   const instructions = [];
-  for (const source of revision.sources) if (source.active) {
+  for (const source of revision.sources) {
     const geometry = await ctx.db.get(source.geometryId);
     if (!geometry) return reject('CONFIGURATION_REQUIRED');
     const instruction = source.instructionVersionId ? await ctx.db.get(source.instructionVersionId) : null;
@@ -68,7 +74,7 @@ export const detail = query({ args: { alertId: v.id('alerts') }, handler: async 
     const translation = instruction && profile && profile.language !== instruction.sourceLanguage
       ? await ctx.db.query('instructionTranslations').withIndex('by_instruction_language', q => q.eq('instructionVersionId', instruction._id).eq('targetLanguage', profile.language)).unique() : null;
     const validTranslation = translation && instruction && translation.originalHash === instruction.originalHash;
-    instructions.push({ translation: validTranslation ? { status: translation.status, language: translation.targetLanguage, text: translation.status === 'READY' ? translation.text ?? null : null, machineTranslated: true as const, reviewed: false as const } : null, sourceId: source.sourceId, issuer: source.issuerLabel, severity: source.severity, area: geometry.area,
+    instructions.push({ active: source.active, translation: validTranslation ? { status: translation.status, language: translation.targetLanguage, text: translation.status === 'READY' ? translation.text ?? null : null, machineTranslated: true as const, reviewed: false as const } : null, sourceId: source.sourceId, issuer: source.issuerLabel, severity: source.severity, area: geometry.area,
       appliesToCurrentLocation: fresh ? overlapsArea(location, geometry.area) : null,
       originalText: instruction?.originalText ?? null, sourceLanguage: instruction?.sourceLanguage ?? null,
       actionKind: instruction?.actionKind ?? null, issuedAt: instruction?.issuedAt ?? revision.publishedAt,

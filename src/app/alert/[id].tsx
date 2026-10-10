@@ -26,7 +26,8 @@ function Detail() {
       {!fresh && <AppText style={{ color: theme.warning }}>{t('emergencyLocationOld')}</AppText>}
       {value.proximity === 'OUTSIDE' && <AppText>{t('emergencyOutside')}</AppText>}
       {value.instructions.map(source => <View key={source.sourceId} style={{ padding: 16, gap: 12, borderRadius: 20, backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border }}>
-        <AppText variant="heading">{source.issuer}</AppText><AppText variant="caption">{t('emergencyIssued')}: {date(source.issuedAt)}</AppText>
+        <AppText variant="heading">{source.issuer}</AppText>
+        {!source.active && <AppText>{t('emergencySourceEnded')}</AppText>}<AppText variant="caption">{t('emergencyIssued')}: {date(source.issuedAt)}</AppText>
         {(source.reviewOverdue || (source.reviewDueAt !== null && source.reviewDueAt < now)) && <AppText style={{ color: theme.warning }}>{t('emergencyReviewOverdue')}</AppText>}
         {source.appliesToCurrentLocation === false && <AppText>{t('emergencyOutside')}</AppText>}
         {source.deadlineAt !== null && <AppText style={{ fontWeight: '700' }}>{t('emergencyDeadline')}: {date(source.deadlineAt)}</AppText>}

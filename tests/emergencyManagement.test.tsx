@@ -1,0 +1,25 @@
+import React, { type PropsWithChildren, type ReactNode } from 'react';
+import { act, create, type ReactTestRenderer } from 'react-test-renderer';
+import { afterEach, expect, it, vi } from 'vitest';
+const state=vi.hoisted(()=>({end:vi.fn()}));
+vi.mock('convex/react',()=>({useMutation:()=>state.end,useQuery:()=>({page:[{id:'declaration-1',revision:4,locality:'Test locality',hazard:'HEATWAVE',severity:'HIGH',reviewDueAt:Date.now()+60000,originalText:'Stay indoors',issuer:'Test issuer',audience:'DEMO'}],isDone:true})}));
+vi.mock('expo-router',()=>({useLocalSearchParams:()=>({jurisdictionId:'scope-1'}),router:{replace:vi.fn()}}));
+vi.mock('expo-crypto',()=>({randomUUID:()=> 'ending-request-001'}));
+vi.mock('react-native',()=>({View:'View',ScrollView:'ScrollView',Modal:({visible,children}:PropsWithChildren<{visible:boolean}>)=>visible?<section>{children}</section>:null}));
+vi.mock('react-native-safe-area-context',()=>({useSafeAreaInsets:()=>({top:0,bottom:0})}));
+vi.mock('react-i18next',()=>({useTranslation:()=>({t:(key:string)=>key,i18n:{language:'en'}})}));
+vi.mock('../src/features/authority/AuthorityGate',()=>({AuthorityGate:({children}:PropsWithChildren)=><>{children}</>}));
+vi.mock('../src/theme/useTheme',()=>({useTheme:()=>({})}));
+vi.mock('../src/components/Choice',()=>({Choice:()=>null}));
+vi.mock('../src/components/ui',()=>({Screen:({children,footer}:PropsWithChildren<{footer:ReactNode}>)=><>{children}{footer}</>,AppText:({children}:PropsWithChildren)=><>{children}</>,LoadingState:()=>null,ActionButton:(props:object)=>React.createElement('button',props)}));
+import Manager from '../src/app/authority/emergencies';
+let screen:ReactTestRenderer;
+afterEach(async()=>{if(screen)await act(async()=>screen.unmount());vi.clearAllMocks();});
+it('requires ending confirmation and retries an uncertain ending with the exact same command',async()=>{
+ state.end.mockRejectedValueOnce(new Error('Transport lost'));state.end.mockResolvedValueOnce({alertEnded:true});
+ await act(async()=>{screen=create(<Manager/>);});
+ const button=(title:string)=>screen.root.findAllByType('button').find(b=>b.props.title===title)!;
+ await act(async()=>button('endDeclaration').props.onPress());expect(state.end).not.toHaveBeenCalled();expect(screen.root.findAllByType('section')).toHaveLength(1);
+ await act(async()=>button('confirmEndDeclaration').props.onPress());const original=state.end.mock.calls[0]![0];expect(original).toMatchObject({declarationId:'declaration-1',expectedRevision:4,kind:'WITHDRAWN'});expect(button('cancel').props.disabled).toBe(true);
+ await act(async()=>button('retry').props.onPress());expect(state.end.mock.calls[1]![0]).toEqual(original);expect(screen.root.findAllByType('section')).toHaveLength(0);expect(JSON.stringify(screen.toJSON())).toContain('declarationEnded');
+});

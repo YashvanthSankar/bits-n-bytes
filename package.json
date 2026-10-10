@@ -33,6 +33,7 @@
     "expo-system-ui": "~57.0.4",
     "expo-task-manager": "~57.0.21",
     "expo-web-browser": "~57.0.3",
+    "fast-xml-parser": "^5.11.2",
     "i18next": "^26.4.2",
     "lucide-react-native": "^1.54.0",
     "ngeohash": "^0.6.4",

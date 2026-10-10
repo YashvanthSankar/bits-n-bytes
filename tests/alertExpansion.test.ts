@@ -157,3 +157,28 @@ it('shows official emergency status in public incident reads independently of mo
  expect(detail).toMatchObject({qualification:null,officialEmergency:{severity:'HIGH',revision:1},lifecycle:'ACTIVE'});
  const nearby=await actor.query(api.incidents.nearby,{});expect(nearby.items.find(i=>i.id===incident._id)?.officialEmergency).toMatchObject({severity:'HIGH',revision:1});
 });
+it('ends only the selected declaration source and ends the emergency only after its final source ends',async()=>{
+ const {t,actor,scope,drain}=await fixture();await drain();
+ const incident=(await t.run(ctx=>ctx.db.query('incidents').collect()))[0]!;
+ await actor.mutation(api.declarations.publish,{requestId:'additional-source-001',jurisdictionId:scope.jurisdictionIds[0]!,incidentId:incident._id,expectedIncidentRevision:incident.revision,hazard:incident.hazard,locality:incident.locality,area:{type:'circle',center:point,radiusM:1000},severity:'CRITICAL',originalText:'Do not approach the flood',sourceLanguage:'en',actionKind:'AVOID_TRAVEL',reviewDueAt:Date.now()+3600000});
+ const declarations=await t.run(ctx=>ctx.db.query('authorityDeclarations').collect()),first=declarations[0]!,second=declarations[1]!;
+ const args={requestId:'end-declaration-001',jurisdictionId:scope.jurisdictionIds[0]!,declarationId:first._id,expectedRevision:first.revision,kind:'WITHDRAWN' as const};
+ const result=await actor.mutation(api.declarations.end,args);expect(result.alertEnded).toBe(false);expect(await actor.mutation(api.declarations.end,args)).toEqual(result);
+ expect((await actor.query(api.declarations.managed,{jurisdictionId:scope.jurisdictionIds[0]!,paginationOpts:{numItems:20,cursor:null}})).page).toHaveLength(1);
+ const alert=(await t.run(ctx=>ctx.db.query('alerts').collect()))[0]!;expect(alert.lifecycle).toBe('ACTIVE');
+ expect((await actor.query(api.alerts.detail,{alertId:alert._id})).instructions.filter(i=>i.active)).toHaveLength(1);
+ await expect(actor.mutation(api.declarations.end,{...args,requestId:'stale-ending-001'})).rejects.toThrow('REVISION_CONFLICT');
+ await actor.mutation(api.declarations.end,{...args,requestId:'end-declaration-002',declarationId:second._id,expectedRevision:second.revision,kind:'FALSE_ALERT'});
+ expect(await t.run(ctx=>ctx.db.get(alert._id))).toMatchObject({lifecycle:'ENDED'});
+ const detail=await actor.query(api.alerts.detail,{alertId:alert._id});expect(detail.instructions).toHaveLength(2);expect(detail.instructions.every(i=>!i.active)).toBe(true);
+ const revision=await t.run(ctx=>ctx.db.query('alertRevisions').withIndex('by_alert_revision',q=>q.eq('alertId',alert._id).eq('revision',4)).unique());expect(revision).toMatchObject({urgency:'SILENT',materialReason:'CORRECTION'});
+});
+it('delivers a quiet correction to a previously targeted account after it leaves the affected area',async()=>{
+ const {t,actor,userId,scope,drain}=await fixture();await drain();
+ const move=await actor.mutation(api.locations.update,{requestId:'correction-move-001',fix:{point:{latitude:13.15,longitude:80.27},accuracyM:10,observedAt:Date.now()},foregroundPermission:'granted',backgroundPermission:'denied',source:'FOREGROUND'});
+ await t.mutation(internal.locationAlerts.reconcile,{userId,locationRevision:move.revision,cursor:null});
+ const declaration=(await t.run(ctx=>ctx.db.query('authorityDeclarations').collect()))[0]!;
+ await actor.mutation(api.declarations.end,{requestId:'correct-prior-alert-001',jurisdictionId:scope.jurisdictionIds[0]!,declarationId:declaration._id,expectedRevision:1,kind:'FALSE_ALERT'});
+ const result=await actor.query(api.alerts.active,{});expect(result.items).toHaveLength(0);expect(result.updates).toHaveLength(1);expect(result.updates[0]).toMatchObject({kind:'CORRECTION',ended:true,revision:2});
+ await actor.mutation(api.alerts.dismiss,{alertId:result.updates[0]!.id,revision:2});expect((await actor.query(api.alerts.active,{})).updates).toHaveLength(0);
+});

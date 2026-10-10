@@ -30,6 +30,7 @@ function Overview() {
         <TriangleAlert size={26} color={theme.onAccent} />
         <View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="heading" style={{color:theme.onAccent,flex:1}}>{t('declareEmergency')}</AppText><ChevronRight size={22} color={theme.onAccent} /></View>
       </Pressable>
+      <ActionButton title={t('manageEmergencies')} variant="secondary" onPress={()=>router.push({pathname:'/authority/emergencies',params:{jurisdictionId:scope.id}})} />
       <Pressable accessibilityRole="button" accessibilityLabel={t('manageShelters')} onPress={() => router.push({pathname:'/authority/shelters',params:{jurisdictionId:scope.id}})}
         style={({pressed})=>({padding:20,borderRadius:22,borderWidth:1,borderColor:theme.border,backgroundColor:pressed?theme.muted:theme.surface,flexDirection:'row',alignItems:'center',gap:16})}>
         <View style={{padding:12,borderRadius:14,backgroundColor:theme.selection}}><House size={24} color={theme.accent} /></View>

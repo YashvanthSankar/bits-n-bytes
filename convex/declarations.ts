@@ -1,7 +1,8 @@
+import { paginationOptsValidator } from 'convex/server';
 import geohash from 'ngeohash';
 import { enqueueTranslations } from './translations';
 import { internal } from './_generated/api';
-import { mutation } from './_generated/server';
+import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 import { requireAssignedJurisdiction, requireUser } from './lib/authorization';
 import { containsArea, coveringCells, validateArea } from './lib/areas';
@@ -84,3 +85,47 @@ export const publish = mutation({ args: {
     return { incidentId, declarationId, alertId, revision, instructionVersionId, publishedAt: now };
   });
 } });
+
+export const managed = query({args:{jurisdictionId:v.id('jurisdictions'),paginationOpts:paginationOptsValidator},handler:async(ctx,args)=>{
+ const scope=await requireAssignedJurisdiction(ctx,args.jurisdictionId);
+ if(args.paginationOpts.numItems<1 || args.paginationOpts.numItems>30)return reject('INVALID_INPUT');
+ const result=await ctx.db.query('authorityDeclarations').withIndex('by_agency_active',q=>q.eq('agencyId',scope.agency._id).eq('active',true)).order('desc').paginate(args.paginationOpts);
+ const page=[];
+ for(const declaration of result.page){
+  const geometry=await ctx.db.get(declaration.geometryId);if(!geometry || !containsArea(scope.area,geometry.area))continue;
+  const incident=await ctx.db.get(declaration.incidentId),instruction=declaration.instructionVersionId?await ctx.db.get(declaration.instructionVersionId):null;
+  if(!incident || declaration.audience!==scope.agency.audience)continue;
+  page.push({id:declaration._id,revision:declaration.revision,locality:incident.locality,hazard:incident.hazard,severity:declaration.severity,reviewDueAt:declaration.reviewDueAt,originalText:instruction?.originalText??null,issuer:scope.agency.sourceLabel,audience:declaration.audience});
+ }
+ return {...result,page};
+}});
+/** Ends only this agency's source; concurrent independent sources remain authoritative. */
+export const end = mutation({args:{requestId:v.string(),jurisdictionId:v.id('jurisdictions'),declarationId:v.id('authorityDeclarations'),expectedRevision:v.number(),kind:v.union(v.literal('WITHDRAWN'),v.literal('RESOLVED'),v.literal('FALSE_ALERT'))},handler:async(ctx,args)=>{
+ const userId=await requireUser(ctx);
+ return command(ctx,userId,'DECLARATION_END',args.requestId,args,async()=>{
+  const scope=await requireAssignedJurisdiction(ctx,args.jurisdictionId),declaration=await ctx.db.get(args.declarationId);
+  if(!declaration || declaration.agencyId!==scope.agency._id || declaration.audience!==scope.agency.audience)return reject('JURISDICTION_DENIED');
+  const geometry=await ctx.db.get(declaration.geometryId);if(!geometry || !containsArea(scope.area,geometry.area))return reject('JURISDICTION_DENIED');
+  if(!declaration.active || declaration.revision!==args.expectedRevision)return reject('REVISION_CONFLICT');
+  const now=Date.now(),declarationRevision=declaration.revision+1;
+  await ctx.db.patch(declaration._id,{active:false,endedAt:now,endReason:args.kind,revision:declarationRevision});
+  const source=await ctx.db.query('alertSources').withIndex('by_declaration',q=>q.eq('declarationId',declaration._id)).unique();
+  if(!source)return reject('CONFIGURATION_REQUIRED');
+  await ctx.db.patch(source._id,{active:false,endedAt:now,endReason:args.kind,sourceRevision:source.sourceRevision+1});
+  const alert=await ctx.db.get(source.alertId);if(!alert)return reject('CONFIGURATION_REQUIRED');
+  const prior=await ctx.db.query('alertRevisions').withIndex('by_alert_revision',q=>q.eq('alertId',alert._id).eq('revision',alert.currentRevision)).unique();if(!prior)return reject('CONFIGURATION_REQUIRED');
+  const remaining=await ctx.db.query('alertSources').withIndex('by_alert_active',q=>q.eq('alertId',alert._id).eq('active',true)).take(33);if(remaining.length>32)return reject('CONFIGURATION_REQUIRED');
+  const revision=alert.currentRevision+1,ranks=['CRITICAL','HIGH','MODERATE','LOW','UNKNOWN'];
+  const strongest=remaining.reduce<typeof source.severity>((best,item)=>ranks.indexOf(item.severity)<ranks.indexOf(best)?item.severity:best,'UNKNOWN');
+  const sources=prior.sources.map(item=>item.sourceId===source._id?{...item,active:false}:item);
+  await ctx.db.patch(alert._id,{currentRevision:revision,lifecycle:remaining.length?'ACTIVE':'ENDED',updatedAt:now});
+  await ctx.db.insert('alertRevisions',{alertId:alert._id,revision,sources,severity:strongest,materialReason:args.kind==='FALSE_ALERT'?'CORRECTION':'ENDING',urgency:'SILENT',criticalInstruction:false,publishedAt:now,policyVersion:POLICY_VERSION});
+  if(remaining.length){
+   const cells=new Set<string>();for(const item of remaining){const area=await ctx.db.get(item.geometryId);if(!area)return reject('CONFIGURATION_REQUIRED');for(const cell of coveringCells(area.area))cells.add(cell);if(cells.size>2048)return reject('CONFIGURATION_REQUIRED');}
+   const jobId=await ctx.db.insert('jobs',{kind:'ALERT_EXPANSION',key:`${alert._id}:${revision}`,status:'PENDING',dueAt:now,createdAt:now,alertId:alert._id,alertRevision:revision,geometryId:remaining[0]!.geometryId,cells:[...cells].sort(),cellIndex:0,childIndex:0,cursor:null,checkpoint:0});
+   await ctx.scheduler.runAfter(0,internal.alertExpansion.page,{jobId,checkpoint:0});
+  }
+  await ctx.db.insert('auditEvents',{actorId:userId,actorKind:'AUTHORITY',objectKind:'AUTHORITY_DECLARATION',objectId:declaration._id,revision:declarationRevision,action:args.kind,reason:'Authority ended this declaration',createdAt:now});
+  return {declarationRevision,alertRevision:revision,alertEnded:remaining.length===0};
+ });
+}});

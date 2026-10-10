@@ -25,7 +25,10 @@ export function EmergencyAlerts({ global = false }: { global?: boolean }) {
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 15_000); return () => clearInterval(timer); }, []);
   const fresh = result?.locationFresh && now - result.locationObservedAt <= POLICY.alertFix.maxAgeMs;
   const items = fresh ? [...(result?.items ?? [])].sort(compareAlerts) : [];
-  const attention = items.find(item => item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision));
+  const urgent = items.find(item => item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision));
+  const update = result?.updates?.find(item => !hidden.has(item.exposureId + ':' + item.revision));
+  const attention = urgent ?? update;
+  const isUpdate = !!attention && !urgent;
   const open = (id: typeof items[number]['id']) => router.push({ pathname: '/alert/[id]', params: { id } });
   async function dismiss() {
     if (!attention) return;
@@ -42,13 +45,17 @@ export function EmergencyAlerts({ global = false }: { global?: boolean }) {
       <AppText variant="caption">{t(item.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText>
       <ActionButton title={t('viewEmergency')} onPress={() => open(item.id)} />
     </View>)}
+    {!global && result?.updates?.map(item => <View key={'update-'+item.id} style={{padding:14,gap:8,borderRadius:16,borderWidth:1,borderColor:theme.warning,backgroundColor:theme.surface}}>
+      <AppText>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t(item.kind === 'CORRECTION' ? 'alertCorrected' : 'alertSourceEnded')}</AppText><AppText>{item.locality}</AppText><AppText>{t('emergencySourceEnded')}</AppText>
+      <ActionButton title={t('viewNotice')} variant="secondary" onPress={()=>open(item.id)}/>
+    </View>)}
     {!global && error && <AppText style={{ color: theme.warning }}>{t('emergencyDismissFailed')}</AppText>}
     <Modal visible={global && active && eligiblePage && !!attention} animationType="slide" onRequestClose={() => void dismiss()}>
       <View style={{ flex: 1, backgroundColor: theme.background, padding: 20, paddingTop: safe.top + 20, paddingBottom: safe.bottom + 20 }}>
         <View style={{ flex: 1, backgroundColor: theme.surface, borderRadius: 24, padding: 20, gap: 16 }}>
-          <AppText variant="heading" style={{ color: theme.danger }}>{attention?.audience === 'DEMO' ? 'DEMO · ' : ''}{t('emergencyActive')}</AppText>
-          <ScrollView contentContainerStyle={{ gap: 12 }}><AppText>{attention?.locality}</AppText><AppText>{t(attention?.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText><AppText>{t('emergencyStillAvailable')}</AppText>{error && <AppText>{t('emergencyDismissFailed')}</AppText>}</ScrollView>
-          <ActionButton title={t('viewEmergency')} onPress={() => { if (attention) { const id = attention.id; void dismiss(); open(id); } }} />
+          <AppText variant="heading" style={{ color: isUpdate ? theme.warning : theme.danger }}>{attention?.audience === 'DEMO' ? 'DEMO · ' : ''}{t(isUpdate ? update?.kind === 'CORRECTION' ? 'alertCorrected' : 'alertSourceEnded' : 'emergencyActive')}</AppText>
+          <ScrollView contentContainerStyle={{ gap: 12 }}><AppText>{attention?.locality}</AppText><AppText>{t(isUpdate ? 'emergencySourceEnded' : urgent?.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText><AppText>{t(isUpdate && !update?.ended ? 'otherEmergencySourcesActive' : 'emergencyStillAvailable')}</AppText>{error && <AppText>{t('emergencyDismissFailed')}</AppText>}</ScrollView>
+          <ActionButton title={t(isUpdate ? 'viewNotice' : 'viewEmergency')} onPress={() => { if (attention) { const id = attention.id; void dismiss(); open(id); } }} />
           <ActionButton title={t('dismissPopup')} variant="secondary" onPress={() => void dismiss()} />
         </View>
       </View>

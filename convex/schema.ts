@@ -2,9 +2,23 @@ import { authTables } from '@convex-dev/auth/server';
 import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 import * as types from './lib/validators';
+import { capInfo } from './lib/sachetValidators';
 
 export default defineSchema({
   ...authTables,
+  feedDocuments: defineTable({
+    url: v.string(), kind: v.union(v.literal('RSS'), v.literal('CAP'), v.literal('POLYGON')), xml: v.optional(v.string()), etag: v.optional(v.string()),
+    hash: v.optional(v.string()), revision: v.number(), lastAttemptAt: v.optional(v.number()), lastSuccessAt: v.optional(v.number()), changedAt: v.optional(v.number()),
+    nextPollAt: v.number(), failures: v.number(), lastError: v.optional(v.string()), leaseUntil: v.number(), generation: v.number(),
+  }).index('by_url', ['url']).index('by_nextPollAt', ['nextPollAt']),
+  officialNotices: defineTable({
+    key: v.string(), sender: v.string(), identifier: v.string(), sentAt: v.number(), documentId: v.id('feedDocuments'), revision: v.number(),
+    eligible: v.boolean(), active: v.boolean(), msgType: v.string(), references: v.array(v.string()), supersededBy: v.optional(v.string()),
+    // Validated by parseCap on every internal acceptance; immutable raw XML stays in revisions.
+    infos: v.array(capInfo), updatedAt: v.number(),
+  }).index('by_key', ['key']).index('by_active_sentAt', ['active', 'sentAt']),
+  officialNoticeRevisions: defineTable({ noticeId: v.id('officialNotices'), revision: v.number(), hash: v.string(), xml: v.string(), fetchedAt: v.number() }).index('by_notice_revision', ['noticeId', 'revision']),
+  officialReferenceTombstones: defineTable({ key: v.string(), supersededBy: v.string(), msgType: v.string(), createdAt: v.number() }).index('by_key', ['key']),
   profiles: defineTable({
     userId: v.id('users'), name: v.string(), alias: v.string(), language: types.language,
     bloodGroup: v.optional(v.string()), emergencyContact: v.optional(v.object({ name: v.string(), phone: v.string() })),
@@ -51,7 +65,7 @@ export default defineSchema({
     incidentId: v.id('incidents'), membershipId: v.id('authorityMemberships'), agencyId: v.id('agencies'), geometryId: v.id('geometries'),
     severity: types.severity, instructionVersionId: v.optional(v.id('instructionVersions')), reviewDueAt: v.number(), active: v.boolean(),
     endedAt: v.optional(v.number()), endReason: v.optional(v.string()), revision: v.number(), audience: types.audience,
-  }).index('by_incident_active', ['incidentId', 'active']).index('by_active_reviewDueAt', ['active', 'reviewDueAt']),
+  }).index('by_agency_active', ['agencyId', 'active']).index('by_incident_active', ['incidentId', 'active']).index('by_active_reviewDueAt', ['active', 'reviewDueAt']),
   instructionVersions: defineTable({
     declarationId: v.id('authorityDeclarations'), revision: v.number(), originalText: v.string(), sourceLanguage: types.language, originalHash: v.string(),
     actionKind: types.actionKind, namedShelterId: v.optional(v.id('shelters')), issuedAt: v.number(), deadlineAt: v.optional(v.number()),
