@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#F6F7F4">
+  <meta name="description" content="Meet GudTour. An India-first travel companion designed for local hazard reports, alerts in your language, and shelter information.">
+  <title>GudTour — Local alerts. Your language.</title>
+  <link rel="icon" href="./assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./downloads.js" defer></script>
+  <script src="./main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="icon-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <symbol id="compass" viewBox="0 0 32 32"><path d="M16 2 27 27 16 22 5 27Z" fill="currentColor"/><path d="m16 9 4 11-4-2-4 2Z" fill="#fff"/></symbol>
+      <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+      <symbol id="pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+      <symbol id="language" viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m-5 4 8 8m1-12c0 6-4 10-10 13m11 3 4-11 4 11m-7-3h6"/></symbol>
+      <symbol id="shelter" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3Zm6 11v-8h6v8"/></symbol>
+      <symbol id="android" viewBox="0 0 24 24"><path d="m7 5-2-3m12 3 2-3M3 13a9 9 0 0 1 18 0v4H3Z"/><path d="M7 17v4m10-4v4"/><circle cx="8" cy="10" r=".75" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r=".75" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="apple" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M16.7 3.1c-.9 1.1-2.3 1.8-3.6 1.7-.2-1.3.5-2.7 1.3-3.6C15.3.2 16.8-.4 18 0c.1 1.2-.5 2.3-1.3 3.1ZM20.5 17.4c-.6 1.3-.9 1.9-1.7 3.1-1.1 1.6-2.6 3.6-4.5 3.5-1.7 0-2.1-1.1-4.4-1.1-2.2 0-2.7 1.1-4.4 1.1-1.9.1-3.3-1.7-4.4-3.3C-2 16.2-.6 9.4 2.8 7.1c1.6-1.1 3.7-1.3 5.7-.5 1.5.6 2.4.6 3.9 0 1.9-.8 4.1-.6 5.6.5-4.5 2.5-3.8 8.9 2.5 10.3Z" transform="translate(3 2) scale(.8)"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="page-shell">
+    <header class="header">
+      <a class="brand" href="./" aria-label="GudTour home" translate="no">
+        <span class="brand-mark"><svg aria-hidden="true"><use href="#compass"/></svg></span>
+        GudTour<span class="brand-period">.</span>
+      </a>
+      <div class="header-right"><span class="edition">Made for your journey in India</span><a class="header-cta" href="#get-app">Get the app <svg class="line-icon" aria-hidden="true"><use href="#arrow"/></svg></a></div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="tiny-compass" aria-hidden="true">↗</span> A little local knowledge goes a long way.</p>
+          <h1 id="hero-title">New place.<br>Same <span class="word-home">peace of mind<svg viewBox="0 0 460 20" preserveAspectRatio="none" aria-hidden="true"><path d="M3 14C125 1 303 3 455 11"/></svg></span>.</h1>
+          <p class="intro">Meet <strong translate="no">GudTour</strong>. We’re building a travel companion that brings nearby hazard reports, local alerts and shelter information into one clear map. In your language.</p>
+
+          <div id="get-app" class="download-block">
+            <div class="download-actions" aria-label="App downloads">
+              <a class="download download-primary" data-download="ios" role="link" aria-disabled="true" aria-describedby="release-note">
+                <svg class="platform-icon" aria-hidden="true"><use href="#apple"/></svg><span><span class="download-overline">iPhone · Release pending</span><span class="download-title">GudTour for iOS</span></span><svg class="line-icon download-arrow" aria-hidden="true"><use href="#arrow"/></svg>
+              </a>
+              <a class="download download-secondary" data-download="android" role="link" aria-disabled="true" aria-describedby="release-note">
+                <svg class="platform-icon" aria-hidden="true"><use href="#android"/></svg><span><span class="download-overline">Android · Release pending</span><span class="download-title">GudTour for Android</span></span><svg class="line-icon download-arrow" aria-hidden="true"><use href="#arrow"/></svg>
+              </a>
+            </div>
+            <p id="release-note" class="release-note">In development. Download links will appear when builds are ready.</p>
+          </div>
+
+          <div class="language-note"><span class="language-dots" aria-hidden="true"><span>अ</span><span>அ</span><span>A</span></span><p>Local alerts. <strong>Your language.</strong><br><span>English · हिन्दी · தமிழ் · Français · Deutsch · Español</span></p></div>
+        </div>
+
+        <figure class="product-visual">
+          <div class="orbit orbit-outer" aria-hidden="true"></div><div class="orbit orbit-inner" aria-hidden="true"></div>
+          <span class="orbit-pin orbit-pin-one" aria-hidden="true"><svg class="line-icon"><use href="#pin"/></svg></span>
+          <span class="orbit-pin orbit-pin-two" aria-hidden="true"><svg class="line-icon"><use href="#shelter"/></svg></span>
+          <div class="visual-label"><span class="label-dot" aria-hidden="true"></span> A familiar feeling. Wherever you are.</div>
+          <div class="phone">
+            <div class="phone-button phone-button-one" aria-hidden="true"></div><div class="phone-button phone-button-two" aria-hidden="true"></div>
+            <div class="phone-screen"><img src="./assets/app-preview.jpg" width="920" height="2000" fetchpriority="high" alt="GudTour iOS development screen: a full-screen map with a nearby incident boundary, Report an incident action and floating navigation. The location and incident data are simulated."><div class="dynamic-island" aria-hidden="true"></div></div>
+          </div>
+          <div class="floating-note" aria-hidden="true"><span class="note-icon"><svg class="line-icon"><use href="#pin"/></svg></span><span>Around you.<br><strong>Not everywhere.</strong></span><span class="note-arrow">↗</span></div>
+          <figcaption>Actual iOS development build <span>·</span> Simulated data</figcaption>
+        </figure>
+      </section>
+
+      <section class="essentials" aria-label="The idea in three parts">
+        <article><span class="essential-icon"><svg class="line-icon" aria-hidden="true"><use href="#pin"/></svg></span><div><h2>A sense of what’s nearby.</h2><p>Local reports, with their source and status kept clear.</p></div><span class="essential-number" aria-hidden="true">01</span></article>
+        <article><span class="essential-icon"><svg class="line-icon" aria-hidden="true"><use href="#language"/></svg></span><div><h2>Less lost in translation.</h2><p>Alerts in your language. Original instructions alongside.</p></div><span class="essential-number" aria-hidden="true">02</span></article>
+        <article><span class="essential-icon"><svg class="line-icon" aria-hidden="true"><use href="#shelter"/></svg></span><div><h2>Your next step, clearer.</h2><p>Shelter information, guided by local authority instructions.</p></div><span class="essential-number" aria-hidden="true">03</span></article>
+      </section>
+    </main>
+
+    <footer class="footer"><p><span translate="no">GudTour</span> <span class="footer-slash">/</span> Explore a little more informed.</p><p class="footer-fine">Development preview. Not an emergency service or a guarantee of safety.<br>No location, sign-in or tracking is collected on this page.</p><span class="footer-location"><span aria-hidden="true">↗</span> India, first.</span></footer>
+  </div>
+</body>
+</html>
