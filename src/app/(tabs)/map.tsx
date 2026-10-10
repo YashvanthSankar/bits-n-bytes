@@ -47,6 +47,7 @@ function MapContent() {
               <action.icon size={18} color={theme.accent} accessible={false} /><AppText variant="caption" style={{fontWeight:'600',flexShrink:1}}>{t(action.label)}</AppText>
             </Pressable>)}
           </View>
+          <ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.push('/sachet')} />
           <AppText variant="caption" style={{color:theme.secondary}}>{nearby===undefined?t('loading'):nearby.partial?t('mapPartial'):nearby.items.length===0?t('mapEmptySummary'):t('mapReportSummary',{count:nearby.items.length})}</AppText>
           <Pressable accessibilityRole="button" accessibilityLabel={t('refreshLocation')} onPress={()=>router.replace('/location')} style={({pressed})=>({minHeight:48,justifyContent:'center',borderRadius:12,paddingHorizontal:8,backgroundColor:pressed?theme.muted:'transparent'})}>
             <AppText variant="caption" style={{color:theme.secondary}}>{t('locationCaptured')} · {new Date(fix.observedAt).toLocaleTimeString(i18n.language,{hour:'2-digit',minute:'2-digit'})} · ±{Math.ceil(fix.accuracyM)} m</AppText>

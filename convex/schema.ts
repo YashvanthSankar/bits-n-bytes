@@ -53,7 +53,7 @@ export default defineSchema({
     mergedInto: v.optional(v.id('incidents')),
     reviewNeeded: v.optional(v.boolean()),
     authorityAgencyId: v.optional(v.id('agencies')),
-  }).index('by_provenance_lifecycle_assessment', ['provenance', 'lifecycle', 'nextAssessmentAt']).index('by_audience_lifecycle', ['audience', 'lifecycle']).index('by_lifecycle_nextAssessmentAt', ['lifecycle', 'nextAssessmentAt']).index('by_hazard_lastObservedAt', ['hazard', 'lastObservedAt']).index('by_mergedInto', ['mergedInto']),
+  }).index('by_audience', ['audience']).index('by_provenance_lifecycle_assessment', ['provenance', 'lifecycle', 'nextAssessmentAt']).index('by_audience_lifecycle', ['audience', 'lifecycle']).index('by_lifecycle_nextAssessmentAt', ['lifecycle', 'nextAssessmentAt']).index('by_hazard_lastObservedAt', ['hazard', 'lastObservedAt']).index('by_mergedInto', ['mergedInto']),
   observations: defineTable({
     incidentId: v.id('incidents'), authorId: v.optional(v.id('users')), alias: v.string(), capturedPoint: types.point,
     fixObservedAt: v.number(), accuracyM: v.number(), observedAt: v.number(), receivedAt: v.number(), description: v.string(),

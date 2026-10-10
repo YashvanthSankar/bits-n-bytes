@@ -55,6 +55,7 @@ function Settings() {
   }
   return <Screen>
     <AppText variant="title" accessibilityRole="header">{t('navSettings')}</AppText>
+    <ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.push('/sachet')} />
     {!isAuthenticated ? <ActionButton title={t('locationAction')} onPress={()=>router.replace('/location')} /> : own===undefined ? <LoadingState /> : <>
       <View style={{gap:8}}><AppText variant="heading">{t('profileTitle')}</AppText><AppText>{own.profile?.alias}</AppText><AppText variant="caption">{t('profilePrivacy')}</AppText>
         <ActionButton title={t('profileTitle')} variant="secondary" onPress={()=>router.push('/profile')} disabled={busy} />

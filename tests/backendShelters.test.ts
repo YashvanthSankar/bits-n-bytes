@@ -173,3 +173,23 @@ it('uses raw distance order including closed shelters without eligibility filter
   const listed=await actor(tourist).query(api.shelters.nearby,{});
   expect(listed.nearestId).toBe(nearest.shelterId);expect(listed.items.map(s=>s.id)).toEqual([nearest.shelterId,farther.shelterId]);expect(listed.items[0]!.status).toBe('CLOSED');
 });
+
+it('scopes authority report decisions and preserves exact saved context without private observations',async()=>{
+ const incidentId=await t.run(async ctx=>{
+  const scope=(await ctx.db.get(jurisdictionId))!;
+  const incidentId=await ctx.db.insert('incidents',{hazard:'CYCLONE',locality:'Test locality',geometryId:scope.geometryId,provenance:'COMMUNITY',verification:'CORROBORATED',lifecycle:'ACTIVE',qualification:'INSUFFICIENT_EVIDENCE',assessmentStatus:'ACCEPTED',severity:'UNKNOWN',recentWitnesses:0,totalWitnesses:0,lastObservedAt:Date.now(),staleAt:Date.now()+3600000,revision:2,evidenceGeneration:2,controlRevision:0,nextAssessmentAt:Date.now()+300000,audience:'LIVE'});
+  const json=JSON.stringify({incident:{counts:{recent:2,total:2},samples:[{description:'Report evidence'}]},missingInputs:['UPSTREAM_WEATHER_UNAVAILABLE']});
+  const snapshotId=await ctx.db.insert('evidenceSnapshots',{incidentId,incidentRevision:1,evidenceGeneration:2,controlRevision:0,hash:'report-context-test',json,createdAt:Date.now(),policyVersion:'test'});
+  await ctx.db.insert('assessments',{incidentId,snapshotId,runId:1,model:'jev-1.13',rubric:'gudtour-crisis-v2',qualification:'INSUFFICIENT_EVIDENCE',outcome:'INSUFFICIENT_EVIDENCE',optionProbability:0.83,confidence:0.74,severity:'UNKNOWN',inputTokens:200,outputTokens:30,latencyMs:900,judgmentsJson:'{}',createdAt:Date.now()});return incidentId;
+ });
+ await expect(actor(tourist).query(api.authorityReports.detail,{jurisdictionId,incidentId})).rejects.toThrow('AUTHORITY_REQUIRED');
+ await expect(actor(authority).query(api.authorityReports.detail,{jurisdictionId:otherJurisdictionId,incidentId})).rejects.toThrow('JURISDICTION_DENIED');
+ const detail=await actor(authority).query(api.authorityReports.detail,{jurisdictionId,incidentId});expect(detail.assessment).toMatchObject({qualification:'INSUFFICIENT_EVIDENCE',optionProbability:0.83,confidence:0.74,currentEvidence:true});expect(JSON.parse(detail.assessment!.contextJson!).incident.counts.recent).toBe(2);expect(JSON.stringify(detail)).not.toContain('Private tourist');
+ const listed=await actor(authority).query(api.authorityReports.list,{jurisdictionId,paginationOpts:{numItems:15,cursor:null}});expect(listed.page[0]!.id).toBe(incidentId);
+ await t.run(ctx=>ctx.db.patch(incidentId,{evidenceGeneration:3}));expect((await actor(authority).query(api.authorityReports.detail,{jurisdictionId,incidentId})).assessment!.currentEvidence).toBe(false);
+ await t.run(ctx=>ctx.db.patch(agencyId,{audience:'DEMO'}));
+ const demoReviewer=await actor(authority).query(api.authorityReports.detail,{jurisdictionId,incidentId});expect(demoReviewer.canDeclare).toBe(false);
+ expect((await actor(authority).query(api.authorityReports.list,{jurisdictionId,audience:'LIVE',paginationOpts:{numItems:15,cursor:null}})).page[0]!.id).toBe(incidentId);
+ await t.mutation(internal.operator.revokeAuthority,{membershipId,reason:'Test revocation'});
+ await expect(actor(authority).query(api.authorityReports.detail,{jurisdictionId,incidentId})).rejects.toThrow('AUTHORITY_REQUIRED');
+});

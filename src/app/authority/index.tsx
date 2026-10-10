@@ -16,9 +16,7 @@ function Overview() {
       <View style={{width:48,height:48,borderRadius:16,backgroundColor:theme.selection,alignItems:'center',justifyContent:'center'}}><ShieldCheck size={24} color={theme.accent} /></View>
       <View style={{flex:1,gap:4}}><AppText variant="caption" style={{color:theme.accent,fontWeight:'600'}}>GudTour</AppText><AppText variant="heading">{t('authorityTitle')}</AppText></View>
     </View>
-    <View style={{backgroundColor:theme.surface,borderRadius:24,borderWidth:1,borderColor:theme.border,padding:20,gap:10}}>
-      <AppText variant="heading">{t('authorityReady')}</AppText><AppText style={{color:theme.secondary}}>{t('authorityScopeHelp')}</AppText>
-    </View>
+    <ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.push('/sachet')} />
     {!scopes ? <LoadingState /> : !scopes.length ? <EmptyState title={t('authorityNoScopes')} /> : scopes.map(scope => <View key={scope.id} style={{gap:16}}>
       <View style={{flexDirection:'row',alignItems:'center',gap:10}}>
         <MapPin size={18} color={theme.secondary} />
@@ -30,6 +28,7 @@ function Overview() {
         <TriangleAlert size={26} color={theme.onAccent} />
         <View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="heading" style={{color:theme.onAccent,flex:1}}>{t('declareEmergency')}</AppText><ChevronRight size={22} color={theme.onAccent} /></View>
       </Pressable>
+      <ActionButton title={t('viewReports')} variant="secondary" onPress={()=>router.push({pathname:'/authority/reports',params:{jurisdictionId:scope.id}})} />
       <ActionButton title={t('manageEmergencies')} variant="secondary" onPress={()=>router.push({pathname:'/authority/emergencies',params:{jurisdictionId:scope.id}})} />
       <Pressable accessibilityRole="button" accessibilityLabel={t('manageShelters')} onPress={() => router.push({pathname:'/authority/shelters',params:{jurisdictionId:scope.id}})}
         style={({pressed})=>({padding:20,borderRadius:22,borderWidth:1,borderColor:theme.border,backgroundColor:pressed?theme.muted:theme.surface,flexDirection:'row',alignItems:'center',gap:16})}>

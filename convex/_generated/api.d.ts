@@ -14,6 +14,7 @@ import type * as assessments from "../assessments.js";
 import type * as auth from "../auth.js";
 import type * as authority from "../authority.js";
 import type * as authorityAccess from "../authorityAccess.js";
+import type * as authorityReports from "../authorityReports.js";
 import type * as crons from "../crons.js";
 import type * as declarations from "../declarations.js";
 import type * as evidence from "../evidence.js";
@@ -41,6 +42,7 @@ import type * as providers_googleTranslation from "../providers/googleTranslatio
 import type * as providers_jev from "../providers/jev.js";
 import type * as providers_sachet from "../providers/sachet.js";
 import type * as sachet from "../sachet.js";
+import type * as sachetPublic from "../sachetPublic.js";
 import type * as shelters from "../shelters.js";
 import type * as translations from "../translations.js";
 import type * as weather from "../weather.js";
@@ -58,6 +60,7 @@ declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   authority: typeof authority;
   authorityAccess: typeof authorityAccess;
+  authorityReports: typeof authorityReports;
   crons: typeof crons;
   declarations: typeof declarations;
   evidence: typeof evidence;
@@ -85,6 +88,7 @@ declare const fullApi: ApiFromModules<{
   "providers/jev": typeof providers_jev;
   "providers/sachet": typeof providers_sachet;
   sachet: typeof sachet;
+  sachetPublic: typeof sachetPublic;
   shelters: typeof shelters;
   translations: typeof translations;
   weather: typeof weather;

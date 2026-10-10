@@ -14,6 +14,7 @@ function Incidents() {
   const nearby = useQuery(api.incidents.nearby, isAuthenticated && fix ? {} : 'skip');
   return <Screen footer={<ActionButton title={t('reportTitle')} onPress={() => router.push('/report')} disabled={!isAuthenticated || !fix} />}>
     <AppText variant="title" accessibilityRole="header">{t('navIncidents')}</AppText>
+    <ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.push('/sachet')} />
     <EmergencyAlerts />
     <AppText>{t('nearbyReports')} · 5 km</AppText>
     {!isAuthenticated || !fix ? <ActionButton title={t('locationAction')} onPress={() => router.replace('/location')} /> : !nearby ? <LoadingState /> : <>
