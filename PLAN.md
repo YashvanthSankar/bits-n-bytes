@@ -1,3 +1,5 @@
+> Emergency presentation override — 2026-10-10: the first emergency message displays actual attributed instructions, severity, authority, DEMO and nearest listed shelter details inline. Do not require a Read instructions button or show generic nearby/alert-remains filler. Preserve original/translation, deadlines and actual stale/outside/uncertain location warnings.
+
 > Navigation override — 2026-10-10: user requested Map, Incidents, Shelters, SACHET and Settings; hide Nearby chat until implemented. Compact/collapsible map welcome panel replaces duplicate top shortcuts.
 
 > Implementation status: [docs/current-state.md](docs/current-state.md) distinguishes implemented functionality, acceptance gaps and deferred scope. This document includes planned features and is not proof they are complete.

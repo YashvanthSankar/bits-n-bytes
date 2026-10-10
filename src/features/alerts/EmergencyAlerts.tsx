@@ -1,5 +1,6 @@
+import { EmergencyNotice } from './EmergencyNotice';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
-import { router, usePathname } from 'expo-router';
+import { usePathname } from 'expo-router';
 import { Component, type PropsWithChildren, useEffect, useState } from 'react';
 import { AppState, Modal, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,7 +30,6 @@ export function EmergencyAlerts({ global = false }: { global?: boolean }) {
   const update = result?.updates?.find(item => !hidden.has(item.exposureId + ':' + item.revision));
   const attention = urgent ?? update;
   const isUpdate = !!attention && !urgent;
-  const open = (id: typeof items[number]['id']) => router.push({ pathname: '/alert/[id]', params: { id } });
   async function dismiss() {
     if (!attention) return;
     const current = attention, key = current.exposureId + ':' + current.revision;
@@ -41,21 +41,21 @@ export function EmergencyAlerts({ global = false }: { global?: boolean }) {
   return <>
     {!global && items.map(item => <View key={item.id} style={{ padding: 14, gap: 8, borderRadius: 16, borderWidth: 1, borderColor: item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision) ? theme.danger : theme.warning, backgroundColor: theme.surface }}>
       <AppText style={{ color: theme.danger, fontWeight: '700' }}>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t('emergencyActive')}</AppText>
-      <AppText>{item.locality} · {t(`hazard${item.hazard}`)}</AppText>
-      <AppText variant="caption">{t(item.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText>
-      <ActionButton title={t('viewEmergency')} onPress={() => open(item.id)} />
+      <EmergencyNotice alertId={item.id} revision={item.revision} now={now}/>
     </View>)}
     {!global && result?.updates?.map(item => <View key={'update-'+item.id} style={{padding:14,gap:8,borderRadius:16,borderWidth:1,borderColor:theme.warning,backgroundColor:theme.surface}}>
-      <AppText>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t(item.kind === 'CORRECTION' ? 'alertCorrected' : 'alertSourceEnded')}</AppText><AppText>{item.locality}</AppText><AppText>{t('emergencySourceEnded')}</AppText>
-      <ActionButton title={t('viewNotice')} variant="secondary" onPress={()=>open(item.id)}/>
+      <AppText>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t(item.kind === 'CORRECTION' ? 'alertCorrected' : 'alertSourceEnded')}</AppText>
+      <EmergencyNotice alertId={item.id} revision={item.revision} now={now}/>
     </View>)}
     {!global && error && <AppText style={{ color: theme.warning }}>{t('emergencyDismissFailed')}</AppText>}
     <Modal visible={global && active && eligiblePage && !!attention} animationType="slide" onRequestClose={() => void dismiss()}>
       <View style={{ flex: 1, backgroundColor: theme.background, padding: 20, paddingTop: safe.top + 20, paddingBottom: safe.bottom + 20 }}>
         <View style={{ flex: 1, backgroundColor: theme.surface, borderRadius: 24, padding: 20, gap: 16 }}>
           <AppText variant="heading" style={{ color: isUpdate ? theme.warning : theme.danger }}>{attention?.audience === 'DEMO' ? 'DEMO · ' : ''}{t(isUpdate ? update?.kind === 'CORRECTION' ? 'alertCorrected' : 'alertSourceEnded' : 'emergencyActive')}</AppText>
-          <ScrollView contentContainerStyle={{ gap: 12 }}><AppText>{attention?.locality}</AppText><AppText>{t(isUpdate ? 'emergencySourceEnded' : urgent?.proximity === 'INSIDE' ? 'emergencyNearby' : 'emergencyPossible')}</AppText><AppText>{t(isUpdate && !update?.ended ? 'otherEmergencySourcesActive' : 'emergencyStillAvailable')}</AppText>{error && <AppText>{t('emergencyDismissFailed')}</AppText>}</ScrollView>
-          <ActionButton title={t(isUpdate ? 'viewNotice' : 'viewEmergency')} onPress={() => { if (attention) { const id = attention.id; void dismiss(); open(id); } }} />
+          <ScrollView contentContainerStyle={{ gap: 16 }}>
+            {attention && <EmergencyNotice alertId={attention.id} revision={attention.revision} now={now}/>}
+            {error && <AppText>{t('emergencyDismissFailed')}</AppText>}
+          </ScrollView>
           <ActionButton title={t('dismissPopup')} variant="secondary" onPress={() => void dismiss()} />
         </View>
       </View>

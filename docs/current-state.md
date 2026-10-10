@@ -1,5 +1,7 @@
 # GudTour current implementation state
 
+Emergency UI (2026-10-10): first popup and persistent warning now display the notice/instructions, severity, authority, DEMO and nearest shelter details directly. Removed the intermediate read-instructions action and generic proximity/availability filler. TypeScript/lint and 280 tests/46 files pass; physical popup acceptance remains pending.
+
 Latest UI/startup checkpoint (2026-10-10): compact collapsible map panel, SACHET tab in place of unimplemented Chat, icon controls, relative incident timestamps and expandable assessment details. Returning-user root startup remembers completed setup, restores authentication and quietly refreshes location before Map. Strict TypeScript/lint and 277 tests/46 files pass; authenticated native cold-start and populated UI/device matrix still require acceptance. Existing APK artifacts do not contain these source changes.
 
 Updated: 2026-10-10. Source checkpoint `0a3443d`; later documentation-only commits do not change the APK. This page supersedes older status summaries. PLAN.md remains the core product contract with its dated user overrides. Implementation, automated checks and physical-device acceptance are separate.

@@ -18,7 +18,7 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 | Android | rc.1 public but reported map initialization crash. rc.2 local production APK built/verified with fix, versionCode 4; physical retest pending. |
 | Distribution | rc.2 GitHub upload STOPPED by user; draft checksum only. No active upload/build. iOS simulator uses dev; APK uses prod. Physical iOS delivery pending. |
 | Not implemented | Nearby chat/moderation and full recovery/privacy/retention/deletion. Contacts explicitly deferred. |
-| Verification |277 tests / 46 files, strict TypeScript/lint and local release build pass. These do not establish full native acceptance. |
+| Verification |280 tests / 46 files, strict TypeScript/lint and local release build pass. These do not establish full native acceptance. |
 | DEMO Jev evidence notices | Implemented backend/UI test workflow: active DEMO authority creates a contained circle notice with a two-hour default/24-hour cap, review and early withdrawal. It is stored outside official SACHET records and enters only overlapping DEMO incident evidence. Physical two-account acceptance remains pending. |
 
 ### Requested UI checkpoint — 2026-10-10
@@ -29,6 +29,8 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 - [x] UI04 Remember completed setup and open returning users on the map after quiet fresh permission/geography checks. Startup/persistence regression checks plus strict TypeScript/lint and 274 tests/45 files pass; authenticated physical cold-start acceptance pending.
 
 - [x] UI05 Fix native relative timestamp constructor crash; dependency-free localized formatter and missing-Intl regression pass (277 tests/46 files, TypeScript/lint).
+
+- [x] UI06 Display emergency notice, issuer, severity, DEMO and nearest shelter details in the first popup/card; remove read-step buttons and generic filler. TypeScript/lint and 280 tests/46 files pass; native first-popup acceptance pending.
 
 ### Next executable work
 

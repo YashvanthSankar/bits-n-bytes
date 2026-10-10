@@ -1,5 +1,11 @@
 # Latest handoff — 2026-10-10
 
+## 2026-10-10 — emergency instructions in the first message
+- User requested the first emergency popup show the actual notice immediately. Removed Read emergency instructions/View notice navigation actions and the generic nearby/alert-remains messages. Popup and persistent warning cards now fetch and render attributed instructions, localized severity, active/ended state, DEMO label and authority inline, with the same content shared by the alert detail screen.
+- Nearest listed shelter details render in the first emergency message: name, status, distance, issuer, address, access instruction, phone, last confirmation, stale/restricted warnings and route limitations. No shelter detail click is required in this inline view. Official instructions remain above shelter guidance; raw nearest ordering is unchanged.
+- Kept original text/translation fallback, deadlines, ended sources, overdue review and actual stale/outside/uncertain location warnings. Inline loading/error retry preserves dismissal and the rest of the app.
+- Verification: strict TypeScript/lint and 280 tests/46 files pass. Tests cover first-popup instruction/authority/severity/shelter content, absence of read button/filler, loading, correction/dismissal and inline shelter details. Physical/native emergency delivery remains acceptance work; no new backend deployment or APK build required for development preview.
+
 ## 2026-10-10 — native relative timestamp crash fix
 - User supplied `undefined cannot be used as a constructor` at IncidentSummary relativeTime; Metro confirms Intl.RelativeTimeFormat is absent in the native runtime. Replaced it with dependency-free localized minute/hour/day templates for all six languages. No polyfill/native rebuild needed.
 - Regression runs with Intl.RelativeTimeFormat absent, checks time boundaries/future skew/invalid values and locale fallback. Strict TypeScript/lint and 277 tests/46 files pass. Populated native user retry still required; simulator preview itself is currently unauthenticated.
