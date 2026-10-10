@@ -526,3 +526,9 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 - Six icon destinations now fit 320-point and wider phone windows (44px minimum targets); large text no longer hides icon-only tabs. Menu fallback only for windows narrower than318 points.
 - Verification: TypeScript, lint and297 tests/51files; regression covers360-point Android at200% text showing all six tabs and no hamburger, plus auth-transition duplicate redirect. Physical-device relaunch/loop reproduction remains pending.
 - rc.6 build completed from5093dfa but predates this follow-up; do not publish it. Next APK rc.7 must contain these changes.
+
+
+## 2026-10-10 — rc.7 release artifact verification
+- Latest local production APK: `tmp/release-artifacts/GudTour-0.1.0-rc.7.apk`, packagecom.bitsnbytes.gudtour/version0.1.0/versionCode10/minSDK24. Includes phone tabs/setup follow-up and final UI/chat/DEMO authority changes. Built at4fa8aee; rebasedf108eb8 differs only in documentation (verified no src/tests/convex/config/dependency differences).
+- Signature v2 valid, expected certificate SHA256a280f5b4f25df90198d303cf58848cfdefec8862921b3fc6eb99c27dda488527; all four Inter weights/XML font family present, ZIP integrity passed, production backend present/dev absent/no configured server secrets or env/key files in bundle.
+- APK SHA256 `d30e30a13b4693c408ed9387f038326a351abcab1fc3affb2389cf4577635ff4`.297tests/51files, TypeScript and lint passed. iOS screenshot confirms six visible icon tabs; Android hardware relaunch and two-device chat still pending.
