@@ -4,6 +4,8 @@
 
 The [detailed technical implementation plan](../TECHNICAL_IMPLEMENTATION_PLAN.md) specifies architecture, schema, provider contracts, delivery, tests and release gates. Latest user overrides and implementation order are in [tech-stack.md](../tech-stack.md) and [TODO.md](../TODO.md). Read [PLAN.md](../PLAN.md) for detailed behavior. The latest stack/scope updates override older pre-arrival, Supabase, news and full-offline proposals.
 
+Use [API/team setup](api-setup.md) for configured credentials and [SACHET feed contract](research/sachet-feed-contract.md) for verified ETag/geometry behavior.
+
 Start with [architecture.md](architecture.md) for the core product and technical boundaries. Provider access and repository migration evidence are in [the 2026-10-10 progress note](progress/2026-10-10-technical-plan-and-migration.md).
 
 Historical document order:
@@ -29,4 +31,4 @@ Historical document order:
 
 **Precedence:** organizer brief governs official eligibility/deliverables; final user requirements govern requested product; controlling plan/UI contract interpret implementation and safety; research is non-authoritative. Do not silently shrink the final request using old MVP exclusions.
 
-Development is authorized and underway. App functionality, deployment, device delivery and submission are not yet verified. See [development progress](progress/2026-10-10-development.md) and [acceptance ledger](acceptance-ledger.md). OpenCode Zen Jev 1.13 connectivity was verified on 2026-10-10; all application workflows and remaining integrations still need working evidence. GudTour is the selected name; no brand-clearance claim is made.
+Development is authorized and underway. Complete crisis workflows, production deployment, device delivery and submission are not yet verified. Native iOS entry/auth/profile and Apple Maps rendering have development evidence. See [development progress](progress/2026-10-10-development.md) and [acceptance ledger](acceptance-ledger.md). OpenCode Zen Jev 1.13 connectivity was verified on 2026-10-10; all application workflows and remaining integrations still need working evidence. GudTour is the selected name; no brand-clearance claim is made.

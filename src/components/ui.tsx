@@ -1,7 +1,7 @@
-import { ActivityIndicator, Pressable, ScrollView, Text, View, type TextProps } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, type TextProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { spacing, typography } from '../theme/tokens';
 import { useTheme } from '../theme/useTheme';
 
@@ -9,20 +9,25 @@ export function AppText({ variant = 'body', style, ...props }: TextProps & { var
   const theme = useTheme();
   return <Text {...props} style={[typography[variant], { color: theme.text }, style]} />;
 }
-export function Screen({ children }: PropsWithChildren) {
+export function Screen({ children, footer }: PropsWithChildren<{ footer?: ReactNode }>) {
   const theme = useTheme();
   return <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
-    <ScrollView contentContainerStyle={{ flexGrow: 1, padding: spacing.xl, width: '100%', maxWidth: 640, alignSelf: 'center', gap: spacing.xxl }} keyboardShouldPersistTaps="handled">{children}</ScrollView>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, padding: spacing.xl, width: '100%', maxWidth: 640, alignSelf: 'center', gap: spacing.xxl }} keyboardShouldPersistTaps="handled">{children}</ScrollView>
+    {footer && <View style={{ borderTopWidth: 1, borderTopColor: theme.border, backgroundColor: theme.background }}>
+      <View style={{ width: '100%', maxWidth: 640, alignSelf: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.md }}>{footer}</View>
+    </View>}
+    </KeyboardAvoidingView>
   </SafeAreaView>;
 }
-export function ActionButton({ title, onPress, disabled = false, busy = false }: {
-  title: string; onPress: () => void; disabled?: boolean; busy?: boolean;
+export function ActionButton({ title, onPress, disabled = false, busy = false, variant = 'primary' }: {
+  title: string; onPress: () => void; disabled?: boolean; busy?: boolean; variant?: 'primary' | 'secondary';
 }) {
   const theme = useTheme();
   return <Pressable onPress={onPress} disabled={disabled || busy} accessibilityRole="button" accessibilityState={{ disabled: disabled || busy, busy }}
-    style={({ pressed }) => ({ minHeight: 52, borderRadius: 12, padding: spacing.lg, backgroundColor: theme.accent, opacity: disabled ? 0.55 : pressed ? 0.8 : 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm })}>
-    {busy && <ActivityIndicator color={theme.onAccent} />}
-    <AppText style={{ color: theme.onAccent, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}>{title}</AppText>
+    style={({ pressed }) => ({ minHeight: 52, borderRadius: 12, padding: spacing.lg, backgroundColor: variant === 'primary' ? theme.accent : theme.muted, opacity: disabled ? 0.55 : pressed ? 0.8 : 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm })}>
+    {busy && <ActivityIndicator color={variant === 'primary' ? theme.onAccent : theme.accent} />}
+    <AppText style={{ color: variant === 'primary' ? theme.onAccent : theme.text, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}>{title}</AppText>
   </Pressable>;
 }
 export function LoadingState() {

@@ -10,10 +10,13 @@ Source of truth: [PLAN.md](PLAN.md) for core behavior, [tech-stack.md](tech-stac
 | --- | --- |
 | Foundation F01–F03 | Complete; committed/pushed b4e1c22. Expo SDK 57, Denoise Labs Convex, themes/language resources and shared contracts. |
 | Core backend F04/F05/F07 | Complete for currently exposed core handlers; 51 checks pass. Private ownership, public DTOs, bounded indexes, internal operator approval and jurisdiction/revocation checks. |
-| Google login F06 | OAuth client/keys and PKCE initiation configured; native session/restore/sign-out still pending. |
-| iOS testing F08 | Simulator development build compiles/installs; runtime window/Metro connection being checked. Basemap and Android verification pending. |
-| Location L01/L02/L05 | Shared country checks and server latest-fix mutation exist; mobile permission/gate/recovery workflow in progress. |
+| Google login F06 | OAuth client/keys and PKCE initiation configured; Real Google session/private profile confirmed on iOS; Android, restore and sign-out remain pending. |
+| iOS testing F08 | Simulator development build compiles/installs; Native runtime and Apple Maps rendering confirmed; Android development build/Maps verification pending. |
+| Location L01/L02/L05 | Shared country checks and server latest-fix mutation exist; Mobile fresh-fix admission and private profile implemented; mocked denial/disabled/old/coarse cases pass. Full native revocation/targeting pending. |
+| API access P06/P08 | Maps restrictions/billing and Translation calls verified; RSS/CAP/polygon XML and real ETag 304 verified. Credentials saved privately; see docs/api-setup.md. |
 | Main product flows | Incident reporting, official alerts, shelters, provider workers, chat and release acceptance pending. |
+
+Primary onboarding actions now stay pinned above the bottom safe area while content scrolls. Latest checks: 65 tests, strict typecheck/lint and exports for all platforms.
 
 See [dated verification details](docs/progress/2026-10-10-development.md). Task completion here is scoped to the named foundation/backend work; M1's full sign-in/device goal remains incomplete.
 
@@ -68,9 +71,9 @@ The Jev check above proves only one synthetic Noul request succeeded. Choice map
 - [x] P03 Confirm the user has authorized application coding and the organizer development window is open. Record the actual deadline. Owner A.
 - [x] P04 Create an access checklist for Convex, EAS/Apple signing, GCP, OpenCode Zen and AccuWeather. Record available/pending access without credentials. Owners A/C/D.
 - [ ] P05 Verify AccuWeather current + 24-hour history endpoint entitlement, quota and allowed retention. Owner C.
-- [ ] P06 Inspect a real SACHET feed and one CAP notice; document geographic coverage/update/cancellation fields. Owner C.
+- [x] P06 Inspect a real SACHET feed and one CAP notice; document geographic coverage/update/cancellation fields. Owner C.
 - [ ] P07 Verify live Jev Choice responses, selected-option probabilities and confidence; check Score only if used. Record timeout/auth/rate-limit/malformed behavior and run labeled incident evaluations before automatic publication. Owner C.
-- [ ] P08 Verify Google OAuth first, then Android Maps and Translation before their dependent features. Record enabled services, billing, restrictions and deployed credential flow. Owner A.
+- [x] P08 Verify Google OAuth first, then Android Maps and Translation before their dependent features. Record enabled services, billing, restrictions and deployed credential flow. Owner A.
 - [ ] P09 Agree initial approved demo authorities/jurisdictions and sourced or DEMO-labeled shelters/contacts. Owners A/D.
 - [ ] P10 Confirm Android install and signed iOS judge-access paths before screen-heavy work; choose landing hosting before release. Owner D.
 - [x] Q01 Create a pass/fail ledger from PLAN.md section 18 before feature work. Replace only the user-deferred full-offline cases with online-first recovery checks; review the ledger at every milestone. Owner D.
@@ -96,7 +99,7 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 - [ ] F06 Implement Google OAuth through Convex Auth; prove native redirect, session restore and sign-out on both platforms. Owner A, D verifies.
 - [x] F07 Enforce default tourist role and operator-approved authority memberships/jurisdictions in every backend handler. Owner A.
 - [ ] F08 Produce Android/iOS development builds; prove Google basemap on Android and Apple basemap on iOS before building map overlays. Owners B/D.
-- [ ] F09 Implement common loading/error/empty/offline/stale components and structured error handling. Owner B.
+- [x] F09 Implement common loading/error/empty/offline/stale components and structured error handling. Owner B.
 
 **Done when:** Run both native builds, restore a session after restart, sign out, and directly attempt an unauthorized read/mutation. The tourist cannot assign an authority role. Both basemaps render.
 
@@ -109,9 +112,9 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 
 **Design reference:** Technical plan §§5, 7–9, 18.
 
-- [ ] L01 Language selection before permission prompts; India boundary gate using <=5-minute, <=200-metre fix. Owner B.
+- [x] L01 Language selection before permission prompts; India boundary gate using <=5-minute, <=200-metre fix. Owner B.
 - [ ] L02 Blocking denied/disabled/uncertain/outside-India states with Settings/Retry and restoration behavior. Owner B.
-- [ ] L03 Required name; private optional blood group/emergency contact; persistent profile and alias. Owners A/B.
+- [x] L03 Required name; private optional blood group/emergency contact; persistent profile and alias. Owners A/B.
 - [ ] L04 Separate optional notification and background-location prompts with actual reduced-capability copy. Owner B.
 - [ ] L05 Latest-location mutation records observed time/accuracy; stops eligibility outside India and avoids travel-history storage. Owner A.
 - [ ] L06 Refresh on foreground/report/corroboration/chat/shelter selection; show stale age and actual tracking status. Owner B.

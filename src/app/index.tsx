@@ -17,7 +17,10 @@ export default function LanguageScreen() {
     setBusy(true); setError(false);
     try { await changeLanguage(code); } catch { setError(true); } finally { setBusy(false); }
   }
-  return <Screen>
+  return <Screen footer={<>
+    {error && <AppText accessibilityLiveRegion="polite" style={{ color: theme.danger }}>{t('saveError')}</AppText>}
+    <ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => router.push('/location')} />
+  </>}>
     <View style={{ paddingTop: spacing.section, gap: spacing.sm }}>
       <AppText variant="heading" style={{ color: theme.accent }}>GudTour</AppText>
       <AppText variant="caption" style={{ color: theme.secondary }}>{t('tagline')}</AppText>
@@ -31,7 +34,5 @@ export default function LanguageScreen() {
         <AppText style={{ color: theme.accent }}>{language === code ? '✓' : ''}</AppText>
       </Pressable>)}
     </View>}
-    {error && <AppText accessibilityLiveRegion="polite" style={{ color: theme.danger }}>{t('saveError')}</AppText>}
-    <View style={{ marginTop: 'auto', paddingVertical: spacing.lg }}><ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => router.push('/location')} /></View>
   </Screen>;
 }

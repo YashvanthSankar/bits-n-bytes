@@ -1,6 +1,6 @@
 # GudTour — detailed technical implementation plan
 
-Date: 2026-10-10. Revision: 2. Status: design specification, not implemented functionality.
+Date: 2026-10-10. Revision: 3. Status: design specification with dated implementation checkpoints; incomplete workflows remain planned.
 
 ## 1. Authority of this document
 
@@ -28,7 +28,9 @@ The app supports both an app-assessed community emergency and an official emerge
 
 This mapping preserves the core idea rather than substituting a generic AI chat app. Original news/full-offline proposals are the explicit user-directed changes; role-based crisis communication, evidence timing, targeting, translations, shelters and nearby chat remain in scope.
 
-Application implementation remains unauthorized: no scaffold, GCP changes or Convex deployment has been performed. A separately authorized live provider check on 2026-10-10 confirmed OpenCode Zen Jev 1.13 access: HTTP 200, approximately 1.3 seconds, 302 input tokens, and a Noul result of 0.96 on synthetic evacuation evidence. This confirms connectivity only; it does not validate classification accuracy, balance, end-to-end alerts or production reliability. AccuWeather credentials are locally configured but endpoint entitlement is unverified. Keys never appear in these documents. The implementation and acceptance checks below remain pending.
+Development is authorized and underway on 2026-10-10 in the GitHub-connected bitsnbytes folder. Expo/native foundations, core Convex identity/privacy/authority handlers, iOS Google sign-in/India admission/private profile and Apple Maps rendering are implemented. The complete incident, emergency, shelter, chat and release workflows remain pending. Current task evidence is in TODO.md and docs/progress/2026-10-10-development.md.
+
+Google OAuth, restricted Android Maps and Translation v2 credentials are configured in the existing GCP project; backend-only credentials are set on Denoise Labs Convex development. AccuWeather location/current/24-hour history, Jev Choice, Translation and SACHET RSS/CAP ETag requests passed live connectivity checks. Quota/license review, decision evaluation, Android rendering, push/signing and full application acceptance remain open. Credentials live only in ignored/private configuration; see docs/api-setup.md.
 
 ## 2. System architecture
 
@@ -279,9 +281,9 @@ Country checks, witness proximity, chat origin radius, shelter exclusions and al
 
 These are planned function names, not existing APIs or REST routes. Mobile calls generated Convex references. Google OAuth uses the auth library's HTTP callback; there is no duplicated general REST API.
 
-Common success envelope: `{ data, serverTime, revision?, freshness?, partial? }`. Command identity uses `clientRequestId` and canonical payload hash. A retry with the same key/body returns the original accepted result; same key/different body returns IDEMPOTENCY_CONFLICT. Update commands use expectedRevision and reject stale writes with VERSION_CONFLICT plus currentRevision. Do not wrap errors as successful empty arrays.
+Implemented functions return explicit typed DTOs through generated Convex references. profiles.me returns own profile/role/membership summary, locations.me returns own latest fix or null, incident detail returns a public allowlist DTO, and commands return accepted revision/result. Add serverTime/freshness/partial metadata to the read models that need it; do not falsely describe these current handlers as a generic envelope. Command identity uses requestId and canonical payload hash. Same key/body retries return the original accepted result; changed body returns COMMAND_KEY_REUSED. Update commands use expectedRevision and reject stale writes with REVISION_CONFLICT plus currentRevision. Errors are ConvexError objects, never successful empty results.
 
-Error codes: UNAUTHENTICATED, INDIA_REQUIRED, LOCATION_REQUIRED, LOCATION_STALE, LOCATION_INACCURATE, FORBIDDEN, AUTHORITY_REVOKED, OUTSIDE_JURISDICTION, NOT_FOUND, VALIDATION_ERROR, RATE_LIMITED, VERSION_CONFLICT, IDEMPOTENCY_CONFLICT, INCIDENT_CLOSED, PROVIDER_UNAVAILABLE and SOURCE_UNCERTAIN. Errors contain safe message keys, optional retryAfterMs/fieldErrors/currentRevision, never secrets/provider request URLs with keys. Use stable codes for six-language UI.
+Current shared error codes are AUTH_REQUIRED, AUTHORITY_REQUIRED, JURISDICTION_DENIED, LOCATION_REQUIRED, LOCATION_STALE, LOCATION_INACCURATE, LOCATION_INVALID, OUTSIDE_INDIA, COUNTRY_UNCERTAIN, INVALID_INPUT, REVISION_CONFLICT, RATE_LIMITED, NOT_FOUND, PROVIDER_UNAVAILABLE, CONFIGURATION_REQUIRED and COMMAND_KEY_REUSED. Extend the shared enum for new workflows rather than inventing client-only variants. Safe optional retryAfterMs/currentRevision metadata excludes credentials/private diagnostics; UI maps codes to reviewed language keys.
 
 ### 9.1 Tourist reads and commands
 
@@ -290,7 +292,7 @@ Error codes: UNAUTHENTICATED, INDIA_REQUIRED, LOCATION_REQUIRED, LOCATION_STALE,
 | profiles.me / query | none | Own profile, role/membership summary, onboarding and permission status; auth |
 | profiles.save / mutation | name, language, optional private fields, preferences, expectedRevision, requestId | Updated own revision; auth, valid profile; no role field |
 | profiles.delete / mutation | explicit confirmation, requestId | Deletion job/status; own account; anonymize retained evidence |
-| locations.update / mutation | point, fix time, accuracy, permission state, installationId, requestId | Accepted location revision/country/eligibility; auth, coordinate/time validation |
+| locations.update / mutation | fix {point, observedAt, accuracyM}, foreground/background permission, source, requestId | Accepted location revision/country/eligibility; auth, coordinate/time validation |
 | devices.register / mutation | installationId, Expo token, platform, permission, build, requestId | Own association; token format and authorized installation ownership |
 | devices.unregister / mutation | installationId, requestId | Own association removed; auth |
 | incidents.viewport / query | normalized bounded viewport, hazard/status filters, paging | Public summary/geometry refs, freshness, grouped/partial state; India viewing gate |
@@ -384,13 +386,13 @@ User-specific classification policy: Actual/Public and currently effective warni
 
 Notice identity uses source sender/identifier/sent and reference chains, not RSS item title. Deduplicate feeds carrying the same notice. Store ignored classifications and reconciliation outcomes for diagnostics without exposing draft/private notices publicly. A cancellation arriving before its original creates a tombstone so a later old entry cannot resurrect it.
 
-Poll at two-minute target; conditional requests when supported; record attempt/success and per-source failure. A 304 confirms successful check but does not change issuedAt. Apply backoff on failures while showing last-success age. Missing notices in a shortened RSS window do not mean cancellation. At expiry, remove current advisory presentation but retain any previous emergency as warning-expired/conditions-unconfirmed until an actual end.
+Follow the mandatory CAP ETag protocol: persist XML and exact ETag; later requests send If-None-Match. On 304 use cached XML without fetching again; changed 200 replaces valid XML/ETag together. Keep successful-check time distinct from source/revision time. Missing cached XML on 304 is a cache-integrity failure, never an empty warning list. See docs/research/sachet-feed-contract.md for observed fields and separate Polygon URL XML. Poll at two-minute target; record attempt/success and per-source failure. A 304 confirms successful check but does not change issuedAt. Apply backoff on failures while showing last-success age. Missing notices in a shortened RSS window do not mean cancellation. At expiry, remove current advisory presentation but retain any previous emergency as warning-expired/conditions-unconfirmed until an actual end.
 
 Material area/notice changes enqueue candidate reassessment and retargeting. Multilingual CAP info is retained as issuer-provided translation bound to its source revision. Broad state/district coverage stays broad.
 
 ## 12. AccuWeather context pipeline
 
-An internal action resolves coordinates to provider location key, then fetches current conditions and `/currentconditions/v1/{locationKey}/historical/24`. The official history endpoint supplies previous hourly conditions by location key; verify subscribed access and precipitation details before depending on them. [AccuWeather history](https://developer.accuweather.com/core-weather/historical)
+Use https://dataservice.accuweather.com with Authorization: Bearer ACCUWEATHER_KEY for the current developer portal credential; do not put this key into logged query URLs. Live location/current/history requests passed on 2026-10-10, with 24 historical samples; quota and licensed retention still require review. An internal action resolves coordinates to provider location key, then fetches current conditions and `/currentconditions/v1/{locationKey}/historical/24`. The official history endpoint supplies previous hourly conditions by location key; verify subscribed access and precipitation details before depending on them. [AccuWeather history](https://developer.accuweather.com/core-weather/historical)
 
 Adapter output: providerLocationKey, requestedPoint, providerArea/resolution, observationAt/fetchedAt, temperature/wind/precipitation values with units when actually returned, past-hour samples, availability reasons and staleAt. Unknown fields remain unknown. Do not replace observed rainfall with a forecast or infer a complete rainfall time series from an insufficient response.
 
@@ -408,7 +410,7 @@ The selected gateway is `POST https://opencode.ai/zen/v1/systemone`, using beare
 
 Choice answers expose choice/probabilities/confidence; Score has a weighted score and level distribution; Noul is yes/no probability. Use Choice for qualification and categorical severity, avoiding rounding a weighted Score into a supposedly certain category. [Choice](https://docs.typesafe.ai/primitives/choice), [Score](https://docs.typesafe.ai/primitives/score), [Noul](https://docs.typesafe.ai/primitives/noul)
 
-Configure `DECISION_PROVIDER=opencode-zen`, `JEV_MODEL=jev-1.13` and `JEV_BASE_URL=https://opencode.ai/zen/v1`. Store gateway, requested/returned model, rubric/policy versions, request hash, input/output usage and latency with each assessment. The successful smoke response was `{ model: "jev-1.13", answers: { urgent: { type: "noul", noul: 0.96 } }, usage: { input_tokens: 302, output_tokens: 20 } }`. Do not normalize Noul using an invented `probability` field. Choice/Score shape and error handling still require live contract checks before integration. OpenAI Decisions/Responses were considered and are not selected for this version. A future provider change needs its own adapter and evaluation; probabilities are not assumed equivalent.
+Configure `DECISION_PROVIDER=opencode-zen`, `JEV_MODEL=jev-1.13` and `JEV_BASE_URL=https://opencode.ai/zen/v1`. Store gateway, requested/returned model, rubric/policy versions, request hash, input/output usage and latency with each assessment. The successful smoke response was `{ model: "jev-1.13", answers: { urgent: { type: "noul", noul: 0.96 } }, usage: { input_tokens: 302, output_tokens: 20 } }`. Do not normalize Noul using an invented `probability` field. A live Choice check returned type=choice, choice=INSUFFICIENT_EVIDENCE, confidence=0.91 and probabilities={NOTIFIABLE_EMERGENCY:0, NOT_QUALIFIED:0.06, INSUFFICIENT_EVIDENCE:0.94}. Read the selected label’s entry in probabilities; confidence is independent. Failure contracts and labeled held-out evaluation still gate automatic publication. Score is not required unless selected for a concrete feature. OpenAI Decisions/Responses were considered and are not selected for this version. A future provider change needs its own adapter and evaluation; probabilities are not assumed equivalent.
 
 ### 13.2 Evidence construction
 
@@ -486,6 +488,8 @@ Contacts are authority-maintained, jurisdiction-filtered and attributed. Use rev
 ## 16. Six-language translation and instruction integrity
 
 Static UI dictionaries cover English, Hindi, Tamil, French, German and Spanish. Use stable keys, pluralization, locale-aware dates/units, adequate text expansion and English fallback. Do not translate UI through live paid calls per render. Language changes update future presentation and notification localization without creating a new emergency sound.
+
+Current credential flow is a dedicated service-restricted Google Translation Basic v2 API key, with a real translation request verified. GCP blocks service-account private key issuance, and that policy is preserved. Advanced v3/glossaries are deferred until a supported keyless credential flow is available; never upload local gcloud refresh credentials.
 
 Dynamic official content follows an immutable translation pipeline:
 

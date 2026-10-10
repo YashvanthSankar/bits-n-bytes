@@ -1,7 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-/** Only app preferences use the web fallback; native auth tokens use SecureStore. */
+/** Native preferences and auth tokens use OS-backed secure storage. Web is a development preview. */
 export const preferenceStorage = {
   async getItem(key: string): Promise<string | null> {
     if (Platform.OS !== 'web') return SecureStore.getItemAsync(key);

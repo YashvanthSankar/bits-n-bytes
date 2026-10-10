@@ -1,4 +1,8 @@
-import { ConvexProvider, ConvexReactClient } from 'convex/react';
+import { ConvexReactClient } from 'convex/react';
+import { ConvexAuthProvider } from '@convex-dev/auth/react';
+import { preferenceStorage } from '../services/preferences';
+import { LocationSession } from '../session/LocationSession';
+import { ErrorState, Screen } from '../components/ui';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import type { PropsWithChildren } from 'react';
@@ -9,7 +13,7 @@ import { useTheme } from '../theme/useTheme';
 const url = process.env.EXPO_PUBLIC_CONVEX_URL;
 const convex = url ? new ConvexReactClient(url, { unsavedChangesWarning: false }) : null;
 function BackendProvider({ children }: PropsWithChildren) {
-  return convex ? <ConvexProvider client={convex}>{children}</ConvexProvider> : children;
+  return convex ? <ConvexAuthProvider client={convex} storage={preferenceStorage} shouldHandleCode={false}><LocationSession>{children}</LocationSession></ConvexAuthProvider> : <Screen><ErrorState /></Screen>;
 }
 function Navigation() {
   const theme = useTheme();

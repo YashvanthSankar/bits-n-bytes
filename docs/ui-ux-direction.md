@@ -6,7 +6,7 @@ Updated 2026-10-10. PLAN.md is the core behavior specification. tech-stack.md an
 
 Calm, precise, mobile-native crisis communication. The map is the primary working surface. Use system typography, semantic light/dark colors, 4-point spacing, 20-unit content insets, separators and grouped rows. Status must use words and a pattern/icon alongside color. Never paint unknown areas green, invent trust percentages, display fake agency seals or imply a route is safe. Brand: **GudTour — Local alerts. Your language.**
 
-Use native stack/back behavior, sheets and tabs with safe areas. Interactive targets are at least 48 units. Text scales with the operating system; screens scroll instead of hiding primary controls at large font sizes. Motion explains changes and respects reduced motion. Every critical error remains visible beside the affected action.
+Use native stack/back behavior, sheets and tabs with safe areas. Interactive targets are at least 48 units. Text scales with the operating system. Primary onboarding actions stay in a footer above the bottom safe area; language/content lists scroll independently. The footer participates in layout rather than overlapping or covering list rows. Use keyboard avoidance for forms, readable wrapping labels and one dominant primary action; secondary navigation/sign-out has lower emphasis. Motion explains changes and respects reduced motion. Every critical error remains visible beside the affected action.
 
 ## Entry and navigation
 

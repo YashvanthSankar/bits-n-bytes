@@ -1,6 +1,6 @@
 # GudTour — technical stack
 
-Updated: 2026-10-10. Status: planning complete; application implementation/deployment pending. OpenCode Zen Jev connectivity smoke test passed; other integrations and decision quality remain unverified.
+Updated: 2026-10-10. Status: development underway. iOS entry/auth/profile and Apple Maps are working; core backend is deployed. API connectivity is verified; full crisis workflows, decision quality and release/device delivery remain pending.
 
 ## 1. Decisions and precedence
 
@@ -100,7 +100,7 @@ Jev is not a prose generator, translator or source-fetching agent. Build evidenc
 
 ### Google Cloud Translation
 
-Use the official Cloud Translation API, invoked from a backend action. Prefer Advanced v3 for a future emergency glossary, subject to project access and actual language coverage. Bind each result to the exact original revision/hash and target language. Prefer translations supplied by the issuing authority where available.
+Use the official Cloud Translation API, invoked from a backend action. Use Basic v2 with a dedicated backend-only API key restricted to translate.googleapis.com; a real request passed on 2026-10-10. GCP blocks service-account key creation, so its policy is preserved. Advanced v3/glossaries require a future supported keyless credential flow. Bind each result to the exact original revision/hash and target language. Prefer translations supplied by the issuing authority where available.
 
 Preserve place names, contacts, numbers/units, deadlines, negation and instruction strength; tests and review are needed beyond entity matching. Never label machine output authority-approved without exact-version approval. Invalidate obsolete translations when originals change. A prepared local-language summary plus original text provides a timely fallback; specific instructions are not invented.
 
@@ -130,7 +130,7 @@ Convex scheduling is the first-version worker infrastructure; no VPS/FastAPI/Clo
 
 ## 8. GCP and secrets
 
-Read-only local check on 2026-10-09 found gcloud installed with an active account and project `project-ba909057-8b45-4731-9b9`. Listing enabled services filtered for Translation and Android Maps returned no matches; actual permission, billing, OAuth configuration and API enablement remain verification tasks. No GCP resource/settings changes were made during planning.
+Read-only local check on 2026-10-09 found gcloud installed with an active account and project `project-ba909057-8b45-4731-9b9`. Listing enabled services filtered for Translation and Android Maps returned no matches; actual permission, billing, OAuth configuration and API enablement remain verification tasks. No GCP resource/settings changes were made during planning. During authorized development on 2026-10-10, Android Maps and Translation were enabled, dedicated restricted keys were created, billing/restrictions were verified and Translation returned HTTP 200. Google OAuth produced a real iOS session. See docs/api-setup.md for current setup.
 
 Local gcloud login is not an authentication mechanism inside deployed Convex. Google Translation needs a deployment-supported server credential flow: evaluate short-lived federation first, or a narrowly scoped dedicated service account credential if necessary. Keep it only in backend secret storage; never reuse or upload the developer's local OAuth refresh token.
 
