@@ -2,19 +2,19 @@ import { useConvexAuth, usePaginatedQuery, useQuery } from 'convex/react';
 import { router } from 'expo-router';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../../convex/_generated/api';
-import { ActionButton, AppText, EmptyState, LoadingState, Screen } from '../../components/ui';
-import { ReadBoundary } from '../../components/ReadBoundary';
-import { useLocationSession } from '../../session/LocationSession';
-import { useTheme } from '../../theme/useTheme';
-import { isLanguageCode } from '../../i18n/resources';
+import { api } from '../../convex/_generated/api';
+import { ActionButton, AppText, EmptyState, LoadingState, Screen } from '../components/ui';
+import { ReadBoundary } from '../components/ReadBoundary';
+import { useLocationSession } from '../session/LocationSession';
+import { useTheme } from '../theme/useTheme';
+import { isLanguageCode } from '../i18n/resources';
 function Latest(){
  const {t,i18n}=useTranslation(),theme=useTheme(),{isAuthenticated}=useConvexAuth(),{fix,signedOut}=useLocationSession();
  const enabled=isAuthenticated&&!!fix&&!signedOut;const language=isLanguageCode(i18n.language)?i18n.language:'en';
  const {results,status,loadMore}=usePaginatedQuery(api.sachetPublic.latest,enabled?{language}:'skip',{initialNumItems:15});
  const feed=useQuery(api.sachetPublic.status,enabled?{}:'skip');
  const date=(time:number)=>new Date(time).toLocaleString(i18n.language);
- return <Screen footer={<ActionButton title={t('backToMap')} variant="secondary" onPress={()=>router.replace('/map')}/>}>
+ return <Screen>
   <AppText variant="title">{t('sachetTitle')}</AppText><AppText>{t('sachetAllIndia')}</AppText>
   {feed?.checkedAt&&<AppText variant="caption">{t('sachetLastSync')}: {date(feed.checkedAt)}</AppText>}
   {(feed?.stale||feed?.failed)&&<AppText style={{color:theme.warning}}>{t('sachetStale')}</AppText>}

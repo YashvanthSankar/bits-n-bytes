@@ -8,7 +8,9 @@ const state = vi.hoisted(() => ({
   hasObservation: false,
   push: vi.fn(), replace: vi.fn(), eligibilityReads: 0,
 }));
-vi.mock('react-native', () => ({ View: 'View' }));
+vi.mock('react-native', () => ({ View: 'View', Pressable: 'Pressable' }));
+vi.mock('lucide-react-native', () => Object.fromEntries(['Map','PencilLine','RefreshCw','ChevronDown','ChevronUp','Users','MapPin','Newspaper','Clock3','ShieldCheck','ShieldQuestion','Radio'].map(name => [name, (props: object) => React.createElement('icon', { ...props, name })])));
+vi.mock('../src/theme/useTheme', () => ({ useTheme: () => ({}) }));
 vi.mock('expo-router', () => ({ useFocusEffect: (callback: () => void) => React.useEffect(callback, [callback]), useLocalSearchParams: () => state.params, router: { push: state.push, replace: state.replace } }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }) }));
 vi.mock('convex/react', () => ({
@@ -70,4 +72,14 @@ it('labels a deliberate later contribution as updating the existing observation'
 it('still lets a different tourist contribute from a normal incident detail page', async () => {
   await render();
   expect(screen.root.findAllByType('button').map(button => button.props.title)).toEqual(['corroborate', 'backToMap']);
+});
+
+it('keeps the evidence disclosure accessible and expands secondary details on demand', async () => {
+  await render();
+  const disclosure = screen.root.find(node => node.props.accessibilityRole === 'button' && node.props.accessibilityState?.expanded !== undefined);
+  expect(disclosure.props.accessibilityState.expanded).toBe(false);
+  expect(JSON.stringify(screen.toJSON())).not.toContain('assessmentDevelopment');
+  await act(async () => disclosure.props.onPress());
+  expect(disclosure.props.accessibilityState.expanded).toBe(true);
+  expect(JSON.stringify(screen.toJSON())).toContain('assessmentDevelopment');
 });

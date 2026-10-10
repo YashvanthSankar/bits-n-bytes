@@ -1,3 +1,5 @@
+> Navigation override — 2026-10-10: user requested Map, Incidents, Shelters, SACHET and Settings; hide Nearby chat until implemented. Compact/collapsible map welcome panel replaces duplicate top shortcuts.
+
 > Implementation status: [docs/current-state.md](docs/current-state.md) distinguishes implemented functionality, acceptance gaps and deferred scope. This document includes planned features and is not proof they are complete.
 
 > Assessment cadence override — 2026-10-10: periodic Jev reassessment is now hourly (60 minutes). New/updated observations still queue immediately; outage retries remain 1/5/15 minutes.

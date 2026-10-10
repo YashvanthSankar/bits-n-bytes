@@ -1,5 +1,9 @@
 import type { Translation } from './en';
 export const ta: Translation = {
+  expandPanel: "வரைபடப் பலகையை விரி",
+  minimizePanel: "வரைபடப் பலகையைச் சுருக்கு",
+  witnessSummary: "{{recent}} சமீபத்திய · {{total}} மொத்த சாட்சிகள் · {{hours}} மணி",
+
   tagline: 'உள்ளூர் எச்சரிக்கைகள். உங்கள் மொழியில்.', languageTitle: 'உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்',
   languageDescription: 'அருகிலுள்ள அவசரத் தகவல்களை உங்களுக்கு நன்றாகப் புரியும் மொழியில் பெறுங்கள்.',
   continue: 'தொடரவும்', locationTitle: 'அருகிலுள்ள தகவல்களை அறியுங்கள்',

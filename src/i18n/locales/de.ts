@@ -1,5 +1,9 @@
 import type { Translation } from './en';
 export const de: Translation = {
+  expandPanel: "Kartenfeld öffnen",
+  minimizePanel: "Kartenfeld minimieren",
+  witnessSummary: "{{recent}} aktuell · {{total}} Zeugen insgesamt · {{hours}} Std.",
+
   tagline: 'Lokale Warnungen. In deiner Sprache.', languageTitle: 'Wähle deine Sprache',
   languageDescription: 'Erhalte Notfallinformationen aus deiner Umgebung in der Sprache, die du am besten verstehst.',
   continue: 'Weiter', locationTitle: 'Bleib vor Ort informiert',

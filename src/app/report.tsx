@@ -1,3 +1,5 @@
+import { hazardIcons } from '../components/hazardIcons';
+import { Map, Send, Search, RefreshCw, PencilLine } from 'lucide-react-native';
 import { useConvex, useConvexAuth, useMutation } from 'convex/react';
 import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
@@ -77,18 +79,17 @@ export default function ReportScreen() {
   const locked = busy || uncertain;
   return <Screen footer={<>
     {error && <AppText accessibilityLiveRegion="polite" style={{ color: theme.danger }}>{t(error)}</AppText>}
-    <ActionButton title={t(uncertain ? 'retry' : matches === null ? 'findMatches' : !chosen ? 'reviewMatches' : chosen !== 'NEW' ? 'submitObservation' : 'submitReport')}
+    <ActionButton icon={uncertain ? RefreshCw : matches === null ? Search : Send} title={t(uncertain ? 'retry' : matches === null ? 'findMatches' : !chosen ? 'reviewMatches' : chosen !== 'NEW' ? 'submitObservation' : 'submitReport')}
       busy={busy} disabled={isLoading || !isAuthenticated || !hazard} onPress={() => void (matches === null ? checkMatches() : send())} />
-    <ActionButton title={t('backToMap')} variant="secondary" disabled={locked} onPress={() => router.replace('/map')} />
+    <ActionButton icon={Map} title={t('backToMap')} variant="secondary" disabled={locked} onPress={() => router.replace('/map')} />
   </>}>
     <AppText variant="title" accessibilityRole="header">{t('reportTitle')}</AppText>
     {audience === 'DEMO' && <AppText>DEMO</AppText>}
-    <AppText>{t('reportSafety')}</AppText>
     <View style={{ gap: 8 }}><AppText variant="heading">{t('hazardLabel')}</AppText>
-      {choosingHazard ? HAZARD_CODES.map(code => <Choice key={code} label={t(`hazard${code}`)} selected={hazard === code} disabled={locked || !!incidentId}
+      {choosingHazard ? HAZARD_CODES.map(code => <Choice key={code} icon={hazardIcons[code]} label={t(`hazard${code}`)} selected={hazard === code} disabled={locked || !!incidentId}
         onPress={() => { setHazard(code); setChoosingHazard(false); setMatches(null); setChosen(null); }} />) : <>
         <AppText>{t(`hazard${hazard}`)}</AppText>
-        {!incidentId && <ActionButton title={t('changeHazard')} variant="secondary" disabled={locked} onPress={()=>setChoosingHazard(true)} />}</>}
+        {!incidentId && <ActionButton icon={PencilLine} title={t('changeHazard')} variant="secondary" disabled={locked} onPress={()=>setChoosingHazard(true)} />}</>}
     </View>
     <View style={{ gap: 8 }}><AppText variant="heading">{t('timeLabel')}</AppText>
       {(['NOW','MINUTES_15','MINUTES_30','EARLIER'] as const).map((choice, index) => <Choice key={choice} label={t(['timeNow','time15','time30','timeEarlier'][index]!)} selected={when === choice} disabled={locked} onPress={() => setWhen(choice)} />)}

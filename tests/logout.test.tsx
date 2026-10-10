@@ -2,6 +2,7 @@ import React, { type PropsWithChildren, type ReactNode } from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 const state = vi.hoisted(() => ({ signOut: vi.fn(), setSignedOut: vi.fn(), setFix: vi.fn(), replace: vi.fn(), mutate: vi.fn() }));
+vi.mock('lucide-react-native', () => Object.fromEntries(['UserRound','ShieldCheck','RefreshCw','LocateFixed','LogOut','FlaskConical'].map(name => [name, () => null])));
 vi.mock('@convex-dev/auth/react', () => ({ useAuthActions: () => ({ signOut: state.signOut }) }));
 vi.mock('react-native', () => ({ View: 'View', Switch: 'Switch' }));
 vi.mock('expo-router', () => ({ useFocusEffect: (callback: () => void) => React.useEffect(callback, [callback]), router: { replace: state.replace, push: vi.fn() } }));

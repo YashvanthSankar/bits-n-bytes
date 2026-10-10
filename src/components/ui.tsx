@@ -1,3 +1,4 @@
+import { ArrowRight, type LucideIcon } from 'lucide-react-native';
 import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, Text, View, type TextProps } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -24,13 +25,14 @@ export function Screen({ children, footer }: PropsWithChildren<{ footer?: ReactN
     </View>
   </SafeAreaView>;
 }
-export function ActionButton({ title, onPress, disabled = false, busy = false, variant = 'primary' }: {
-  title: string; onPress: () => void; disabled?: boolean; busy?: boolean; variant?: 'primary' | 'secondary' | 'danger';
+export function ActionButton({ title, onPress, disabled = false, busy = false, variant = 'primary', icon: Icon = ArrowRight }: {
+  icon?: LucideIcon; title: string; onPress: () => void; disabled?: boolean; busy?: boolean; variant?: 'primary' | 'secondary' | 'danger';
 }) {
   const theme = useTheme();
   return <Pressable onPress={onPress} disabled={disabled || busy} accessibilityRole="button" accessibilityState={{ disabled: disabled || busy, busy }}
     style={({ pressed }) => ({ minHeight: 52, borderRadius: 12, padding: spacing.lg, backgroundColor: variant === 'primary' ? theme.accent : theme.muted, opacity: disabled ? 0.55 : pressed ? 0.8 : 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm })}>
     {busy && <ActivityIndicator color={variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.accent} />}
+    {!busy && <Icon size={20} accessible={false} color={variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.accent} />}
     <AppText style={{ color: variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.text, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}>{title}</AppText>
   </Pressable>;
 }

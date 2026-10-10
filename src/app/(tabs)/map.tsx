@@ -2,7 +2,7 @@ import { useConvexAuth, useQuery } from 'convex/react';
 import { router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
-import { MapPin, LocateFixed, Plus, List, House } from 'lucide-react-native';
+import { MapPin, LocateFixed, Plus, ChevronUp, ChevronDown } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NearbyMap } from '../../components/NearbyMap';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +22,7 @@ function MapContent() {
   const nearby = useQuery(api.incidents.nearby,isAuthenticated && fix ? {} : 'skip');
   const locality=useLocality(fix?.point??null);
   const navInset=useNavigationInset()??120;const [headerHeight,setHeaderHeight]=useState(190);const [reportHeight,setReportHeight]=useState(64);const [recenter,setRecenter]=useState(0);
+  const [minimized,setMinimized]=useState(false);
   const expandedText=fontScale>=1.5;
   useFocusEffect(useCallback(() => {
     if (isLoading || signedOut) return;
@@ -35,23 +36,20 @@ function MapContent() {
       <View onLayout={event=>setHeaderHeight(event.nativeEvent.layout.height)} style={{borderRadius:24,overflow:'hidden',borderWidth:1,borderColor:theme.border,backgroundColor:theme.surface+'F5',flexShrink:1}}>
         <ScrollView contentContainerStyle={{padding:16,gap:12}}>
           <View style={{flexDirection:'row',gap:12,alignItems:'center'}}>
-            <View style={{flex:1,gap:4}}><AppText variant={expandedText?'caption':'heading'} accessibilityRole="header">{expandedText?'GudTour':t('mapWelcome')}</AppText>
+            <View style={{flex:1,gap:4}}><AppText variant={expandedText?'caption':'heading'} accessibilityRole="header">{minimized?'GudTour':t('mapWelcome')}</AppText>
               <View style={{flexDirection:'row',alignItems:'center',gap:6}}><MapPin size={16} color={theme.secondary} accessible={false} /><AppText variant="caption" style={{color:theme.secondary,flex:1}}>{locality??t('mapCurrentArea')}</AppText></View>
             </View>
+            <Pressable accessibilityRole="button" accessibilityLabel={t(minimized?'expandPanel':'minimizePanel')} accessibilityState={{expanded:!minimized}} onPress={()=>setMinimized(value=>!value)} style={{minWidth:44,minHeight:44,alignItems:'center',justifyContent:'center'}}>{minimized?<ChevronDown size={20} color={theme.secondary}/>:<ChevronUp size={20} color={theme.secondary}/>}</Pressable>
             <Pressable accessibilityRole="button" accessibilityLabel={t('mapRecenter')} onPress={()=>setRecenter(value=>value+1)} style={({pressed})=>({minWidth:48,minHeight:48,alignItems:'center',justifyContent:'center',borderRadius:16,backgroundColor:pressed?theme.selection:theme.muted})}><LocateFixed size={22} color={theme.accent} accessible={false} /></Pressable>
           </View>
           <EmergencyAlerts />
+          {!minimized && <>
           {own?.role === 'AUTHORITY' && <ActionButton title={t('authorityTitle')} onPress={()=>router.push('/authority')} />}
-          <View style={{flexDirection:expandedText?'column':'row',gap:8}}>
-            {[{label:'navIncidents',icon:List,path:'/incidents'},{label:'navShelters',icon:House,path:'/shelters'}].map(action=><Pressable key={action.path} accessibilityRole="button" onPress={()=>router.navigate(action.path as '/incidents'|'/shelters')} style={({pressed})=>({flex:expandedText?undefined:1,minHeight:48,padding:12,borderRadius:14,backgroundColor:pressed?theme.selection:theme.muted,flexDirection:'row',gap:8,alignItems:'center',justifyContent:'center'})}>
-              <action.icon size={18} color={theme.accent} accessible={false} /><AppText variant="caption" style={{fontWeight:'600',flexShrink:1}}>{t(action.label)}</AppText>
-            </Pressable>)}
-          </View>
-          <ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.push('/sachet')} />
           <AppText variant="caption" style={{color:theme.secondary}}>{nearby===undefined?t('loading'):nearby.partial?t('mapPartial'):nearby.items.length===0?t('mapEmptySummary'):t('mapReportSummary',{count:nearby.items.length})}</AppText>
           <Pressable accessibilityRole="button" accessibilityLabel={t('refreshLocation')} onPress={()=>router.replace('/location')} style={({pressed})=>({minHeight:48,justifyContent:'center',borderRadius:12,paddingHorizontal:8,backgroundColor:pressed?theme.muted:'transparent'})}>
             <AppText variant="caption" style={{color:theme.secondary}}>{t('locationCaptured')} · {new Date(fix.observedAt).toLocaleTimeString(i18n.language,{hour:'2-digit',minute:'2-digit'})} · ±{Math.ceil(fix.accuracyM)} m</AppText>
           </Pressable>
+          </>}
         </ScrollView>
       </View>
     </View>

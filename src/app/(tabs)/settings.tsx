@@ -1,3 +1,4 @@
+import { UserRound, ShieldCheck, RefreshCw, LocateFixed, LogOut, FlaskConical } from 'lucide-react-native';
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 import { randomUUID } from 'expo-crypto';
@@ -55,30 +56,29 @@ function Settings() {
   }
   return <Screen>
     <AppText variant="title" accessibilityRole="header">{t('navSettings')}</AppText>
-    <ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.push('/sachet')} />
-    {!isAuthenticated ? <ActionButton title={t('locationAction')} onPress={()=>router.replace('/location')} /> : own===undefined ? <LoadingState /> : <>
+    {!isAuthenticated ? <ActionButton icon={LocateFixed} title={t('locationAction')} onPress={()=>router.replace('/location')} /> : own===undefined ? <LoadingState /> : <>
       <View style={{gap:8}}><AppText variant="heading">{t('profileTitle')}</AppText><AppText>{own.profile?.alias}</AppText><AppText variant="caption">{t('profilePrivacy')}</AppText>
-        <ActionButton title={t('profileTitle')} variant="secondary" onPress={()=>router.push('/profile')} disabled={busy} />
+        <ActionButton icon={UserRound} title={t('profileTitle')} variant="secondary" onPress={()=>router.push('/profile')} disabled={busy} />
         {own.role === 'AUTHORITY' && <AppText style={{color:theme.accent}}>{t('authorityReady')}</AppText>}
-        {own.role === 'AUTHORITY' && <ActionButton title={t('authorityTitle')} variant="secondary" onPress={()=>router.push('/authority')} disabled={busy} />}
-        <ActionButton title={t('refreshAccountAccess')} variant="secondary" onPress={()=>void refreshAccess()} disabled={busy || uncertain} />
+        {own.role === 'AUTHORITY' && <ActionButton icon={ShieldCheck} title={t('authorityTitle')} variant="secondary" onPress={()=>router.push('/authority')} disabled={busy} />}
+        <ActionButton icon={RefreshCw} title={t('refreshAccountAccess')} variant="secondary" onPress={()=>void refreshAccess()} disabled={busy || uncertain} />
       </View>
       <View style={{gap:8}}><AppText variant="heading">DEMO</AppText><AppText>{t('demoModeHelp')}</AppText>
-        <ActionButton title={t(own.profile?.demoEnabled ? 'disableDemoMode' : 'enableDemoMode')} variant="secondary" disabled={busy || uncertain} onPress={()=>void toggleDemo()} />
+        <ActionButton icon={FlaskConical} title={t(own.profile?.demoEnabled ? 'disableDemoMode' : 'enableDemoMode')} variant="secondary" disabled={busy || uncertain} onPress={()=>void toggleDemo()} />
       </View>
       <View style={{gap:8}}><AppText variant="heading">{t('languageTitle')}</AppText>
         {LANGUAGE_CODES.map(code=><Choice key={code} label={`${languageNames[code].native} · ${languageNames[code].english}`} selected={language===code} disabled={busy || uncertain} onPress={()=>void select(code)} />)}
         {busy && <LoadingState />}
         {error && <AppText style={{color:theme.danger}} accessibilityLiveRegion="polite">{t(error)}</AppText>}
-        {uncertain && !busy && <ActionButton title={t('retry')} onPress={()=>{if(pending.current)void select(pending.current.language);}} />}
+        {uncertain && !busy && <ActionButton icon={RefreshCw} title={t('retry')} onPress={()=>{if(pending.current)void select(pending.current.language);}} />}
       </View>
       <View style={{gap:8}}><AppText variant="heading">{t('locationCaptured')}</AppText>
         <AppText>{t('locationPrivacy')}</AppText>
         {fix && <AppText variant="caption">{new Date(fix.observedAt).toLocaleString(i18n.language)} · ±{Math.ceil(fix.accuracyM)} m</AppText>}
-        <ActionButton title={t('locationAction')} variant="secondary" onPress={()=>router.replace('/location')} disabled={busy} />
+        <ActionButton icon={LocateFixed} title={t('locationAction')} variant="secondary" onPress={()=>router.replace('/location')} disabled={busy} />
       </View>
       <View style={{paddingTop:16,borderTopWidth:1,borderTopColor:theme.border}}>
-        <ActionButton title={t('signOut')} variant="danger" onPress={()=>void logout()} busy={busy} disabled={busy} />
+        <ActionButton icon={LogOut} title={t('signOut')} variant="danger" onPress={()=>void logout()} busy={busy} disabled={busy} />
       </View>
     </>}
   </Screen>;

@@ -1,5 +1,11 @@
 # Latest handoff — 2026-10-10
 
+## 2026-10-10 — compact mobile UI upgrade
+- Replaced the unimplemented Chat tab with SACHET, removed duplicate shortcuts, and added a minimize/expand control to the map welcome panel. Active emergency banners remain visible when minimized. SACHET now has one tab route; detail deep links remain available.
+- Added vector icons to shared buttons, semantic icons to core actions and hazard choices, compact incident status/time/witness rows, localized relative timestamps, and grouped incident detail cards with an accessible evidence disclosure. Verification, emergency state, stale assessments, DEMO and approximate-area cautions remain distinct.
+- Verification: strict TypeScript/lint and 264 tests/43 files pass, including evidence disclosure and existing submission completion tests. iOS simulator loaded the new Incidents route and SACHET navigation icon; the current development-client session lacks auth/location, so populated map/detail visual acceptance and Android/large-text matrix remain pending. No new native dependencies or backend changes.
+- User follow-up: after this UI checkpoint, fix returning-user startup to remember setup and open the map without repeating language/location onboarding. Do not persist precise GPS as a shortcut around current permission/geography checks.
+
 Read [docs/current-state.md](docs/current-state.md) and the current checkpoint at the top of [TODO.md](TODO.md) before historical notes below.
 
 - Latest app source pushed:0a3443d.259 tests / 42 files+TypeScript/lint+Doctor 21/21 pass. Development basic-newt-690 (iOS simulator/Metro); production jovial-eagle-875 (release APK); backend functions current on both.

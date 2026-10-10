@@ -1,5 +1,9 @@
 import type { Translation } from './en';
 export const es: Translation = {
+  expandPanel: "Ampliar panel del mapa",
+  minimizePanel: "Minimizar panel del mapa",
+  witnessSummary: "{{recent}} recientes · {{total}} testigos en total · {{hours}} h",
+
   tagline: 'Alertas locales. En tu idioma.', languageTitle: 'Elige tu idioma',
   languageDescription: 'Recibe información de emergencias cercanas en el idioma que mejor entiendes.',
   continue: 'Continuar', locationTitle: 'Infórmate sobre tu entorno',

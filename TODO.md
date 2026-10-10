@@ -21,6 +21,13 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 | Verification |263 tests / 43 files, strict TypeScript/lint and local release build pass. These do not establish full native acceptance. |
 | DEMO Jev evidence notices | Implemented backend/UI test workflow: active DEMO authority creates a contained circle notice with a two-hour default/24-hour cap, review and early withdrawal. It is stored outside official SACHET records and enters only overlapping DEMO incident evidence. Physical two-account acceptance remains pending. |
 
+### Requested UI checkpoint — 2026-10-10
+
+- [x] UI01 Compact/collapsible map panel and SACHET tab replacing Chat; duplicate shortcuts removed. Simulator route/tab smoke check and TypeScript/lint pass.
+- [x] UI02 Icon buttons/hazard choices and compact incident/shelter metadata with relative timestamps. TypeScript/lint and existing workflow tests pass; populated native visual matrix remains pending.
+- [x] UI03 Group incident detail facts and disclose secondary assessment evidence. Disclosure regression plus existing submission tests pass; full suite 264 tests/43 files.
+- [ ] UI04 Remember completed setup and open returning users on the map, preserving fresh permission/geography checks.
+
 ### Next executable work
 
 - [ ] NOW01 Retest local rc.2 location→map on the affected Android device; verify Google login/restore/sign-out and capture actual outcome.

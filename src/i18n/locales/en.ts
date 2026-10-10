@@ -1,4 +1,8 @@
 export const en = {
+  expandPanel: "Expand map panel",
+  minimizePanel: "Minimize map panel",
+  witnessSummary: "{{recent}} recent · {{total}} total witnesses · {{hours}}h window",
+
   tagline: 'Local alerts. Your language.', languageTitle: 'Choose your language',
   languageDescription: 'Receive nearby emergency information in the language you understand best.',
   continue: 'Continue', locationTitle: 'Stay informed nearby',

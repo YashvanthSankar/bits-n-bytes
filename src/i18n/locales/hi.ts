@@ -1,5 +1,9 @@
 import type { Translation } from './en';
 export const hi: Translation = {
+  expandPanel: "मानचित्र पैनल खोलें",
+  minimizePanel: "मानचित्र पैनल छोटा करें",
+  witnessSummary: "{{recent}} हाल के · {{total}} कुल गवाह · {{hours}} घंटे",
+
   tagline: 'स्थानीय अलर्ट। आपकी भाषा में।', languageTitle: 'अपनी भाषा चुनें',
   languageDescription: 'आस-पास की आपातकालीन जानकारी अपनी पसंद की भाषा में पाएँ।',
   continue: 'जारी रखें', locationTitle: 'आस-पास की जानकारी पाएँ',

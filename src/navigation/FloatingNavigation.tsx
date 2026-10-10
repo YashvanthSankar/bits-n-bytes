@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { TabTrigger, useTabTrigger, type TabTriggerSlotProps } from 'expo-router/ui';
-import { Map, List, House, MessageCircle, Settings, Menu, X, Check, type LucideIcon } from 'lucide-react-native';
+import { Map, List, House, BellRing, Settings, Menu, X, Check, type LucideIcon } from 'lucide-react-native';
 import { useEffect, useState, type RefObject } from 'react';
 import { AccessibilityInfo, Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,7 +12,7 @@ export const destinations = [
   { name: 'map', href: '/map', label: 'navMap', icon: Map },
   { name: 'incidents', href: '/incidents', label: 'navIncidents', icon: List },
   { name: 'shelters', href: '/shelters', label: 'navShelters', icon: House },
-  { name: 'chat', href: '/chat', label: 'navChat', icon: MessageCircle },
+  { name: 'sachet', href: '/sachet', label: 'sachetTitle', icon: BellRing },
   { name: 'settings', href: '/settings', label: 'navSettings', icon: Settings },
 ] as const;
 

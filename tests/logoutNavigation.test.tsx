@@ -3,6 +3,7 @@ import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
 const Focus = createContext(true);
 const state=vi.hoisted(()=>({authenticated:true,signOut:vi.fn(),signIn:vi.fn(),browser:vi.fn(),replace:vi.fn(),permission:vi.fn(),locate:vi.fn(),navigate:null as null | ((path:string)=>void)}));
+vi.mock('lucide-react-native', () => Object.fromEntries(['UserRound','ShieldCheck','RefreshCw','LocateFixed','LogOut','FlaskConical'].map(name => [name, () => null])));
 vi.mock('@convex-dev/auth/react',()=>({useAuthActions:()=>({signOut:state.signOut,signIn:state.signIn})}));
 vi.mock('react-native',()=>({View:'View',Platform:{OS:'ios'}}));
 vi.mock('expo-router',()=>({useFocusEffect:(callback:()=>void)=>{const focused=React.useContext(Focus);React.useEffect(()=>focused?callback():undefined,[focused,callback]);},router:{replace:(path:string)=>{state.replace(path);state.navigate?.(path);},push:vi.fn()}}));

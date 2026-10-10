@@ -1,3 +1,4 @@
+import { Plus } from 'lucide-react-native';
 import { useConvexAuth, useQuery } from 'convex/react';
 import { router } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -12,9 +13,8 @@ import { EmergencyAlerts } from '../../features/alerts/EmergencyAlerts';
 function Incidents() {
   const { t } = useTranslation(); const { isAuthenticated } = useConvexAuth(); const { fix } = useLocationSession();
   const nearby = useQuery(api.incidents.nearby, isAuthenticated && fix ? {} : 'skip');
-  return <Screen footer={<ActionButton title={t('reportTitle')} onPress={() => router.push('/report')} disabled={!isAuthenticated || !fix} />}>
+  return <Screen footer={<ActionButton icon={Plus} title={t('reportTitle')} onPress={() => router.push('/report')} disabled={!isAuthenticated || !fix} />}>
     <AppText variant="title" accessibilityRole="header">{t('navIncidents')}</AppText>
-    <ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.push('/sachet')} />
     <EmergencyAlerts />
     <AppText>{t('nearbyReports')} · 5 km</AppText>
     {!isAuthenticated || !fix ? <ActionButton title={t('locationAction')} onPress={() => router.replace('/location')} /> : !nearby ? <LoadingState /> : <>
