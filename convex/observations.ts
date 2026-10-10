@@ -1,16 +1,16 @@
-import { v } from 'convex/values';
+import { ConvexError, v } from 'convex/values';
 import geohash from 'ngeohash';
 import { mutation, query, internalMutation, type QueryCtx, type MutationCtx } from './_generated/server';
 import type { Id, Doc } from './_generated/dataModel';
 import { internal } from './_generated/api';
 import type { PublicIncident } from '../src/contracts/domain';
-import { requireUser, requireEligibleFix, activeMemberships, requireAuthorityForCircle, containsCircle } from './lib/authorization';
+import { requireUser, requireIndiaAccess, requireEligibleFix, activeMemberships, requireAuthorityForCircle, containsCircle } from './lib/authorization';
 import { command, payloadHash } from './lib/idempotency';
 import { reject } from './lib/errors';
 import { hazard, fix, audience } from './lib/validators';
 import { HAZARD_POLICY, HOUR, POLICY } from '../src/domain/policy';
 import { countryStatus, distanceM } from '../src/domain/geography';
-import { validateIndiaFix } from '../src/domain/eligibility';
+import { validateFix, validateIndiaFix } from '../src/domain/eligibility';
 import { currentIncidentState, witnessSummary } from '../src/domain/incidentState';
 import { freshIncidentDTO } from './lib/publicModels';
 
@@ -62,6 +62,26 @@ export const refreshState = internalMutation({ args: { incidentId: v.id('inciden
   await refresh(ctx, args.incidentId);
 } });
 
+export const eligibility = query({ args: { incidentId: v.id('incidents') }, handler: async (ctx, args) => {
+  const { location, userId } = await requireIndiaAccess(ctx);
+  const incident = await resolve(ctx,args.incidentId);
+  if (incident.audience === 'DEMO') {
+    const profile = await ctx.db.query('profiles').withIndex('by_user', q=>q.eq('userId',userId)).unique();
+    if (!profile?.demoEnabled) return reject('NOT_FOUND');
+  }
+  const checked = validateFix(location,Date.now(),POLICY.entryFix);
+  if (!checked.ok) return { eligible:false, reason:checked.error.code, retryAfterMs:0 };
+  if (!['ACTIVE','STALE'].includes(currentIncidentState(incident,incident.hazard,incident.recentWitnesses,Date.now()).lifecycle)) return { eligible:false,reason:'INCIDENT_CLOSED' as const,retryAfterMs:0 };
+  try { await mayObserve(ctx,incident,location); }
+  catch (error) {
+    if (error instanceof ConvexError && typeof error.data === 'object' && error.data && 'code' in error.data && error.data.code === 'OBSERVATION_TOO_FAR') return { eligible:false,reason:'OBSERVATION_TOO_FAR' as const,retryAfterMs:0 };
+    throw error;
+  }
+  const previous = await ctx.db.query('observations').withIndex('by_incident_author',q=>q.eq('incidentId',incident._id).eq('authorId',userId)).unique();
+  const retryAfterMs = previous ? Math.max(0,previous.lastContributionAt+POLICY.witnessCooldownMs-Date.now()) : 0;
+  return { eligible:retryAfterMs === 0,reason:retryAfterMs ? 'RATE_LIMITED' as const : null,retryAfterMs };
+} });
+
 export const candidates = query({ args: { hazard, audience: v.optional(audience) }, handler: async (ctx, args) => {
   const { location, userId } = await requireEligibleFix(ctx);
   const profile = await ctx.db.query('profiles').withIndex('by_user', q => q.eq('userId', userId)).unique();
@@ -70,18 +90,20 @@ export const candidates = query({ args: { hazard, audience: v.optional(audience)
   const found = new Map<string, PublicIncident>(); let partial = false;
   const now = Date.now(); const radius = args.hazard === 'CYCLONE' ? 10_000 : 1_000;
   for (const cell of cells(location.point, 4)) {
-    const points = await ctx.db.query('geoPoints').withIndex('by_kind_precision_cell_active', q => q.eq('kind','INCIDENT').eq('precision',4).eq('cell',cell).eq('active',true)).take(101);
-    if (points.length > 100) partial = true;
-    for (const candidate of points.slice(0,100)) {
+    const points = await ctx.db.query('geoPoints').withIndex('by_kind_precision_cell_active', q => q.eq('kind','INCIDENT').eq('precision',4).eq('cell',cell).eq('active',true)).take(31);
+    if (points.length > 30) partial = true;
+    for (const candidate of points.slice(0,30)) {
       if (distanceM(candidate.point, location.point) > radius) continue;
       const id = ctx.db.normalizeId('incidents', candidate.entityId); if (!id) continue;
       const incident = await ctx.db.get(id);
       if (!incident || incident.hazard !== args.hazard || !['ACTIVE','STALE'].includes(incident.lifecycle) || now - incident.lastObservedAt > POLICY.maxObservationAgeMs || incident.audience !== selectedAudience) continue;
+      if (found.has(id)) continue;
+      if (found.size >= 30) { partial = true; continue; }
       const geometry = await ctx.db.get(incident.geometryId);
       if (geometry) found.set(id, await freshIncidentDTO(ctx, incident, geometry));
     }
   }
-  return { items: [...found.values()].slice(0,100), partial: partial || found.size > 100, serverTime: now };
+  return { items: [...found.values()], partial, serverTime: now };
 } });
 
 export const submit = mutation({ args: {

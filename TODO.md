@@ -14,10 +14,11 @@ Source of truth: [PLAN.md](PLAN.md) for core behavior, [tech-stack.md](tech-stac
 | iOS testing F08 | Simulator development build compiles/installs; Native runtime and Apple Maps rendering confirmed; Android development build/Maps verification pending. |
 | Location L01/L02/L05 | Shared country checks and server latest-fix mutation exist; Mobile fresh-fix admission and private profile implemented; mocked denial/disabled/old/coarse cases pass. Full native revocation/targeting pending. |
 | API access P06/P08 | Maps restrictions/billing and Translation calls verified; RSS/CAP/polygon XML and real ETag 304 verified. Credentials saved privately; see docs/api-setup.md. |
+| Report UI I03/I04 | Native report form renders on iOS; eight explicit choices, relative/earlier time, 500-character text, fresh GPS and explicit candidate/different-event choice. Export/typecheck checks pass; two-account device submission acceptance remains pending. |
 | Incident backend I01/I02/I07 | Eight preset boundaries, separate state dimensions and authenticated atomic reporting/rate/proximity guards verified. UI, correction/withdrawal and full M3 acceptance remain pending. |
 | Main product flows | Official alerts, shelters, provider workers, chat and release acceptance pending. |
 
-Primary onboarding actions now stay pinned above the bottom safe area while content scrolls. Latest backend checkpoint: 86 tests, strict typecheck/lint and Convex development deployment pass. Previously verified exports cover the onboarding checkpoint; incident UI is in progress.
+Primary onboarding actions now stay pinned above the bottom safe area while content scrolls. Latest mobile checkpoint: 102 tests, strict typecheck/lint, Convex development deployment and Android/iOS/web exports pass. Report/detail and initial 5-km map/list are connected; two-account device submission and complete crisis workflows remain pending.
 
 See [dated verification details](docs/progress/2026-10-10-development.md). Task completion here is scoped to the named foundation/backend work; M1's full sign-in/device goal remains incomplete.
 
@@ -135,9 +136,9 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 
 - [x] I01 Implement eight hazard presets, radii, witness windows and stale timers exactly from PLAN.md section 5. Owner A.
 - [x] I02 Keep verification, activity and emergency qualification as separate fields/state transitions. Owner A.
-- [ ] I03 Build Report incident form: hazard, captured location, observed time, description <=500; no media. Owner B.
-- [ ] I04 Suggest same-type nearby candidates; require user choice to corroborate or report a different event. Owners A/B.
-- [ ] I05 Idempotent submit persists observation; acknowledged response opens unverified/pending detail. Owner A.
+- [x] I03 Build Report incident form: hazard, captured location, observed time, description <=500; no media. Owner B.
+- [x] I04 Suggest same-type nearby candidates; require user choice to corroborate or report a different event. Owners A/B.
+- [ ] I05 Idempotent submit persists observation; acknowledged response opens unverified/pending detail. Owner A. Backend receipt/replay tests pass and native routing is connected; device submit/open confirmation remains pending.
 - [ ] I06 Count one independent witness per person; refresh observation time without incrementing count. Owner A.
 - [x] I07 Enforce proximity/fix quality, <=24-hour observed-time validation, five reports/hour and ten-minute witness cooldown. Owner A.
 - [ ] I08 Corrections/withdrawals/flags and merge redirects preserve history and independent counts. Owners A/D.
@@ -294,7 +295,7 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 
 ## Next development actions
 
-1. Connect I03/I04/I05/I11: native report, explicit candidate selection, accepted receipt and detail.
+1. Verify I05/I11 on native devices: submit/open receipt, two-account contribution and source/evidence detail.
 2. Finish I06/I08/I12: scalable independent counts, correction/withdrawal/history and lifecycle checks.
 3. Continue M4 official publication/shelters and M5 delivery; complete Android auth/Maps and native permission checks alongside these workflows.
 

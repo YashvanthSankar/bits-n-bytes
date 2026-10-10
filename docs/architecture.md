@@ -18,7 +18,7 @@ Read [docs/README.md](README.md), [PLAN.md](../PLAN.md), [tech-stack.md](../tech
 
 Expo owns native presentation, location/notification permissions and private session storage. Convex owns identity authorization, canonical data, versioned state changes and durable jobs. Actions call providers; mutations apply validated results only if evidence/control revisions still match. Public DTOs exclude private profiles, witness origins and device tokens.
 
-Selected model gateway: OpenCode Zen `/zen/v1/systemone`, model `jev-1.13`, server-only `OPENCODE_API_KEY`. One synthetic Noul call passed; Choice/Score contracts, decision quality and app integration remain pending. OpenAI is not an active dependency. Basemaps are Apple on iOS and Google on Android; downloaded basemaps and automatic offline posting are deferred by user instruction.
+Selected model gateway: OpenCode Zen `/zen/v1/systemone`, model `jev-1.13`, server-only `OPENCODE_API_KEY`. One synthetic Noul call passed; A synthetic Choice request also passed; Score contract, decision quality and app integration remain pending. OpenAI is not an active dependency. Basemaps are Apple on iOS and Google on Android; downloaded basemaps and automatic offline posting are deferred by user instruction.
 
 ## Detailed design map
 
@@ -33,3 +33,6 @@ Selected model gateway: OpenCode Zen `/zen/v1/systemone`, model `jev-1.13`, serv
 | Failure handling, verification, build gates and inputs | 23–26 |
 
 The TODO file assigns acceptance checks and dependencies to proposed team owners. Older strategy/research documents remain historical input. Follow [agent-execution-policy.md](agent-execution-policy.md) and the user authorized application coding on 2026-10-10. GitHub remote and local progress are recorded in [the dated progress note](progress/2026-10-10-technical-plan-and-migration.md).
+
+
+Current incident checkpoint: atomic observation commands and fresh public read models are deployed. Native report/detail and a bounded initial 5-km report map/list are connected. Official publication, shelters, provider ingestion/assessment workers, chat and actual device delivery remain unfinished; TODO.md records their gates.

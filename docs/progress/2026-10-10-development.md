@@ -85,3 +85,17 @@ Previous onboarding/API checkpoint `fb94df7` was committed and pushed to main.
 - Validation: `npm run check` passes strict TypeScript, lint and **86 tests** across 10 files. `npx convex dev --once` deploys successfully to Denoise Labs GudTour development. Tests use isolated test data, not live crisis reports.
 - Current explicit pilot bound: aggregating more than 500 active observations fails with CONFIGURATION_REQUIRED instead of claiming a complete count. Larger-scale paginated/incremental aggregates remain part of I06. I08 withdrawal/restriction/history and M3 two-device acceptance are not complete.
 - No emergency notification is emitted by observation submission. Provider assessment and publication workers remain pending. Native report/detail UI is under development; it is not yet accepted as complete.
+
+
+### Native reporting checkpoint — I03/I04 and connected detail/map
+
+- Backend checkpoint `2232fe9` is committed and pushed.
+- I03: native report form renders in the running iPhone 17 Pro simulator. No hazard is preselected; selection collapses the list into a readable summary. The scrolling form includes relative observation times, explicit Today/Yesterday with HH:MM validation, 500-character text, required Other explanation and acknowledged fresh GPS. Submission/navigation remain pinned above safe areas. Screenshot: ignored `tmp/ios-native-report.png`.
+- I04: captured-position candidate query returns same-hazard suggestions with explicit Add my observation/Report a different event selection; no silent merge. Backend tests demonstrate separate incidents when the user chooses a new event. Partial result coverage is labeled.
+- Connected detail shows separate verification, lifecycle, qualification, provenance, timestamp and recent/total windowed witnesses. Server eligibility disables distant/closed/cooldown contributions. Retry keeps a frozen request ID/body while confirmation is uncertain; authoritative validation errors permit correction and show cooldown seconds. Accepted response is wired to the detail route; **actual native submit/open and two-account corroboration remain pending I05/M3**.
+- Map/list query initially covers 5 km with bounded/partial results. Unverified approximate circles use dashed polylines supported by iOS Apple Maps and Android Google Maps; marker labels and readable incident cards give a non-color alternative. Full filters, polygon/official overlays, shelters and archive remain pending I09/I10. No empty view claims safety.
+- Newly captured outside-India coordinates are recorded before admission fails, removing prior location targeting indexes. Native foreground revocation/background/targeting acceptance still remains pending L02/L05/L06/L08.
+- Added 72 report/detail labels in all six languages. New translations were generated through the configured Google Translation v2 API; N03 human review remains pending. No runtime translation is required for these UI labels.
+- Validation: strict TypeScript/lint, 102 tests across 12 files, successful Convex development deploy, and Android/iOS/web exports. Native reload and report rendering confirmed; no synthetic LIVE emergency was posted.
+
+- Read-budget review caps initial nearby/candidate results and cell pages at 30 incidents. Partial lists carry an explicit flag; cell pagination retains its cursor so later pages remain accessible. This prevents 100 worst-case witness aggregates exceeding a Convex read budget. A dense 32-incident test checks both partial disclosure and 30+2 pagination.

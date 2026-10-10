@@ -47,3 +47,9 @@ it('hung GPS times out without admitting an older location', async () => {
   const pending = expect(currentIndiaFix()).rejects.toMatchObject({ reason: 'unavailable' });
   await vi.advanceTimersByTimeAsync(25_001); await pending;
 });
+it('records a newly established outside-country fix before rejecting admission',async()=>{
+  mock.position.mockResolvedValue(position(1.3521,103.8198));
+  const record=vi.fn().mockResolvedValue(undefined);
+  await expect(currentIndiaFix(record)).rejects.toMatchObject({reason:'outside'});
+  expect(record).toHaveBeenCalledWith(expect.objectContaining({fix:expect.objectContaining({point:{latitude:1.3521,longitude:103.8198}})}));
+});

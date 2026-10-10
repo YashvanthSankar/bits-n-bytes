@@ -6,7 +6,7 @@ import { validateIndiaFix } from '../domain/eligibility';
 export class LocationFailure extends Error {
   constructor(public readonly reason: 'disabled' | 'denied' | 'accuracy' | 'outside' | 'uncertain' | 'unavailable', public readonly settings = false) { super(reason); }
 }
-export async function currentIndiaFix(): Promise<{ fix: LocationFix; backgroundPermission: PermissionState }> {
+export async function currentIndiaFix(onCaptured?: (value: { fix: LocationFix; backgroundPermission: PermissionState }) => Promise<void>): Promise<{ fix: LocationFix; backgroundPermission: PermissionState }> {
   if (!await Location.hasServicesEnabledAsync()) throw new LocationFailure('disabled', true);
   let permission = await Location.getForegroundPermissionsAsync();
   if (!permission.granted && permission.canAskAgain) permission = await Location.requestForegroundPermissionsAsync();
@@ -21,8 +21,10 @@ export async function currentIndiaFix(): Promise<{ fix: LocationFix; backgroundP
     ]);
   } finally { if (timer) clearTimeout(timer); }
   const fix: LocationFix = { point: { latitude: position.coords.latitude, longitude: position.coords.longitude }, observedAt: position.timestamp, accuracyM: position.coords.accuracy ?? Infinity };
+  const background = await Location.getBackgroundPermissionsAsync();
+  // Record a newly established outside-India position before rejecting entry, so an old fix cannot keep targeting the user.
+  if (onCaptured && Number.isFinite(fix.accuracyM) && fix.accuracyM <= 10_000) await onCaptured({ fix, backgroundPermission: background.status });
   const checked = validateIndiaFix(fix, countryStatus(fix), Date.now());
   if (!checked.ok) throw new LocationFailure(checked.error.code === 'OUTSIDE_INDIA' ? 'outside' : checked.error.code === 'COUNTRY_UNCERTAIN' ? 'uncertain' : 'accuracy');
-  const background = await Location.getBackgroundPermissionsAsync();
   return { fix, backgroundPermission: background.status };
 }

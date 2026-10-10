@@ -28,11 +28,9 @@ export default function LocationScreen() {
     running.current = true;
     setBusy(true); setError(null); setSettings(false); setFix(null);
     try {
-      const { fix, backgroundPermission } = await currentIndiaFix();
-      if (isAuthenticated) {
-        const response = await update({ requestId: randomUUID(), fix, foregroundPermission: 'granted', backgroundPermission, source: 'FOREGROUND' });
-        if (!response.admitted) throw new LocationFailure('uncertain');
-      }
+      const { fix } = await currentIndiaFix(isAuthenticated ? async ({ fix, backgroundPermission }) => {
+        await update({ requestId: randomUUID(), fix, foregroundPermission: 'granted', backgroundPermission, source: 'FOREGROUND' });
+      } : undefined);
       if (own?.profile && own.profile.language !== language) {
         const profile = own.profile;
         await saveProfile({ requestId: randomUUID(), expectedRevision: profile.revision, name: profile.name, language, stepFreeNeeded: profile.stepFreeNeeded, ...(profile.bloodGroup === null ? {} : { bloodGroup: profile.bloodGroup }), ...(profile.emergencyContact === null ? {} : { emergencyContact: profile.emergencyContact }) });
