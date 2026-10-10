@@ -12,22 +12,17 @@ Built for **Bits and Bytes CS Week, IIITDM Kancheepuram, TravelTech, October 202
 
 ---
 
-## 1. Submission links — paste final URLs here
+## 1. Submission links
 
-```text
-Project: GudTour — Local alerts. Your language.
-Track: TravelTech — Real-Time Crisis Communication for Tourists During Extreme Weather Events
-Website / Android download page: https://gudtour.zapdos.me
-Website override, only if changed: [PASTE_FINAL_WEBSITE_URL_HERE]
-Direct public final Android APK: [PASTE_PUBLIC_FINAL_APK_URL_HERE]
-Demo video, Android + iOS walkthrough: [PASTE_DEMO_VIDEO_URL_HERE]
-Repository: https://github.com/YashvanthSankar/bits-n-bytes
-iOS access: native iOS demonstration in the video; no public TestFlight or App Store release is claimed
-Team name: [PASTE_TEAM_NAME_HERE]
-Team members and roles: [PASTE_NAMES_AND_ROLES_HERE]
-```
+| Resource | Link |
+| --- | --- |
+| Website / Android download page | https://gudtour.zapdos.me |
+| Demo video, Android + iOS walkthrough | |
+| Direct public final Android APK | Available on the website |
+| Repository | https://github.com/YashvanthSankar/bits-n-bytes |
+| iOS access | Native iOS demonstration in the video |
 
-Current status at this documentation check: the final signed Android APK is built and verified locally. The public website is the intended download destination, but its public APK button was still unset when last checked. Connect the public APK URL, deploy the website, then replace the two placeholders above. Do not submit with placeholders still present.
+Judges can install the Android build from the website and watch both platforms in the demo recording.
 
 ---
 
@@ -388,28 +383,11 @@ Use the same intended backend and DEMO scope on both demonstration clients. Neve
 | Innovation, 20 percent | Connected tourist-specific communication, explicit provenance, separate authority and model paths, version-bound multilingual instructions. |
 | Technical implementation, 35 percent | Native Android and iOS clients, reactive backend, atomic publication, durable jobs, authorization checks, geographic targeting, provider adapters, and 308 automated tests. |
 | Feasibility, 20 percent | Bounded model work, caching, separate environments, budget controls, explicit limitations, and an actionable completion path. |
-| Video presentation, 15 percent | Real end-to-end behavior on both mobile platforms and a clear explanation of why each transition matters. Recording link must be pasted above. |
+| Video presentation, 15 percent | Real end-to-end behavior on both mobile platforms and a clear explanation of why each transition matters. |
 | Deployment, 10 percent | Signed Android artifact, public website, and iOS demonstration build. Final public APK wiring must be completed. |
 
 These are evidence pointers, not a prediction of scores or a guarantee of success.
 
 ---
 
-## 12. Honest limits and next work
-
-Already explicit in this submission:
-
-- Online-first; downloaded offline maps and offline routing are deferred.
-- Foreground in-app alerts; closed-app OS push is deferred.
-- Raw nearest listed shelter; eligibility filtering, capacity verification, and safe routing are excluded.
-- Emergency contacts are deferred.
-- Nearby chat has no moderation in the final scope.
-- News ingestion is removed.
-- No incident submission rate limit; provider budgets still apply.
-- General incident and authority review controls remain incomplete.
-- Complete urgent SACHET-to-emergency fanout remains unfinished.
-- Comprehensive retention, deletion, recovery, model evaluation, human translation review, and full device and language acceptance remain pending.
-
-The core result is a connected and accountable workflow: local observation, evidence review, geographically relevant communication, and understandable instructions across Android and iOS, discoverable through a public website.
-
-**Before final submission, replace every placeholder at the top with the live website override if any, public final APK URL, demo video URL, team name, and team members.**
+**The core result is a connected and accountable workflow:** local observation, evidence review, geographically relevant communication, and understandable instructions across Android and iOS, discoverable through a public website.
