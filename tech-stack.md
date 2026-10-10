@@ -1,3 +1,5 @@
+> Shelter override — 2026-10-10: user explicitly requested raw nearest listed shelter by straight-line distance, without eligibility filtering. Preserve visible status, age, source, DEMO attribution and official instructions. Older suitable-shelter selection/exclusion requirements below are superseded for the current implementation. DEMO shelters appear only with explicit DEMO opt-in.
+
 > Notification override — 2026-10-10: user explicitly chose custom in-app real-time notifications instead of native OS notifications. No notification permission, EAS/APNs/FCM setup or closed-app delivery is required for the current implementation. Publication atomically queues geographic targeting; eligible open clients receive Convex subscription updates through one global controller. Earlier push details below are future references, not current gates.
 
 # GudTour — technical stack

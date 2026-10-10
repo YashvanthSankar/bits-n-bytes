@@ -286,4 +286,5 @@ export const es: Translation = {
   unavailableEvidence: "Indisponible",
   noOfficialMatch: "No se incluyó ninguna advertencia oficial al respecto. Esto no significa que la zona sea segura.",
   evidenceIncomplete: "Faltan algunas pruebas, están desactualizadas o incompletas. Consulte las instrucciones oficiales y las condiciones actuales.",
+  nearestListedShelter: "Refugio registrado más cercano",
 };

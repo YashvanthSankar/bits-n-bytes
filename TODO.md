@@ -175,8 +175,8 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 - [ ] A06 Source-specific withdrawal/resolution/false-alert correction; reject after alert requires explicit correction atomically. Owner A.
 - [ ] A07 Shelter maintenance: open/closed/full/unknown, fresh confirmation, capacity, accessibility, facilities, contact and archive. Owners A/D. Backend and authority forms implemented; 14 backend + 5 form checks pass (09:55). Approved-account native workflow remains pending; no LIVE shelter was fabricated.
 - [ ] A08 Contact maintenance with jurisdiction/source and over-30-day age label. Owners A/D.
-- [ ] A09 Select nearest eligible open shelter: <=2-hour confirmation, <=50 km, outside known hazard areas, instruction/accessibility precedence. Owner A.
-- [ ] A10 Shelter list/detail shows excluded reasons, status ages and distance; external Google Maps/copy/dialer fallbacks. Owner B. Detail/actions implemented and backend/component checks pass (142 total tests at 10:00); iOS clipboard rebuild running. Known status/access limitations are shown; full hazard-based recommendation exclusions depend on A09 and remain pending.
+- [x] A09 Select raw nearest listed shelter within 50 km by straight-line distance. User override 2026-10-10 removes eligibility filtering; show status, confirmation age and DEMO attribution separately. Backend ordering/DEMO regression and emergency shelter-action component tests pass.
+- [ ] A10 Shelter list/detail shows excluded reasons, status ages and distance; external Google Maps/copy/dialer fallbacks. Owner B. Detail/actions implemented and backend/component checks pass (142 total tests at 10:00); iOS clipboard rebuild running. Known status/access limitations are shown; hazard-based eligibility exclusions are superseded by the raw-nearest user override.
 - [ ] A11 Audit authority changes; reject revoked/cross-jurisdiction access and stale concurrent writes. Owner A, D verifies.
 
 **Done when:** Publish with Jev unavailable: the official alert/source/revision and expansion job commit immediately. Reject a cross-jurisdiction edit. Demonstrate stay-put, no eligible shelter, and full/stale/unsafe shelter exclusions. Delivery becomes visible in M5.
@@ -440,3 +440,20 @@ User explicitlyresumedimplementationafterpause. Added /authority/emergencies via
 - Review aligned false-alert suppression with PLAN's 30-minute default. Dedicated authority suppression/review UI, immediate source-change fanout, full provider evaluation, shelter recommendations/contacts, chat, recovery/privacy and native/two-client release acceptance remain unfinished. User handles Android Expo Go testing; preserve LAN runtime and independent web/ work.
 
 Verification: 245 tests/36 files, strict TypeScript and lint pass; corrected iOS bundle export succeeds. Native interaction and two-client acceptance remain unverified.
+
+
+## 2026-10-10 12:11 IST — latest continuation state
+- Assessment/evidence checkpoint committed and pushed as b998284; Convex ready12:08:50. Full checkpoint tests245/245 and iOS export succeeded. Supersedes previous uncommitted/provider-only notes.
+- Started next shelter recommendation increment: src/domain/shelterEligibility.ts and tests/shelterEligibility.test.ts are UNCOMMITTED. Pure rules cover open/fresh/not-full, 50km range, hazard exclusion, incomplete hazard context, fresh location, step-free needs and official instruction precedence. Deterministic nearest/freshest/name ordering; unknown capacity remains unknown. 248 tests/37files + strict TS/lint pass.
+- This helper is NOT connected to Convex/public screens yet. A09 remains unchecked. Next: bounded complete hazard context (community, active alerts, official warnings), preserve applicable official instruction precedence, expose eligibility/exclusion DTOs and reactive recommended shelter UI, then contact maintenance. Do not claim working shelter recommendations from helper tests. Preserve independent web/. No new dependencies/native APIs added.
+
+
+## 2026-10-10 — raw nearest shelter and DEMO visibility
+- User explicitly says ignore shelter eligibility and use raw nearest shelter. Removed the uncommitted eligibility helper/tests, superseding12:11 notes. Core/technical/stack documents carry override banners. No status/accessibility/hazard filtering controls selection; display maintained facts separately.
+- Diagnosed actual saved shelter ABCDEFGHIAJ: OPEN, DEMO, not archived, within roughly100m of both saved client positions. Both profiles have DEMO opt-in enabled. Cause was hardcoded LIVE-only filter in shelters.nearby, unlike shelter detail's existing DEMO gate.
+- Nearby now includes DEMO only for explicitly opted-in profiles, preserves agency-active/audience/archived checks, sorts by straight-line distance before clipping to30 results, and returns nearestId. Bounded100-per-cell lookup exposes partial results. Closed/full/unknown shelters are not filtered from raw distance order. Opt-out immediately hides DEMO again. No profile/authority/location data was altered for diagnosis.
+- Tourist list labels nearest and DEMO; alert detail adds nearest listed shelter status/distance and detail action, retaining official instructions above. Removed obsolete pending-eligibility message from shelter detail. Nearest label supports all six languages. No new dependencies/native APIs.
+- Convex deployed12:14:08;248tests/37files+strictTS/lint pass. Backend tests cover DEMO opt-in/out and raw distance even when nearest is closed; component test covers DEMO/status and destination action. iOS export and live authenticated read verification running in tmp/ios-nearest-shelter-export.log (exec41895). Next inspect same process; do not restart blindly.
+- Three increments this checkpoint: DEMO visibility repair, raw nearest backend/list, emergency nearest-shelter CTA. Review/commit/push after export/live verification. Preserve independent web/. No native/two-client UI acceptance claim.
+
+Verified continuation: live session-scoped shelters.nearby reads for both existing clients return exactly one DEMO shelter, ABCDEFGHIAJ, as nearestId, partial=false. iOS export tmp/ios-nearest-shelter-export completed successfully. No settings or records modified during live diagnosis.

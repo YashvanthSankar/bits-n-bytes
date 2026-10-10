@@ -8,6 +8,7 @@ vi.mock('react-native',()=>({View:'View'}));
 vi.mock('react-i18next',()=>({useTranslation:()=>({t:(key:string)=>key,i18n:{language:'en'}})}));
 vi.mock('../src/session/LocationSession',()=>({useLocationSession:()=>({fix:{observedAt:Date.now()},signedOut:false})}));
 vi.mock('../src/theme/useTheme',()=>({useTheme:()=>({})}));
+vi.mock('../src/components/NearestShelter',()=>({NearestShelter:()=>null}));
 vi.mock('../src/components/ReadBoundary',()=>({ReadBoundary:({children}:PropsWithChildren)=><>{children}</>}));
 vi.mock('../src/components/ui',()=>({Screen:({children,footer}:PropsWithChildren<{footer:ReactNode}>)=><>{children}{footer}</>,AppText:({children}:PropsWithChildren)=><>{children}</>,LoadingState:()=>null,ActionButton:(props:object)=>React.createElement('button',props)}));
 import Detail from '../src/app/alert/[id]';

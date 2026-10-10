@@ -157,3 +157,19 @@ it('does not expose archived, inactive-source or unapproved DEMO shelter details
   await actor(authority).mutation(api.shelters.archive, { requestId: 'public-archive-001', shelterId: created.shelterId, expectedRevision: 1, reason: 'No longer listed' });
   await expect(actor(tourist).query(api.shelters.detail, { shelterId: created.shelterId })).rejects.toThrow('NOT_FOUND');
 });
+
+it('lists DEMO shelters only with explicit opt-in and restores hiding on opt-out', async () => {
+  await t.run(ctx=>ctx.db.patch(agencyId,{audience:'DEMO'}));
+  const created=await actor(authority).mutation(api.shelters.save,input('demo-nearby-001'));
+  expect((await actor(tourist).query(api.shelters.nearby,{})).items).toHaveLength(0);
+  await t.run(ctx=>ctx.db.insert('profiles',{userId:tourist,name:'Traveler',alias:'Traveler',language:'en',stepFreeNeeded:false,demoEnabled:true,onboardingCompletedAt:Date.now(),revision:1}));
+  const visible=await actor(tourist).query(api.shelters.nearby,{});expect(visible.nearestId).toBe(created.shelterId);expect(visible.items[0]).toMatchObject({audience:'DEMO',id:created.shelterId});
+  await t.run(async ctx=>{const profile=await ctx.db.query('profiles').withIndex('by_user',q=>q.eq('userId',tourist)).unique();await ctx.db.patch(profile!._id,{demoEnabled:false});});
+  expect((await actor(tourist).query(api.shelters.nearby,{})).nearestId).toBeNull();
+});
+it('uses raw distance order including closed shelters without eligibility filtering', async () => {
+  const farther=await actor(authority).mutation(api.shelters.save,{...input('farther-shelter-001'),point:{latitude:point.latitude+0.02,longitude:point.longitude}});
+  const nearest=await actor(authority).mutation(api.shelters.save,{...input('nearest-shelter-001'),status:'CLOSED'});
+  const listed=await actor(tourist).query(api.shelters.nearby,{});
+  expect(listed.nearestId).toBe(nearest.shelterId);expect(listed.items.map(s=>s.id)).toEqual([nearest.shelterId,farther.shelterId]);expect(listed.items[0]!.status).toBe('CLOSED');
+});

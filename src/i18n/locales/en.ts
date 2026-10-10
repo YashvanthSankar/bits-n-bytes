@@ -286,5 +286,6 @@ export const en = {
   unavailableEvidence: "Unavailable",
   noOfficialMatch: "No matching official warning was included. This does not mean the area is safe.",
   evidenceIncomplete: "Some evidence is missing, stale or incomplete. Check official instructions and current conditions.",
+  nearestListedShelter: "Nearest listed shelter",
 };
 export type Translation = Record<keyof typeof en, string>;

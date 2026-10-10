@@ -286,4 +286,5 @@ export const de: Translation = {
   unavailableEvidence: "Nicht verfügbar",
   noOfficialMatch: "Es wurde keine entsprechende offizielle Warnung ausgesprochen. Das bedeutet nicht, dass das Gebiet sicher ist.",
   evidenceIncomplete: "Einige Nachweise fehlen, sind veraltet oder unvollständig. Bitte prüfen Sie die offiziellen Anweisungen und die aktuellen Bedingungen.",
+  nearestListedShelter: "Nächstgelegene aufgeführte Unterkunft",
 };

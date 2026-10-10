@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { ActionButton, AppText, LoadingState, Screen } from '../../components/ui';
+import { NearestShelter } from '../../components/NearestShelter';
 import { ReadBoundary } from '../../components/ReadBoundary';
 import { useLocationSession } from '../../session/LocationSession';
 import { useTheme } from '../../theme/useTheme';
@@ -37,6 +38,7 @@ function Detail() {
           <AppText selectable>{source.translation.text}</AppText><AppText variant="caption">{t('emergencyTranslationReview')}</AppText>
         </> : source.originalText !== null && source.sourceLanguage !== null && source.sourceLanguage !== i18n.language && <AppText variant="caption">{t(source.translation?.status === 'FAILED' || source.translation?.status === 'FLAGGED' ? 'emergencyTranslationUnavailable' : 'emergencyTranslationPending')}</AppText>}
       </View>)}
+      {value.lifecycle === 'ACTIVE' && <NearestShelter />}
     </>}
   </Screen>;
 }

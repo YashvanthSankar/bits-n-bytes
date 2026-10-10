@@ -16,7 +16,7 @@ function Shelters() {
       {listed.partial && <AppText>{t('matchesPartial')}</AppText>}
       {!listed.items.length && <EmptyState title={t('shelterEmpty')} message={t('shelterEmptyNotice')} />}
       {listed.items.map(shelter=><View key={shelter.id} style={{gap:8,borderWidth:1,borderColor:theme.border,borderRadius:16,padding:16,backgroundColor:theme.surface}}>
-        <AppText variant="heading">{shelter.name}</AppText><AppText>{shelter.issuer}</AppText><AppText>{shelter.address}</AppText>
+        {shelter.id===listed.nearestId && <AppText style={{color:theme.accent}}>{t('nearestListedShelter')}</AppText>}<AppText variant="heading">{shelter.name}</AppText>{shelter.audience==='DEMO' && <AppText>DEMO</AppText>}<AppText>{shelter.issuer}</AppText><AppText>{shelter.address}</AppText>
         <AppText>{t(`shelter${shelter.status}`)} · {(shelter.distanceM/1000).toFixed(1)} km · {t('approximateDistance')}</AppText>
         <AppText variant="caption">{t('lastConfirmed')}: {new Date(shelter.statusConfirmedAt).toLocaleString(i18n.language)}</AppText>
         {shelter.stale && <AppText style={{color:theme.warning}}>{t('stale')}</AppText>}

@@ -1,3 +1,5 @@
+> Shelter override — 2026-10-10: user explicitly requested raw nearest listed shelter by straight-line distance, without eligibility filtering. Preserve visible status, age, source, DEMO attribution and official instructions. Older suitable-shelter selection/exclusion requirements below are superseded for the current implementation. DEMO shelters appear only with explicit DEMO opt-in.
+
 > Latest notification scope (2026-10-10): user requested in-app custom notifications only. When an emergency is published, queued geographic targeting updates eligible accounts and Convex real-time subscriptions present a global popup in open foreground clients. Native notification permission, APNs/FCM/Expo push and closed-app delivery are deferred. Other core incident, authority, translation and location requirements remain unchanged.
 
 # PLAN — India Tourist Crisis Communication Mobile App

@@ -42,7 +42,6 @@ function Detail() {
       <AppText>{(shelter.distanceM / 1_000).toFixed(1)} km · {t('approximateDistance')}</AppText>
       {!shelter.locationFresh && <AppText style={{ color: theme.warning }}>{t('shelterOldLocation')}</AppText>}
       <View style={{ gap: 8 }}>{shelter.limitations.map(reason => <AppText key={reason} style={{ color: theme.warning }}>{t(`shelterLimit${reason}`)}</AppText>)}</View>
-      <AppText>{t('shelterRecommendationPending')}</AppText>
       <AppText>{t('shelterCapacity')}: {shelter.capacity ?? t('unknownValue')}</AppText>
       <AppText>{t('shelterRemaining')}: {shelter.remaining ?? t('unknownValue')}</AppText>
       <AppText>{t(`access${shelter.accessibility}`)}</AppText>
