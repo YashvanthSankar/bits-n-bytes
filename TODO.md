@@ -6,29 +6,36 @@ Source of truth: [PLAN.md](PLAN.md) for core behavior, [tech-stack.md](tech-stac
 
 ## Current implementation checkpoint — 2026-10-10
 
-| Work | Verified state |
+Read [the current-state ledger](docs/current-state.md) first. Older dated entries below are historical; unchecked legacy tasks can be implemented but still awaiting their stated native acceptance. Do not equate checkbox count with implementation percentage.
+
+| Area | Current state |
 | --- | --- |
-| Foundation F01–F03 | Complete; committed/pushed b4e1c22. Expo SDK 57, Denoise Labs Convex, themes/language resources and shared contracts. |
-| Core backend F04/F05/F07 | Complete for currently exposed core handlers; 51 checks pass. Private ownership, public DTOs, bounded indexes, internal operator approval and jurisdiction/revocation checks. |
-| Google login F06 | OAuth client/keys and PKCE initiation configured; Real Google session/private profile confirmed on iOS; Android, restore and sign-out remain pending. |
-| iOS testing F08 | Simulator development build compiles/installs; Native runtime and Apple Maps rendering confirmed; Android development build/Maps verification pending. |
-| Location L01/L02/L05 | Shared country checks and server latest-fix mutation exist; Mobile fresh-fix admission and private profile implemented; mocked denial/disabled/old/coarse cases pass. Full native revocation/targeting pending. |
-| API access P06/P08 | Maps restrictions/billing and Translation calls verified; RSS/CAP/polygon XML and real ETag 304 verified. Credentials saved privately; see docs/api-setup.md. |
-| Report UI I03/I04 | Native report form renders on iOS; eight explicit choices, relative/earlier time, 500-character text, fresh GPS and explicit candidate/different-event choice. Export/typecheck checks pass; two-account device submission acceptance remains pending. |
-| Incident backend I01/I02/I07 | Eight preset boundaries, separate state dimensions and authenticated atomic reporting/time/proximity guards verified. UI, correction/withdrawal and full M3 acceptance remain pending. |
-| Navigation F10 | iOS icon-only routes, native blur, full-screen map and unobscured Incidents Report button verified. Android runtime/extended display checks deferred by user. |
-| Submission policy I13 | Complete: no hourly limit/cooldown; 12-report and repeated immediate-update regressions pass. Convex development deployment verified. |
-| Main product flows | Official alerts, shelters, provider workers, chat and release acceptance pending. |
+| Core tourist flow | Auth/onboarding, location/profile, report/candidate popup, map/list/detail, independent witnesses and evidence summaries implemented; full device matrix pending. |
+| Authority | Workspace, new/existing incident emergency publication/endings, shelters/location picker, reports/Jev context implemented. General review/merge/correction/suppression controls incomplete. |
+| Alerts/translation | Realtime foreground popup, geographic expansion/reconciliation, dismiss/reopen and original/versioned translations implemented; two-client acceptance pending. Native push deferred. |
+| Providers | SACHET ingestion/browsing, weather, evidence and durable Jev qualification deployed; urgent source interpretation and decision-quality evaluation remain incomplete. |
+| Jev cadence/budget | Hourly periodic reassessment, immediate observation-triggered queue,2 calls/assessment,100/day default. Today's dev reset completed;3 blocked jobs finished. |
+| Android | rc.1 public but reported map initialization crash. rc.2 local production APK built/verified with fix, versionCode 4; physical retest pending. |
+| Distribution | rc.2 GitHub upload STOPPED by user; draft checksum only. No active upload/build. iOS simulator uses dev; APK uses prod. Physical iOS delivery pending. |
+| Not implemented | Nearby chat/moderation and full recovery/privacy/retention/deletion. Contacts explicitly deferred. |
+| Verification |259 tests / 42 files, strictTypeScript/lint, Doctor 21/21 and local release build pass. These do not establish full native acceptance. |
 
-Primary onboarding actions now stay pinned above the bottom safe area while content scrolls. Latest mobile checkpoint: 111 tests, strict typecheck/lint, Convex development deployment and Android/iOS/web exports pass. Report/detail and initial 5-km map/list are connected; two-account device submission and complete crisis workflows remain pending.
+### Next executable work
 
-See [dated verification details](docs/progress/2026-10-10-development.md). Task completion here is scoped to the named foundation/backend work; M1's full sign-in/device goal remains incomplete.
+- [ ] NOW01 Retest local rc.2 location→map on the affected Android device; verify Google login/restore/sign-out and capture actual outcome.
+- [ ] NOW02 Run two-client inside/outside/stale-location emergency acceptance, translation fallback, dismissal/reopen and DEMO isolation (N10).
+- [ ] NOW03 Verify authority shelter/report/declaration/endings on native clients; then complete outstanding incident review/correction/merge controls (I08,A01–A06).
+- [ ] NOW04 Complete source urgent/advisory/geometry behavior and held-out Jev evaluation (E02/E03/P07).
+- [ ] NOW05 Implement chat/moderation (C01–C07), then recovery/privacy/retention (R01–R08).
+- [ ] NOW06 Finish physical iOS distribution, language review and submission artifacts (Q/S). rc.2 publication is paused; resume only on new user request.
+
+Historical checklist below preserves task IDs and acceptance requirements. Core features must not be reimplemented simply because a device-acceptance checkbox remains open. User overrides above supersede obsolete native-push, shelter-eligibility and contact requirements.
 
 ## The outcome we are building
 
-A tourist in India reports a nearby hazard. Recent independent evidence, weather and official warnings inform Jev qualification. A qualifying incident or official authority declaration produces a geographically relevant alert in the tourist's preferred language, with the original instruction, issuer, eligible shelter and emergency contacts. Authorities can maintain and correct that information. Nearby chat and honest degraded states complete the requested app.
+A tourist in India reports a nearby hazard. Recent independent evidence, weather and official warnings inform Jev qualification. A qualifying incident or official authority declaration produces a geographically relevant alert in the tourist's preferred language, with the original instruction, issuer and raw nearest listed shelter; emergency contact maintenance is deferred. Authorities can maintain and correct that information. Nearby chat and honest degraded states complete the requested app.
 
-**First working checkpoint:** an approved authority publishes one DEMO emergency; an eligible nearby tourist receives it, an outside tourist does not, and the recipient can read the original/translation and a suitable listed shelter. Build this reliable path before attaching automatic community qualification. This checkpoint is not the final scope or a substitute for the remaining milestones.
+**First working checkpoint:** an approved authority publishes one DEMO emergency; an eligible nearby tourist receives it, an outside tourist does not, and the recipient can read the original/translation and a raw nearest listed shelter. Build this reliable path before attaching automatic community qualification. This checkpoint is not the final scope or a substitute for the remaining milestones.
 
 ## How to execute feasibly
 
@@ -174,7 +181,7 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 - [ ] A05 Implement timed suppression (30-minute default, two-hour maximum), urgent-review flags and resumption. Owner A.
 - [ ] A06 Source-specific withdrawal/resolution/false-alert correction; reject after alert requires explicit correction atomically. Owner A.
 - [ ] A07 Shelter maintenance: open/closed/full/unknown, fresh confirmation, capacity, accessibility, facilities, contact and archive. Owners A/D. Backend and authority forms implemented; 14 backend + 5 form checks pass (09:55). Approved-account native workflow remains pending; no LIVE shelter was fabricated.
-- [ ] A08 Contact maintenance with jurisdiction/source and over-30-day age label. Owners A/D.
+- [ ] A08 DEFERRED by user: Contact maintenance with jurisdiction/source and over-30-day age label. Owners A/D.
 - [x] A09 Select raw nearest listed shelter within 50 km by straight-line distance. User override 2026-10-10 removes eligibility filtering; show status, confirmation age and DEMO attribution separately. Backend ordering/DEMO regression and emergency shelter-action component tests pass.
 - [ ] A10 Shelter list/detail shows excluded reasons, status ages and distance; external Google Maps/copy/dialer fallbacks. Owner B. Detail/actions implemented and backend/component checks pass (142 total tests at 10:00); iOS clipboard rebuild running. Known status/access limitations are shown; hazard-based eligibility exclusions are superseded by the raw-nearest user override.
 - [ ] A11 Audit authority changes; reject revoked/cross-jurisdiction access and stale concurrent writes. Owner A, D verifies.
@@ -321,7 +328,7 @@ Do not commit keys, .env.local or private tourist data. Do not lower the Jev thr
 ### Authority email configuration checkpoint — 2026-10-10 10:12 IST
 
 - [x] Add backend-only comma-separated verified Google authority emails, audited scoped synchronization, removal/revocation enforcement, login refresh and manual Settings refresh. Six new backend tests pass; complete suite 148 tests, strict TypeScript and lint pass. Configuration helper applied empty email list and isolated Chennai DEMO scope to Denoise Labs GudTour deployment. User adds their emails privately using docs/api-setup.md.
-- [ ] Approved-account iOS authority/shelter acceptance: pending user-provided allowlist emails and fresh Google sign-in. A07/A10 remain partial; hazard recommendation A09 is unfinished.
+- [ ] Historical acceptance reminder, updated: authority allowlist and DEMO scope are configured. Approved-account native authority/shelter acceptance remains pending; raw nearest guidance is implemented and eligibility filtering was removed by user.
 
 ### Session UX fixes — 2026-10-10 10:18 IST
 
@@ -355,7 +362,7 @@ Do not commit keys, .env.local or private tourist data. Do not lower the Jev thr
 ## Tourist alert read/UI checkpoint — 2026-10-10 10:48 IST
 - Convex dev --once completed successfully at10:48:05 against denoise-labs:gudtour basic-newt-690. Includes alerts.active, alerts.detail and alerts.dismiss plus targeting worker/recovery cron. No LIVE/DEMO disaster fabricated in shared backend.
 - Tourist map/incidents now render private exact-location alerts, focused attention modal, persistent warning after dismissal, and /alert/[id] separately attributed exact original instructions/deadlines/review-overdue notices. Translation explicitly pending. Client timer expires location-based banners after30min. Full-screen severity ordering/yellow dismissed styling, sound, movement entry and actualpush remain unfinished; N02/N07/N09 remain partial.
--179tests/27files, strict TS/lint pass; backend tests prove session isolation, currentrevision acknowledgement, original preservation, DEMO gate and changed geographic relevance. Component test proves popup dismissal retains instruction access. iOSexport tmp/ios-emergency-export completed exit0. Native alert interaction not yet verified. New backend reads/UI uncommitted; preserve independentweb/.
+-179tests/27files, strict TS/lint pass; backend tests prove session isolation, currentrevision acknowledgement, original preservation, DEMO gate and changed geographic relevance. Component test proves popup dismissal retains instruction access. iOSexport tmp/ios-emergency-export completed exit0. Native alert interaction not yet verified. New backend reads/UI uncommitted; preserve independent web/.
 
 ## Existing-incident emergency promotion — 2026-10-10
 - Declare emergency now offers Select existing incident with bounded paginated candidates from the exact assigned jurisdiction/audience, active circular incident areas only. Selection seeds hazard/locality/affected center/radius; hazard locked for existing event, emergency radius remains editable with backend containment enforcement. Explicit new-incident option retained. Reviewed command carries selected incidentId and expectedIncidentRevision; stale edits rejected, uncertain retries retain exact body.
@@ -368,14 +375,14 @@ User override: no reason-for-change field anywhere in app. Removed it from shelt
 ## Translation adapter foundation — 2026-10-10 10:55 IST
 - Added convex/providers/googleTranslation.ts fixed-origin server-only Basicv2 adapter with header credential, bounded original input/output,15s timeout, structured response validation, sanitized errors and plain-text entity decode. Same-language returns exact original without provider call. Numeric-token multiset and explicitly protected-term checks flag detectable alterations; requiresHumanReview always true for machineoutput. These checks do not prove negation/action equivalence.
 - Six adapter tests plus full189tests/29files, strictTS/lint pass. No app dynamic translation job/cache/UI pipeline yet; N01/N02 remain open. Adapter not deployed as callable public function. Existingalert reads remain original-only. Next implement immutable instruction/hash/language cache, dedup durable jobs/retry and internal action completion guards, then labeled translated display. Do not claim emergency translation works from adapter tests alone.
-- Last pushedcommit eafa9ad; no-reason forms/backend changes and adapter remain uncommitted. No-reason Convex deployment and ios export succeeded. Preserve independentweb/.
+- Last pushedcommit eafa9ad; no-reason forms/backend changes and adapter remain uncommitted. No-reason Convex deployment and ios export succeeded. Preserve independent web/.
 
 ## Koodhiyur heatwave visibility diagnosis — 2026-10-10 11:00 IST
 - Inspected actual development database using sanitized aggregate output (no account emails/positions printed). Koodhiyur HEATWAVE ACTIVE, DEMO, alertACTIVErev2; expansion revisions1/2 DONE with zero exposures. Both current accounts demoEnabledfalse, foregroundgranted/admitted, fresh3–4min/5maccuracy, inside1kmarea. Two displayed community reports are LIVE. Primary missingalert cause is deliberate DEMOgate, not model/weather or GPS.
 - Added Settings explicit enable/disable DEMO alerts and session-owned profiles.setDemoEnabled. Opt-in triggers bounded paginated demoCatchup rescheduling current expansion with checkpoint fence; opt-out readgatehidesexistingexposures. Test verifies opt-in catches existing event and opt-out hides. No accounts auto-enabled, no DEMO→LIVE conversion.
 - Also fixed future new circular official publications missing geoPoints mapindex. Added internal idempotent operator.repairOfficialMapIndex; targeted actualKoodhiyur repair started exec36369, poll before claiming successful. Currentbackend deploy11:00:07 succeeded.190tests/29files, strictTS/lint and iOSexport29045 completedsuccessfully. DEMOlabels translatedsixlanguages (humanreviewpending).
 - Translationpipeline scaffold now instructionTranslations table, internalclaim/finish/run/resume, threeattempts/leasefence/exactactiveinstructionhash checks, publicationenqueuefivelanguages, minute recovery. Deployed withvisibilityfix but pipeline/cache tests and UIread/displaypending; not claimfulltranslationcomplete. Codeatconvex/translations.ts, no publicprovideraction.
-- Worktreeuncommitted atop eafa9ad; no-reasonchanges+translationadapter/pipeline+DEMOvisibility. Preserveindependentweb/. User can test Settings→EnableDEMOalerts, remainingmainproductgoalactive.
+- Worktreeuncommitted atop eafa9ad; no-reasonchanges+translationadapter/pipeline+DEMOvisibility. Preserveindependent web/. User can test Settings→EnableDEMOalerts, remainingmainproductgoalactive.
 
 ## Translation cache/display verified — 2026-10-10 11:03 IST
 - Deployed translations pipeline+alerts.detail current preferred-language DTO at11:02:44. READY exact-version/hash machine translations appear alongside original; FLAGGED/FAILED translations withheld, explicit fallback; never authority-reviewed label. Completion does not incrementalertrevision orreplayattention. Internal enqueueExisting backfilledtwoexistingactiveoriginals withoutchangingevents; tenjobs hi/ta/fr/de/es allREADYonfirstattempt, no numericissues. Providertextnotprinted/readout onlystatus metadata.
@@ -403,13 +410,13 @@ User override: no reason-for-change field anywhere in app. Removed it from shelt
 User explicitlyresumedimplementationafterpause. Added /authority/emergencies viaauthoritydashboard scopedaction. declarations.managed paginatedassignedagency/geometry/audience activeoriginals; declarations.end CAS+idempotency handlesWITHDRAWN/RESOLVED/FALSE_ALERT withoutreasonfield. Ends onlychosenagencydeclarationsource; atomicallycreatesSILENTENDING/CORRECTIONalertrevision, retainsotheractivesources+strongestseverity+newtargetingjob, endsalertonlywhennosourcesremain. Exactoriginalinstructionshistoryretained; detailincludesinactiveoriginalswithno-all-clearlabel. Noactualshareddeclarationwasendedfortesting.
 - Managerrequiresconfirmmodal, freezesunknowntransportexactbody/retry, blocksnewnavigationwhileuncertain, savedstate. Sixlanguagemachinelabels added(humanreviewpending).
 -199tests/30files+strictTS/lint pass. Sourceendingbackendregression covers2sources,logicalretry,staleCAS,finalendingandcorrection. Componentregression coversexplicitconfirm/frozenretry. Dashboardroutingtestupdated. Initialiosmanagementexport88498passed; finalafterlocalizationexport runninglogtmp/ios-emergency-management-final.log. Convexdeploy56116logtmp/declaration-management-deploy.log; pollbeforeclaimingready.
-- A06stillpartial: touristquietending/correctionfollow-upsnotyetconnected; declarationinstructionupdate/editorstillpendingnext. Currentworkuncommitted atopb8e1529, independentweb/untouched. Fullgoalactive, no nativepushrequested(currentinapp-onlyscope).
+- A06stillpartial: touristquietending/correctionfollow-upsnotyetconnected; declarationinstructionupdate/editorstillpendingnext. Currentworkuncommitted atopb8e1529, independent web/untouched. Fullgoalactive, no nativepushrequested(currentinapp-onlyscope).
 
 ## Tourist correction/ending follow-ups — 2026-10-10 11:27 IST
 - alerts.active now returns own bounded historicalexposure ending/correction updates independentlyofcurrentarea overlap. Apreviouslytargetedaccountafterexit stillreceives sourcechange; DEMO/account/Indiaaccessgates remain. Activeemergencyitems still requirefreshcurrentexactarea. Quietupdates acknowledgedbyspecificcurrentrevision, no sound ormodelqualificationchanges. APIpartialflag coversbounded21exposures.
 - Globalcontroller prioritizescurrenturgentemergency thenquietupdate; correctiondistinctwarningtitle/no-all-clearcopy, currentinstructionhistoryaction, ifothersourcesactive explicitlystatesremaininginstructions. Map/incidentsquietupdatecards alsoavailableuntilserverack. Originalnoticehistoryfrompreviouscheckpointretained.
 - Newbackendtest proves exitedrecipientgetsFALSE_ALERTcorrection andackremovesit; componenttest provesdistincttitle/currentrevisionack.201tests/30files+strictTS/lintpass. Convexdeploy32603 logtmp/correction-followup-deploy.log andiOSexport logtmp/ios-correction-followup-export.log running; pollbeforeclaimingready. Native2clientinteractionstillpending.
-- Instructionupdateeditorstillnext; A06remainscompositepartial untilincidentreject/correctionworkflowfullyhandled. Workuncommitted atopb8e1529 includesauthoritymanagement+sourceend+correctionfollowups. Preserveindependentweb/. Fullgoalactive.
+- Instructionupdateeditorstillnext; A06remainscompositepartial untilincidentreject/correctionworkflowfullyhandled. Workuncommitted atopb8e1529 includesauthoritymanagement+sourceend+correctionfollowups. Preserveindependent web/. Fullgoalactive.
 
 
 ### 2026-10-10 — core functionality checkpoint: SACHET ingestion
@@ -487,14 +494,14 @@ Final verification:254tests/41files, strictTypeScript/lint and git diff check pa
 - User supplied Android resource-link failure: drawable/splashscreen_logo missing. expo-splash-screen had background settings but no image. Generated a transparent GudTour shield/location/weather logo with built-in imagegen, committed under assets/brand/gudtour-logo.png; prompt/provenance in assets/brand/README.md.
 - app.config.ts now explicitly provides image for light and dark splash, imageWidth 200, contain scaling, and Android adaptive foreground. No generated native project edits. Isolated prebuild under ignored tmp/splash-resource-check succeeded and generated all ten light/dark density splashscreen_logo.png resources. Strict TypeScript/lint and Expo Doctor 21/21 pass. Local resource-link check pending, replacement cloud build pending. No GitHub APK release yet; physical device acceptance remains pending.
 
-Replacement release build submitted from pushed commit 05942f2: EAS db0b0df6-9cda-405e-8673-2fd261dbf58e, production-apk, versionCode3, existing managed signing key. Build URL https://expo.dev/accounts/yashvanths-org/projects/gudtour/builds/db0b0df6-9cda-405e-8673-2fd261dbf58e. User previously asked to stop cloud monitoring and will report updates; submission only, do not automatically wait for the whole cloud build. Local :app:processReleaseResources check is running as exec58357 in ignored tmp/splash-resource-check/android; log tmp/splash-gradle-resources.log.
+Replacement release build submitted from pushed commit 05942f2: EAS db0b0df6-9cda-405e-8673-2fd261dbf58e, production-apk, versionCode 3, existing managed signing key. Build URL https://expo.dev/accounts/yashvanths-org/projects/gudtour/builds/db0b0df6-9cda-405e-8673-2fd261dbf58e. User previously asked to stop cloud monitoring and will report updates; submission only, do not automatically wait for the whole cloud build. Local :app:processReleaseResources check is running as exec58357 in ignored tmp/splash-resource-check/android; log tmp/splash-gradle-resources.log.
 
-2026-10-10 splash fix verification: isolated Android `:app:processReleaseResources` completed BUILD SUCCESSFUL (251 tasks, 2m27s), confirming the original resource-link failure is fixed locally. Logo/config commit 05942f2 is pushed; replacement EAS build db0b0df6-9cda-405e-8673-2fd261dbf58e (versionCode3) remains the cloud artifact to inspect. No GitHub APK publication or real-device acceptance yet.
+2026-10-10 splash fix verification: isolated Android `:app:processReleaseResources` completed BUILD SUCCESSFUL (251 tasks, 2m27s), confirming the original resource-link failure is fixed locally. Logo/config commit 05942f2 is pushed; replacement EAS build db0b0df6-9cda-405e-8673-2fd261dbf58e (versionCode 3) remains the cloud artifact to inspect. No GitHub APK publication or real-device acceptance yet.
 
 
 ## 2026-10-10 — Android testing prerelease published
 - EAS replacement build db0b0df6-9cda-405e-8673-2fd261dbf58e FINISHED. User requested five-minute monitoring and publication after success; completed.
-- GitHub prerelease v0.1.0-rc.1 published at https://github.com/YashvanthSankar/bits-n-bytes/releases/tag/v0.1.0-rc.1, target build source 05942f295277381c82841f8c66e89d00d0aac742. Assets GudTour-0.1.0-rc.1.apk and SHA256SUMS both uploaded; isDraft=false. APK 117722451 bytes, version0.1.0/versionCode3/package com.bitsnbytes.gudtour/minSDK24.
+- GitHub prerelease v0.1.0-rc.1 published at https://github.com/YashvanthSankar/bits-n-bytes/releases/tag/v0.1.0-rc.1, target build source 05942f295277381c82841f8c66e89d00d0aac742. Assets GudTour-0.1.0-rc.1.apk and SHA256SUMS both uploaded; isDraft=false. APK 117722451 bytes, version 0.1.0/versionCode 3/package com.bitsnbytes.gudtour/minSDK24.
 - apksigner verified v2 signature and certificate SHA1 77:B1:FB:47:55:BB:78:1F:99:48:82:31:CD:8E:3E:4D:C7:60:05:33. ZIP integrity, production hostname in Hermes bundle, absent development hostname, no configured backend secrets or environment files in archive checked. Hermes string-prefix compaction means checking whole uncompressed URL literals is invalid; production hostname is present. Google Maps restriction already confirmed.
 - APK SHA256 2fdd8584c5675baa388a2985186e042e176eec4af363cfef4db6d8d8ea172c7d matches GitHub asset digest. Production backend deployed/configured; accounts need fresh onboarding and explicit DEMO opt-in for controlled authority tests. Native/two-client physical acceptance, iOS distribution and remaining product features are still open. Release snapshot delivery complete; do not mark full app goal complete. Preserve independent web/.
 
@@ -508,14 +515,20 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 
 
 ## 2026-10-10 — hourly assessment, requested budget reset and reports text fix
-- User changed periodic Jev assessment from5 to60minutes; policy now HOUR. Observation-triggered immediate assessments and1/5/15-minute transient retry unchanged. Dev/prod deployments both succeeded. Already scheduled work may run once before its next hourly due time.
-- User requested today's budget reset. Trusted internal operator.resetTodayJevBudget resets only today's UTC JEV reservation row and resumes MODEL_DAILY_LIMIT pending jobs, with operator audit record. Dev reset100→0 and resumed3jobs; follow-up all3DONE with no lastError, usage6/100 after two calls each. Production unused counter not reset. Historical/provider billing usage is not erased; AccuWeather unaffected by reset.
+- User changed periodic Jev assessment from5 to60 minutes; policy now HOUR. Observation-triggered immediate assessments and1/5/15-minute transient retry unchanged. Dev/prod deployments both succeeded. Already scheduled work may run once before its next hourly due time.
+- User requested today's budget reset. Trusted internal operator.resetTodayJevBudget resets only today's UTC JEV reservation row and resumes MODEL_DAILY_LIMIT pending jobs, with operator audit record. Dev reset100 → 0 and resumed3jobs; follow-up all3DONE with no lastError, usage6/100 after two calls each. Production unused counter not reset. Historical/provider billing usage is not erased; AccuWeather unaffected by reset.
 - Fixed authority reports React Native raw-text error: removed inline JSX space between load-more conditional elements. Simulator uses dev basic-newt-690; GitHubAPK uses prod jovial-eagle-875. Reload Metro simulator for frontend correction; existing release APK does not contain this UI change and would need a new build to acquire it.
--257tests/41files, strictTypeScript/lint pass. Added regression for hourly next due time and reset preserving other providers/historical usage. No physical-device acceptance claim. Existing APK after-location crash remains unresolved awaiting adb logs. Preserve independentweb/.
+-257tests/41files, strictTypeScript/lint pass. Added regression for hourly next due time and reset preserving other providers/historical usage. No physical-device acceptance claim. Existing APK after-location crash remains unresolved awaiting adb logs. Preserve independent web/.
 
 
 ## 2026-10-10 — Android GoogleMap initialization crash
 - User provided physical APK fatal NPE GoogleMap.setPadding on null after location selection. Installed react-native-maps1.27.2 MapManager.setMapPadding unconditionally dereferences view.map; NearbyMap supplied mapPadding at initial mount, before Google native readiness.
 - NearbyMap now omits mapPadding entirely until onMapReady (not null/undefined setter), then applies insets. NearbyMap recenter and AreaPicker selected-camera effects also wait for onMapReady. Readiness resets per component mount. No dependency/node_modules/generated-native modifications.
--259tests/42files, strictTypeScript/lint pass. Regression covers initial padding omission, ready padding/camera, remount reset, and picker camera deferral. This verifies lifecycle sequencing, not physical GoogleMap execution. Physical Android retest remains required. Version-matched Expo57 maps documentation and installed native setter inspected.
-- Existing GitHub rc1 APK remains affected; new production-apk build required and being submitted. Include latest reports raw-text fix and hourly model cadence. Preserve independentweb/ and dev/prod separation.
+-259 tests / 42 files, strictTypeScript/lint pass. Regression covers initial padding omission, ready padding/camera, remount reset, and picker camera deferral. This verifies lifecycle sequencing, not physical GoogleMap execution. Physical Android retest remains required. Version-matched Expo57 maps documentation and installed native setter inspected.
+- Existing GitHub rc1 APK remains affected; new production-apk build required and being submitted. Include latest reports raw-text fix and hourly model cadence. Preserve independent web/ and dev/prod separation.
+
+
+## 2026-10-10 — local Android release build switch
+- User asked to build locally because cloud is slow. Interrupted cloud submission exec49858 before new build queued; latest cloud remains finished rc1 db0b0df6. Fix source commit0a3443d pushed.
+- Started EAS local production-apk build exec77636 (node/npm runner managed by EAS CLI), output tmp/release-artifacts/GudTour-0.1.0-rc.2.apk, private ignored log tmp/map-ready-local-build.log chmod600. Remote versionCode increment3→4; existing release signing key used. Java17 and AndroidSDK already installed. Local build is still running; poll same process, do not duplicate or increment again. Full command npx eas-cli@latest build --platform android --profile production-apk --local --non-interactive --output tmp/release-artifacts/GudTour-0.1.0-rc.2.apk.
+-259 tests / 42 files+strictTypeScript/lint+Doctor 21/21 pass. Next inspect local artifact/signature/backend hostname then publish rc2 if successful under existing publication authorization. User will retest physical map crash. Sensitive signing material is temporary EAS runner state; never commit logs/keystore/env. Preserve web/. No claim of actual physical Android fix confirmation yet.

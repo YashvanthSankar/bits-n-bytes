@@ -1,6 +1,6 @@
 # GudTour — acceptance ledger
 
-Updated: 2026-10-10. Every application scenario is pending. The completed Jev connectivity smoke test is separate provider evidence.
+Updated: 2026-10-10. Full scenario-level native acceptance is not complete.259 automated tests cover core backend/component behavior; provider calls and local build have separate evidence. User confirmed sign-out fix and supplied Android map crash logs; rc.2 fix still needs physical retesting. See [current-state.md](current-state.md).
 
 Source: PLAN.md §18, with the explicit online-first overrides below. Record actual device/OS/build/commit, fixture versus live source and observed outcome when executing a check.
 
@@ -9,7 +9,7 @@ Source: PLAN.md §18, with the explicit online-first overrides below. Record act
 | AC01 | First launch outside India | Language and location gate are available; onboarding and app content are blocked. | Pending |
 | AC02 | First launch with denied foreground permission | Blocking permission screen; no map access. | Pending |
 | AC03 | Background permission denied | Full foreground app works; reduced tracking/alert warning is visible. | Pending |
-| AC04 | Notification permission denied | Onboarding continues; in-app alerts work; delivery limitations are clear. | Pending |
+| AC04 | Foreground in-app alerts | No native notification permission required under latest scope; verify realtime receive/dismiss/reopen in open clients. | Native push deferred; two-client acceptance pending |
 | AC05 | Tourist reports a flood | Unverified/pending detail opens; other tourists receive no alert yet. | Pending |
 | AC06 | Tourist taps corroboration repeatedly | One independent witness; immediate updates accepted without cooldown (2026-10-10 user override). | Pending |
 | AC07 | Corroboration from too far away | Disabled with explanation; new local observation remains possible. | Pending |
@@ -27,8 +27,8 @@ Source: PLAN.md §18, with the explicit online-first overrides below. Record act
 | AC19 | More witnesses arrive without changed instructions | Detail updates without another emergency sound. | Pending |
 | AC20 | Official instruction changes | A new revision is visible; old translation is invalidated; urgent action change is re-alerted. | Pending |
 | AC21 | Authority says stay indoors | No generic go-to-shelter instruction replaces it. | Pending |
-| AC22 | Nearest shelter is full or in a hazard zone | Excluded from automatic recommendation; reason visible. | Pending |
-| AC23 | Every nearby shelter is unsuitable | No confirmed suitable shelter message, official instructions and contacts. | Pending |
+| AC22 | Raw nearest shelter | Selection stays straight-line nearest without eligibility filtering; status/source/age remain visible. | Backend/component checks pass; native acceptance pending |
+| AC23 | No nearby listed shelter | Show no listed shelter without inventing a route or capacity; retain official instructions. | Native acceptance pending; contacts deferred |
 | AC24 | Google Maps is absent | Address/coordinates/contact and Copy destination remain available. | Pending |
 | AC25 | Translation fails | Timely prepared-language warning plus original notice; no invented translation/instruction. | Pending |
 | AC26 | Tourist loses connection | Cached public lists/notices/shelters/contacts remain readable with offline/item timestamps; downloaded basemaps are not required. | Pending |
@@ -58,4 +58,4 @@ Source: PLAN.md §18, with the explicit online-first overrides below. Record act
 | EC09 | Model budget ceiling | Model calls suspend at configured ceiling while official declaration still publishes. | Pending |
 | EC10 | Held-out Jev cases | Record model/rubric/threshold and false positive/negative examples separately from tuning data. | Pending |
 
-No scenario passes solely from a screenshot, mock or provider ticket. Feature-level checks are recorded as they run; release requires scope-appropriate native and integration evidence.
+Current release evidence: local rc.2 build and signing checks pass, but physical crash retest and two-client native acceptance remain pending; rc.2 upload was stopped. No scenario passes solely from a screenshot, mock or provider ticket. Feature-level checks are recorded as they run; release requires scope-appropriate native and integration evidence.

@@ -1,10 +1,12 @@
+> Current reporting/cadence: normal reports are COMMUNITY observations for every account; official actions use authority workspace. Jev periodic reassessment is60 minutes, new/updated observations immediate,2 calls/assessment and default100 reserved calls/day.
+
 > Shelter override — 2026-10-10: user explicitly requested raw nearest listed shelter by straight-line distance, without eligibility filtering. Preserve visible status, age, source, DEMO attribution and official instructions. Older suitable-shelter selection/exclusion requirements below are superseded for the current implementation. DEMO shelters appear only with explicit DEMO opt-in.
 
 > Notification override — 2026-10-10: user explicitly chose custom in-app real-time notifications instead of native OS notifications. No notification permission, EAS/APNs/FCM setup or closed-app delivery is required for the current implementation. Publication atomically queues geographic targeting; eligible open clients receive Convex subscription updates through one global controller. Earlier push details below are future references, not current gates.
 
 # GudTour — technical stack
 
-Updated: 2026-10-10. Status: development underway. iOS entry/auth/profile and Apple Maps are working; core backend is deployed. API connectivity is verified; full crisis workflows, decision quality and release/device delivery remain pending.
+Updated:2026-10-10. Core backend and provider/decision workers deployed to dev/prod;259 tests / 42 files and local Android rc.2 build pass. Physical device acceptance and remaining features are pending; rc.2 GitHub upload stopped. See [current state](docs/current-state.md).
 
 ## 1. Decisions and precedence
 

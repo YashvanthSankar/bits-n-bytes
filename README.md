@@ -9,17 +9,19 @@ TravelTech project for the Bits and Bytes CS Week hackathon: a map-first crisis-
 - Tourist and approved-authority login; India-only language/profile onboarding with mandatory foreground location and consent-based location updates.
 - Live hazard/shelter map with a bottom-center **Report incident** action.
 - Unverified tourist reports evaluated using recent independent reports, AccuWeather, SACHET and an automatic Jev 1.13 decision gate through OpenCode Zen; no immediate rumor broadcast.
-- Approved authorities verify incidents and can declare emergencies immediately; emergency declarations publish without waiting for Jev.
-- Radius-targeted multilingual notifications, per-user nearest eligible listed shelter and authority-maintained contacts.
+- Approved authorities can declare emergencies immediately; declarations publish without waiting for Jev. Full general verification/review controls remain unfinished.
+- Radius-targeted multilingual notifications, per-user raw nearest listed shelter; emergency contact maintenance is deferred.
 - Original official notice alongside version-bound translations preserving critical instructions.
 
 **Platforms:** Android + iOS via Expo; public web landing page. No macOS or full web crisis app.
 
 ## Status and setup
 
-**Development underway.** Expo SDK 57/TypeScript source, six-language entry resources, theme/control foundations, shared domain contracts and a dedicated Convex development backend now exist. The backend is in the **Denoise Labs** team, project **gudtour**. The initial iOS development build compiles and installs on the simulator; runtime and both-platform workflow verification remain pending. Incident/alert workflows, Android/iOS distribution, public landing and demo video are not complete. See [development evidence](docs/progress/2026-10-10-development.md).
+**Current testing snapshot:** core tourist reporting, authority declarations/shelters, realtime in-app alerts, translations, SACHET browsing and Jev decision/context review are implemented.259 tests / 42 files, strictTypeScript/lint, Expo Doctor 21/21 and local Android release build pass. Development Convex is `basic-newt-690`; production is `jovial-eagle-875`. iOS simulator uses development.
 
-For local development, install dependencies with `npm ci`, copy `.env.example` to private `.env.local`, and configure a development deployment with `npx convex dev`. Existing team members should select the Denoise Labs GudTour project. Run `npm run start`, then `npm run ios` or `npm run android` with a configured native device. `npm run check` runs typechecking, lint and domain tests. Native development builds are required; a successful bundle export does not prove push or background behavior. Provider secrets belong on Convex, never in the public client environment.
+Android rc.1 is public but has a reported map initialization crash. Local rc.2(versionCode 4) includes the readiness fix and is verified as an artifact; physical retesting remains pending. **rc.2 GitHub upload was stopped by the user and is not published.** Nearby chat, full incident/authority management, provider decision evaluation, recovery/privacy and physical iOS delivery remain incomplete. See [current state and remaining work](docs/current-state.md) and [TODO](TODO.md).
+
+For local development, install dependencies with `npm ci`, copy `.env.example` to private `.env.local`, and configure a development deployment with `npx convex dev`. Existing team members should select the Denoise Labs GudTour project. Run `npm run start`, then `npm run ios` or `npm run android` with a configured native device. `npm run check` runs typechecking, lint and domain tests. Expo Go runtime OAuth callbacks are supported where explicitly allowlisted; installed builds use the native callback. Native release testing remains necessary. Alerts are foreground in-app only; closed-app push is deferred. Provider secrets belong on Convex, never in the public client environment.
 
 ## Documentation
 

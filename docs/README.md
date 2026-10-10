@@ -8,6 +8,8 @@ Use [API/team setup](api-setup.md) for configured credentials and [SACHET feed c
 
 For continuity, read the root [agent handoff context](../context.md), which records current runtime handles, user overrides, worktree state and next steps without credentials.
 
+For actual implementation/release status, read [current-state.md](current-state.md); historical summaries below are not current completion claims.
+
 Start with [architecture.md](architecture.md) for the core product and technical boundaries. Provider access and repository migration evidence are in [the 2026-10-10 progress note](progress/2026-10-10-technical-plan-and-migration.md).
 
 Historical document order:
@@ -33,4 +35,4 @@ Historical document order:
 
 **Precedence:** organizer brief governs official eligibility/deliverables; final user requirements govern requested product; controlling plan/UI contract interpret implementation and safety; research is non-authoritative. Do not silently shrink the final request using old MVP exclusions.
 
-Development is authorized and underway. Complete crisis workflows, production deployment, device delivery and submission are not yet verified. Native iOS entry/auth/profile, Apple Maps and report-form rendering have development evidence. Incident submission/replay/proximity/counting have backend tests; the native submit/open and two-account acceptance remain pending. See [development progress](progress/2026-10-10-development.md) and [acceptance ledger](acceptance-ledger.md). OpenCode Zen Jev 1.13 connectivity was verified on 2026-10-10; all application workflows and remaining integrations still need working evidence. GudTour is the selected name; no brand-clearance claim is made.
+Development is authorized. Core reporting, authority declaration/shelter workflows, realtime foreground alerts, translation and provider/decision workers are implemented with259 automated tests. Full device acceptance and the remaining features are unfinished. Local rc.2 APK is built with the Android map readiness fix; its GitHub upload is stopped and no public rc.2 APK exists. [Current state](current-state.md) is the authoritative status summary; [development progress](progress/2026-10-10-development.md) records dated evidence.

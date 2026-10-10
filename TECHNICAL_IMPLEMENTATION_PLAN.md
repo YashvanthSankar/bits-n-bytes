@@ -1,3 +1,5 @@
+> Implementation status: [docs/current-state.md](docs/current-state.md) distinguishes implemented functionality, acceptance gaps and deferred scope. This document includes planned features and is not proof they are complete.
+
 > Assessment cadence override — 2026-10-10: periodic Jev reassessment is now hourly (60 minutes). New/updated observations still queue immediately; outage retries remain 1/5/15 minutes.
 
 > Reporting clarification — 2026-10-10: normal Report incident records a personal COMMUNITY observation for every account, including authorities. It never grants official verification from account membership. Official publication is an explicit authority-workspace action with audience and jurisdiction authorization.
