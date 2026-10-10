@@ -1,5 +1,7 @@
 # Latest handoff — 2026-10-10
 
+- Recording icon: `ios.icon` now points to `assets/brand/gudtour-ios-icon.png`, a1024px black-on-warm-white derivative of existing logo (white road preserved). User explicitly requested black after first color build. Expo SDK57 config checked; prebuild and local iPhone17Pro simulator build/install completed successfully with black icon. Typecheck/lint passed for config; original splash/Android logo retained. Simulator bundle com.bitsnbytes.gudtour; Metro8081.
+
 - Recording polish: onboarding GudTour wordmark now uses title typography and explicit700 bold in `src/app/index.tsx`; TypeScript and lint pass. Prior simulator reset cleared only GudTour local container, scoped keychain entries and app permissions for first-launch recording.
 
 ## 2026-10-10 — streamlined DEMO authority workflow
@@ -565,3 +567,5 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 - Local signed productionAPK`tmp/release-artifacts/GudTour-0.1.0-rc.9.apk`, packagecom.bitsnbytes.gudtour/version0.1.0/versionCode12/minSDK24. Build succeeded; expected signaturev2certSHA256a280f5b4f25df90198d303cf58848cfdefec8862921b3fc6eb99c27dda488527; ZIP and productionbackend/no configuredservercredentials/envfiles checks pass. APK SHA256`3b62573809ffa6ebd88e3a6854f4b1b8f2e83176baefef1a4f482de68443e863`.
 -308tests/54files+lint/typecheck verified at freeze; backenddev/prod already deployed. rc.9 is local distribution, not Play Store or public GitHub publication. Old rc.7 draft upload canceled; leave unpublished. User's APK-size question was interrupted and they asked to continue; no size/config changes were made to this frozen universal build.
 - PhysicalAndroidrelaunch/chatlatency, two-client geographic chat, appearancepersistence/device switching and full language/a11y matrix still unverified.
+
+2026-10-10 final logo APK: user asked full final APK with updated logo. Supplied1024px `assets/brand/gudtour-ios-icon.png` reviewed; it was only wired to iOS. Shared it through top-level icon, Android adaptive foreground and both splash modes on matching warm-white background; included current bold GudTour entry title. Existing full UI/chat/location/Jev/SACHET changes retained, backend already deployed.308tests/54files+lint/typecheck pass. Final localAPK build from committed mobile snapshot next; web edits in parallel are outside this mobile release.

@@ -25,7 +25,7 @@ function LanguageScreen() {
     <ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => { setBusy(true); void changeLanguage(language).then(() => router.replace('/location')).catch(() => setError(true)).finally(() => setBusy(false)); }} />
   </>}>
     <View style={{ paddingTop: spacing.sm, gap: spacing.sm }}>
-      <AppText variant="heading" style={{ color: theme.accent }}>GudTour</AppText>
+      <AppText variant="title" style={{ color: theme.accent, fontWeight: '700' }}>GudTour</AppText>
       <AppText variant="caption" style={{ color: theme.secondary }}>{t('tagline')}</AppText>
     </View>
     <JourneyMark />
