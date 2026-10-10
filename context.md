@@ -521,3 +521,8 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 - Cloudflare injects its own zone-level RUM beacon (`static.cloudflareinsights.com` + `/cdn-cgi/rum`); the origin HTML contains no analytics or third-party references. No zone-wide SSL setting or proxy state was changed.
 - Existing services unaffected: cybersec, brainx, automation, reimbursement, ctf all still 200; no other PM2 process or Caddy route touched.
 - Q08 stays open: `downloads.js` still has `ios: null, android: null`, so no store/TestFlight/APK links exist and both download actions remain correctly inert. Hosting alone does not complete the task, and no mobile release was built or deployed. Only `web/` is deployed; Expo app and Convex backends are untouched.
+## 2026-10-10 — Phone navigation and setup follow-up
+- User reported language/location bouncing and phone navbar showing only a hamburger menu. Language Continue now replaces its stack entry; startup redirects are single-shot during transitions, existing session location can go straight to map, and location refresh retains the current session fix until a new admission succeeds. Existing-profile admission records setup completion.
+- Six icon destinations now fit 320-point and wider phone windows (44px minimum targets); large text no longer hides icon-only tabs. Menu fallback only for windows narrower than318 points.
+- Verification: TypeScript, lint and297 tests/51files; regression covers360-point Android at200% text showing all six tabs and no hamburger, plus auth-transition duplicate redirect. Physical-device relaunch/loop reproduction remains pending.
+- rc.6 build completed from5093dfa but predates this follow-up; do not publish it. Next APK rc.7 must contain these changes.

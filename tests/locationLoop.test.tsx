@@ -12,6 +12,7 @@ vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => k
 vi.mock('../src/session/LocationSession', () => ({ useLocationSession: () => ({ setFix: state.setFix, signedOut: state.signedOut }) }));
 vi.mock('../src/i18n/LanguageProvider', () => ({ useLanguage: () => ({ language: 'en' }) }));
 vi.mock('../src/theme/useTheme', () => ({ useTheme: () => ({ secondary: '#000', danger: '#f00' }) }));
+vi.mock('../src/services/onboarding', () => ({ rememberCompletedSetup: vi.fn().mockResolvedValue(undefined) }));
 vi.mock('../src/services/location', () => ({ currentIndiaFix: state.locate, LocationFailure: class extends Error {} }));
 vi.mock('../src/components/ui', () => ({ Screen: ({ children, footer }: PropsWithChildren<{ footer: ReactNode }>) => <>{children}{footer}</>, AppText: ({ children }: PropsWithChildren) => <>{children}</>, ActionButton: (props: object) => React.createElement('button', props) }));
 import LocationScreen from '../src/app/location';
@@ -51,7 +52,7 @@ it('does not navigate or restore GPS when an in-flight request finishes after le
   await act(async () => screen.unmount());
   await act(async () => finish({ fix: { point: {latitude:13,longitude:80},accuracyM:10,observedAt:Date.now() } }));
   expect(state.replace).not.toHaveBeenCalled();
-  expect(state.setFix.mock.calls).toEqual([[null]]);
+  expect(state.setFix).not.toHaveBeenCalled();
 });
 
 it('does not automatically request location or redirect after explicit logout', async () => {

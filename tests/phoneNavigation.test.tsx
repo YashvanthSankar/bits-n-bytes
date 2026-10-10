@@ -1,0 +1,21 @@
+import React from 'react';
+import { act, create } from 'react-test-renderer';
+import { expect, it, vi } from 'vitest';
+vi.mock('expo-blur', () => ({ BlurView: 'BlurView' }));
+vi.mock('expo-router/ui', () => ({ TabTrigger: 'TabTrigger', useTabTrigger: () => ({ getTrigger: () => ({ isFocused: false }) }) }));
+vi.mock('react-native', () => ({ AccessibilityInfo: {}, Keyboard: { addListener: () => ({ remove() {} }) }, Modal: 'Modal', Platform: { OS: 'android', Version: 30 }, Pressable: 'Pressable', ScrollView: 'ScrollView', StyleSheet: {}, View: 'View', useColorScheme: () => 'light', useWindowDimensions: () => ({ width: 360, fontScale: 2 }) }));
+vi.mock('react-native-safe-area-context', () => ({ SafeAreaView: 'SafeAreaView', useSafeAreaInsets: () => ({ left: 0, right: 0, bottom: 24 }) }));
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
+vi.mock('lucide-react-native', () => ({ Map: 'MapIcon', List: 'ListIcon', House: 'HouseIcon', BellRing: 'BellIcon', MessageCircle: 'ChatIcon', Settings: 'SettingsIcon', Menu: 'MenuIcon', X: 'CloseIcon', Check: 'CheckIcon' }));
+vi.mock('../src/components/ui', () => ({ AppText: 'Text' }));
+vi.mock('../src/theme/useTheme', () => ({ useTheme: () => ({ surface: 'white', accent: 'blue', secondary: 'gray' }) }));
+import { FloatingNavigation } from '../src/navigation/FloatingNavigation';
+it('shows every destination without a menu on a 360-point Android phone even at large text', async () => {
+  Object.assign(globalThis, { IS_REACT_ACT_ENVIRONMENT: true });
+  let screen!: ReturnType<typeof create>;
+  await act(async () => { screen = create(<FloatingNavigation target={{ current: null }} onInset={() => {}} />); });
+  expect(screen.root.findAll(node => String(node.type) === 'MenuIcon')).toHaveLength(0);
+  const visibleTabs = screen.root.findAll(node => String(node.type) === 'TabTrigger').filter(node => (() => { let parent = node.parent; while (parent) { if (String(parent.type) === 'Modal') return false; parent = parent.parent; } return true; })());
+  expect(visibleTabs).toHaveLength(6);
+  await act(async () => screen.unmount());
+});

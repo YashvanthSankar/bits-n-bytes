@@ -21,7 +21,7 @@ function NavigationButton({ label, icon: Icon, isFocused, expanded = false, styl
   const theme = useTheme();
   const color = isFocused ? (expanded ? theme.onAccent : theme.accent) : theme.secondary;
   return <Pressable {...props} accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: !!isFocused }}
-    style={state => [typeof style === 'function' ? style(state) : style, { flex: expanded ? undefined : 1, minHeight: 56, minWidth: 48, borderRadius: expanded ? 16 : 18, paddingVertical: 10, paddingHorizontal: expanded ? 16 : 4,
+    style={state => [typeof style === 'function' ? style(state) : style, { flex: expanded ? undefined : 1, minHeight: 56, minWidth: 44, borderRadius: expanded ? 16 : 18, paddingVertical: 10, paddingHorizontal: expanded ? 16 : 4,
       flexDirection: expanded ? 'row' : 'column', justifyContent: 'center', alignItems: 'center', gap: expanded ? 16 : 0,
       backgroundColor: isFocused ? (expanded ? theme.accent : theme.selection) : state.pressed ? theme.muted : 'transparent', opacity: state.pressed ? .75 : 1 }]}>
     <Icon size={24} strokeWidth={2} color={color} accessible={false} />
@@ -34,8 +34,8 @@ function NavigationButton({ label, icon: Icon, isFocused, expanded = false, styl
 /** Target contains only screen content: never blur the bar recursively on Android. */
 export function FloatingNavigation({ target, onInset }: { target: RefObject<View | null>; onInset: (height: number) => void }) {
   const theme = useTheme(); const scheme = useColorScheme(); const { t } = useTranslation();
-  const safe = useSafeAreaInsets(); const { width, fontScale } = useWindowDimensions();
-  const compact = width - safe.left - safe.right < 380 || fontScale > 1.3;
+  const safe = useSafeAreaInsets(); const { width } = useWindowDimensions();
+  const compact = width - safe.left - safe.right < 318;
   const [menuOpen, setMenuOpen] = useState(false); const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [opaque, setOpaque] = useState(Platform.OS === 'ios');
   const { getTrigger } = useTabTrigger({ name: 'map' });
@@ -60,7 +60,7 @@ export function FloatingNavigation({ target, onInset }: { target: RefObject<View
       <View style={{ width: '100%', maxWidth: 600, alignSelf: 'center', borderRadius: 26, shadowColor: theme.text, shadowOffset: { width: 0, height: 5 }, shadowRadius: 18, shadowOpacity: .12, elevation: 10 }}>
         <View style={{ overflow: 'hidden', borderRadius: 26, borderWidth: 1, borderColor: theme.border }}>
           {!fallback && <BlurView pointerEvents="none" accessible={false} importantForAccessibility="no-hide-descendants" blurTarget={target} blurMethod="dimezisBlurViewSdk31Plus" intensity={75} tint={scheme === 'dark' ? 'systemUltraThinMaterialDark' : 'systemUltraThinMaterialLight'} style={StyleSheet.absoluteFill} />}
-          <View style={{ backgroundColor: fallback ? theme.surface : theme.glassSurface, padding: 6, flexDirection: 'row', gap: 8 }}>
+          <View style={{ backgroundColor: fallback ? theme.surface : theme.glassSurface, padding: 6, flexDirection: 'row', gap: 2 }}>
             {compact ? <>
               <View accessibilityLabel={t(active.label)} style={{ flex: 1, paddingHorizontal: 12, justifyContent: 'center' }}><active.icon size={24} color={theme.accent} accessible={false} /></View>
               <Pressable accessibilityRole="button" accessibilityLabel={t('navNavigate')} accessibilityState={{ expanded: menuOpen }} onPress={() => setMenuOpen(true)}
@@ -78,7 +78,7 @@ export function FloatingNavigation({ target, onInset }: { target: RefObject<View
         <SafeAreaView edges={['bottom', 'left', 'right']} accessibilityViewIsModal style={{ backgroundColor: theme.surface, maxHeight: '85%', borderTopLeftRadius: 28, borderTopRightRadius: 28 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: 20 }}>
             <AppText variant="heading" accessibilityRole="header" style={{ flex: 1 }}>{t('navNavigate')}</AppText>
-            <Pressable accessibilityRole="button" accessibilityLabel={t('navClose')} onPress={() => setMenuOpen(false)} style={({ pressed }) => ({ minHeight: 48, minWidth: 48, borderRadius: 16, backgroundColor: pressed ? theme.selection : theme.muted, alignItems: 'center', justifyContent: 'center' })}><X size={24} color={theme.text} accessible={false} /></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel={t('navClose')} onPress={() => setMenuOpen(false)} style={({ pressed }) => ({ minHeight: 48, minWidth: 44, borderRadius: 16, backgroundColor: pressed ? theme.selection : theme.muted, alignItems: 'center', justifyContent: 'center' })}><X size={24} color={theme.text} accessible={false} /></Pressable>
           </View>
           <ScrollView contentContainerStyle={{ padding: 16, paddingTop: 0, gap: 8 }}>
             {destinations.map(item => <TabTrigger key={item.name} name={item.name} onPress={() => setMenuOpen(false)} asChild><NavigationButton label={t(item.label)} icon={item.icon} expanded /></TabTrigger>)}

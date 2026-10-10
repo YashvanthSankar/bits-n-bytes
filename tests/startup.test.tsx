@@ -55,3 +55,10 @@ it('ignores location completion after leaving startup', async () => {
   let finish!: (value: unknown) => void; state.locate.mockImplementation(() => new Promise(resolve => { finish = resolve; })); await render();
   await act(async () => screen.unmount()); await act(async () => finish({ fix })); expect(state.replace).not.toHaveBeenCalled(); expect(state.setFix).not.toHaveBeenCalled();
 });
+
+it('does not redirect again if authentication changes while its replacement is transitioning', async () => {
+  await render();
+  state.authenticated = false; state.own = undefined;
+  await act(async () => screen.update(<StartupGate><span>Choose language</span></StartupGate>));
+  expect(state.replace).toHaveBeenCalledExactlyOnceWith('/map');
+});

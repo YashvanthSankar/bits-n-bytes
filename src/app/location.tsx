@@ -10,6 +10,7 @@ import { ActionButton, AppText, Screen } from '../components/ui';
 import { errorTranslationKey } from '../domain/apiError';
 import { currentIndiaFix, LocationFailure } from '../services/location';
 import { useLocationSession } from '../session/LocationSession';
+import { rememberCompletedSetup } from '../services/onboarding';
 import { spacing } from '../theme/tokens';
 import { useLanguage } from '../i18n/LanguageProvider';
 import { useTheme } from '../theme/useTheme';
@@ -27,7 +28,7 @@ export default function LocationScreen() {
     if (running.current) return;
     const attempt = generation.current;
     running.current = true;
-    setBusy(true); setError(null); setSettings(false); setFix(null);
+    setBusy(true); setError(null); setSettings(false);
     try {
       const { fix } = await currentIndiaFix(isAuthenticated && !signedOut ? async ({ fix, backgroundPermission }) => {
         if (attempt !== generation.current) return;
@@ -38,6 +39,8 @@ export default function LocationScreen() {
         const profile = own.profile;
         await saveProfile({ requestId: randomUUID(), expectedRevision: profile.revision, name: profile.name, language, stepFreeNeeded: profile.stepFreeNeeded, ...(profile.bloodGroup === null ? {} : { bloodGroup: profile.bloodGroup }), ...(profile.emergencyContact === null ? {} : { emergencyContact: profile.emergencyContact }) });
       }
+      if (attempt !== generation.current) return;
+      if (own?.profile && isAuthenticated && !signedOut) await rememberCompletedSetup();
       if (attempt !== generation.current) return;
       setFix(fix); router.replace(isAuthenticated && !signedOut ? own?.profile ? own.role === 'AUTHORITY' ? '/authority' : '/map' : '/profile' : '/login');
     } catch (err) {

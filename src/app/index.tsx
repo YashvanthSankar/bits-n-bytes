@@ -21,7 +21,7 @@ function LanguageScreen() {
   }
   return <Screen footer={<>
     {error && <AppText accessibilityLiveRegion="polite" style={{ color: theme.danger }}>{t('saveError')}</AppText>}
-    <ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => { setBusy(true); void changeLanguage(language).then(() => router.push('/location')).catch(() => setError(true)).finally(() => setBusy(false)); }} />
+    <ActionButton title={t('continue')} disabled={!ready || busy || error} onPress={() => { setBusy(true); void changeLanguage(language).then(() => router.replace('/location')).catch(() => setError(true)).finally(() => setBusy(false)); }} />
   </>}>
     <View style={{ paddingTop: spacing.section, gap: spacing.sm }}>
       <AppText variant="heading" style={{ color: theme.accent }}>GudTour</AppText>
