@@ -6,6 +6,7 @@ const state=vi.hoisted(()=>({authenticated:true,signOut:vi.fn(),signIn:vi.fn(),b
 vi.mock('@convex-dev/auth/react',()=>({useAuthActions:()=>({signOut:state.signOut,signIn:state.signIn})}));
 vi.mock('react-native',()=>({View:'View',Platform:{OS:'ios'}}));
 vi.mock('expo-router',()=>({useFocusEffect:(callback:()=>void)=>{const focused=React.useContext(Focus);React.useEffect(()=>focused?callback():undefined,[focused,callback]);},router:{replace:(path:string)=>{state.replace(path);state.navigate?.(path);},push:vi.fn()}}));
+vi.mock('expo-linking',()=>({createURL:()=> 'gudtour://auth/callback'}));
 vi.mock('expo-location',()=>({getForegroundPermissionsAsync:state.permission}));
 vi.mock('../src/services/location',()=>({currentIndiaFix:state.locate,LocationFailure:class extends Error{}}));
 vi.mock('expo-crypto',()=>({randomUUID:()=> 'request-test-001'}));

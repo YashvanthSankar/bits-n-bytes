@@ -6,7 +6,7 @@ import { useCallback, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { ActionButton, AppText, Screen } from '../components/ui';
-import { NATIVE_AUTH_CALLBACK } from '../domain/authRedirect';
+import { getAuthCallback } from '../services/authRuntime';
 import { validateIndiaFix } from '../domain/eligibility';
 import { countryStatus } from '../domain/geography';
 import { consumeAuthCode, codeFromCallback } from '../services/authCallback';
@@ -25,11 +25,12 @@ export default function LoginScreen() {
       if (!fix || !validateIndiaFix(fix, countryStatus(fix), Date.now()).ok) {
         const captured = await currentIndiaFix(); setFix(captured.fix);
       }
-      const started = await signIn('google', { redirectTo: NATIVE_AUTH_CALLBACK });
+      const callback = getAuthCallback();
+      const started = await signIn('google', { redirectTo: callback });
       if (!started.redirect) throw new Error('Missing redirect');
-      const response = await WebBrowser.openAuthSessionAsync(started.redirect.toString(), NATIVE_AUTH_CALLBACK);
+      const response = await WebBrowser.openAuthSessionAsync(started.redirect.toString(), callback);
       if (response.type === 'success') {
-        await consumeAuthCode(codeFromCallback(response.url), code => signIn('google', { code }));
+        await consumeAuthCode(codeFromCallback(response.url, callback), code => signIn('google', { code }));
         // The focused auth guard performs the single post-login navigation.
         setSignedOut(false);
       }

@@ -9,9 +9,9 @@ export function consumeAuthCode(code: string, exchange: (code: string) => Promis
   last = { code, result };
   return result;
 }
-export function codeFromCallback(url: string): string {
+export function codeFromCallback(url: string, expectedCallback = NATIVE_AUTH_CALLBACK): string {
   const parsed = new URL(url);
-  if (`${parsed.protocol}//${parsed.host}${parsed.pathname}` !== NATIVE_AUTH_CALLBACK || parsed.hash || parsed.searchParams.has('error')) throw new Error('Invalid authorization callback');
+  if (`${parsed.protocol}//${parsed.host}${parsed.pathname}` !== expectedCallback || parsed.username || parsed.password || parsed.hash || parsed.searchParams.has('error')) throw new Error('Invalid authorization callback');
   const codes = parsed.searchParams.getAll('code');
   if (codes.length !== 1 || !codes[0]) throw new Error('Missing authorization code');
   return codes[0];
