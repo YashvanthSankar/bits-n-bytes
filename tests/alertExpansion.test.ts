@@ -89,3 +89,50 @@ it('lists only eligible assigned-area incidents for promotion and promotes witho
  await t.run(ctx=>ctx.db.patch(existing.id,{lifecycle:'RESOLVED'}));
  expect((await actor.query(api.authority.declarationCandidates,{jurisdictionId:scope.jurisdictionIds[0]!,paginationOpts:{numItems:20,cursor:null}})).page).toHaveLength(0);
 });
+it('catches up an existing DEMO emergency only after explicit opt-in, and opt-out hides it',async()=>{
+ const {t,actor,userId,drain}=await fixture();
+ await actor.mutation(api.profiles.setDemoEnabled,{enabled:false});await drain();
+ expect((await actor.query(api.alerts.active,{})).items).toHaveLength(0);
+ await actor.mutation(api.profiles.setDemoEnabled,{enabled:true});
+ await t.mutation(internal.alertExpansion.demoCatchup,{userId,cursor:null});await drain();
+ expect((await actor.query(api.alerts.active,{})).items).toHaveLength(1);
+ await actor.mutation(api.profiles.setDemoEnabled,{enabled:false});expect((await actor.query(api.alerts.active,{})).items).toHaveLength(0);
+});
+it('deduplicates publication translation jobs and fences concurrent claims and duplicate completion',async()=>{
+ const {t}=await fixture();const jobs=await t.run(ctx=>ctx.db.query('instructionTranslations').collect());expect(jobs).toHaveLength(5);
+ const job=jobs.find(j=>j.targetLanguage==='fr')!;
+ await t.mutation(internal.translations.enqueueExisting,{instructionVersionId:job.instructionVersionId});await t.mutation(internal.translations.enqueueExisting,{instructionVersionId:job.instructionVersionId});expect(await t.run(ctx=>ctx.db.query('instructionTranslations').collect())).toHaveLength(5);
+ const first=await t.mutation(internal.translations.claim,{translationId:job._id});expect(first?.attempt).toBe(1);
+ expect(await t.mutation(internal.translations.claim,{translationId:job._id})).toBeNull();
+ await t.mutation(internal.translations.finish,{translationId:job._id,attempt:1,text:'Restez à l’intérieur'});
+ await t.mutation(internal.translations.finish,{translationId:job._id,attempt:1,text:'Wrong replacement'});
+ expect(await t.run(ctx=>ctx.db.get(job._id))).toMatchObject({status:'READY',text:'Restez à l’intérieur'});
+});
+it('suppresses translations that alter numeric details or complete after their source is withdrawn',async()=>{
+ const {t}=await fixture();const jobs=await t.run(ctx=>ctx.db.query('instructionTranslations').collect());const job=jobs[0]!;
+ await t.mutation(internal.translations.claim,{translationId:job._id});await t.mutation(internal.translations.finish,{translationId:job._id,attempt:1,text:'Stay indoors for 3 hours'});
+ expect(await t.run(ctx=>ctx.db.get(job._id))).toMatchObject({status:'FLAGGED',issues:['NUMBERS_CHANGED']});
+ const next=jobs[1]!;await t.mutation(internal.translations.claim,{translationId:next._id});
+ await t.run(async ctx=>{const instruction=await ctx.db.get(next.instructionVersionId);await ctx.db.patch(instruction!.declarationId,{active:false});});
+ await t.mutation(internal.translations.finish,{translationId:next._id,attempt:1,text:'Translated text'});expect(await t.run(ctx=>ctx.db.get(next._id))).toMatchObject({status:'OBSOLETE'});
+});
+it('bounds retries and rejects an expired worker completion after a newer lease is claimed',async()=>{
+ const {t}=await fixture();const job=(await t.run(ctx=>ctx.db.query('instructionTranslations').collect()))[0]!;
+ await t.mutation(internal.translations.claim,{translationId:job._id});await t.run(ctx=>ctx.db.patch(job._id,{dueAt:Date.now()-1}));
+ expect((await t.mutation(internal.translations.claim,{translationId:job._id}))?.attempt).toBe(2);
+ await t.mutation(internal.translations.finish,{translationId:job._id,attempt:1,text:'Late obsolete completion'});expect(await t.run(ctx=>ctx.db.get(job._id))).toMatchObject({status:'RUNNING',attempts:2});
+ await t.mutation(internal.translations.finish,{translationId:job._id,attempt:2,error:'PROVIDER_UNAVAILABLE'});await t.run(ctx=>ctx.db.patch(job._id,{dueAt:Date.now()-1}));
+ await t.mutation(internal.translations.claim,{translationId:job._id});await t.mutation(internal.translations.finish,{translationId:job._id,attempt:3,error:'PROVIDER_UNAVAILABLE'});
+ expect(await t.run(ctx=>ctx.db.get(job._id))).toMatchObject({status:'FAILED',attempts:3});expect(await t.mutation(internal.translations.claim,{translationId:job._id})).toBeNull();
+});
+it('returns only the preferred language translation for the exact original and never replays attention on translation completion',async()=>{
+ const {t,actor,userId,drain}=await fixture();await drain();
+ await t.run(async ctx=>{const p=await ctx.db.query('profiles').withIndex('by_user',q=>q.eq('userId',userId)).unique();await ctx.db.patch(p!._id,{language:'fr'});});
+ const before=await actor.query(api.alerts.active,{}),alertId=before.items[0]!.id;
+ await actor.mutation(api.alerts.dismiss,{alertId,revision:1});
+ const job=(await t.run(ctx=>ctx.db.query('instructionTranslations').collect())).find(j=>j.targetLanguage==='fr')!;
+ await t.mutation(internal.translations.claim,{translationId:job._id});await t.mutation(internal.translations.finish,{translationId:job._id,attempt:1,text:'Restez à l’intérieur'});
+ const detail=await actor.query(api.alerts.detail,{alertId});expect(detail.instructions[0]).toMatchObject({originalText:'Stay indoors',translation:{language:'fr',status:'READY',text:'Restez à l’intérieur',machineTranslated:true,reviewed:false}});
+ expect((await actor.query(api.alerts.active,{})).items[0]!.needsAttention).toBe(false);
+ await t.run(ctx=>ctx.db.patch(job._id,{originalHash:'different-source'}));expect((await actor.query(api.alerts.detail,{alertId})).instructions[0]!.translation).toBeNull();
+});

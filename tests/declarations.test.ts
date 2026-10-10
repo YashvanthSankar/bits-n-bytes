@@ -12,7 +12,7 @@ const actor = () => t.withIdentity({ subject: `${userId}|session` });
 const args = () => ({ requestId: 'publish-test-001', jurisdictionId, expectedIncidentRevision: 0, hazard: 'FLASH_FLOOD' as const,
   locality: 'Test area', area: { type: 'circle' as const, center: point, radiusM: 1000 }, severity: 'HIGH' as const,
   originalText: '  Stay indoors. Do not cross the bridge.\nFollow authority instructions.  ', sourceLanguage: 'en' as const,
-  actionKind: 'STAY_PUT' as const, reviewDueAt: Date.now() + HOUR, reason: 'Isolated test declaration' });
+  actionKind: 'STAY_PUT' as const, reviewDueAt: Date.now() + HOUR });
 beforeEach(async () => {
   t = convexTest(schema, modules);
   const scope = await t.mutation(internal.operator.ensureDemoAuthorityScope, {});

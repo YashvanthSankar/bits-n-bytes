@@ -255,5 +255,11 @@ export const en = {
   createNewIncident: "Use a new incident instead",
   noIncidentsInPage: "No eligible incidents on this page. Check the next page if available.",
   moreIncidents: "Next page",
+  demoModeHelp: "Include clearly labeled test emergencies and reports. These are demonstrations, not real warnings.",
+  enableDemoMode: "Enable DEMO alerts",
+  disableDemoMode: "Disable DEMO alerts",
+  emergencyMachineTranslation: "Machine translation",
+  emergencyTranslationReview: "Not reviewed by the issuing authority. The original notice is shown above.",
+  emergencyTranslationUnavailable: "Translation could not be verified or is unavailable. Refer to the original notice.",
 };
 export type Translation = Record<keyof typeof en, string>;

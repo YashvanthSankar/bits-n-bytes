@@ -255,4 +255,10 @@ export const es: Translation = {
   createNewIncident: "Utilice un nuevo incidente en su lugar.",
   noIncidentsInPage: "No hay incidentes que cumplan los requisitos en esta página. Consulte la página siguiente si está disponible.",
   moreIncidents: "Página siguiente",
+  demoModeHelp: "Incluya informes y simulacros de emergencia claramente identificados. Se trata de demostraciones, no de advertencias reales.",
+  enableDemoMode: "Habilitar alertas DEMO",
+  disableDemoMode: "Desactivar las alertas de DEMO",
+  emergencyMachineTranslation: "Traducción automática",
+  emergencyTranslationReview: "No revisado por la autoridad emisora. El aviso original se muestra arriba.",
+  emergencyTranslationUnavailable: "La traducción no se pudo verificar o no está disponible. Consulte el aviso original.",
 };

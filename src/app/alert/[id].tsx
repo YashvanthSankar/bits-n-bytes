@@ -32,7 +32,10 @@ function Detail() {
         {source.deadlineAt !== null && <AppText style={{ fontWeight: '700' }}>{t('emergencyDeadline')}: {date(source.deadlineAt)}</AppText>}
         <AppText variant="heading">{t('emergencyOriginal')} · {source.sourceLanguage ?? '—'}</AppText>
         <AppText selectable>{source.originalText ?? t('emergencyNoOriginal')}</AppText>
-        {source.sourceLanguage !== i18n.language && <AppText variant="caption">{t('emergencyTranslationPending')}</AppText>}
+        {source.translation?.status === 'READY' && source.translation.language === i18n.language && source.translation.text ? <>
+          <AppText variant="heading">{t('emergencyMachineTranslation')}</AppText>
+          <AppText selectable>{source.translation.text}</AppText><AppText variant="caption">{t('emergencyTranslationReview')}</AppText>
+        </> : source.sourceLanguage !== i18n.language && <AppText variant="caption">{t(source.translation?.status === 'FAILED' || source.translation?.status === 'FLAGGED' ? 'emergencyTranslationUnavailable' : 'emergencyTranslationPending')}</AppText>}
       </View>)}
     </>}
   </Screen>;

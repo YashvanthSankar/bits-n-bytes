@@ -65,3 +65,18 @@ export const resume = internalMutation({ args: {}, handler: async (ctx): Promise
   const jobs = await ctx.db.query('jobs').withIndex('by_kind_status_dueAt', q => q.eq('kind', 'ALERT_EXPANSION').eq('status', 'PENDING').lte('dueAt', Date.now())).take(10);
   for (const job of jobs) if (job.kind === 'ALERT_EXPANSION') await ctx.scheduler.runAfter(0, internal.alertExpansion.page, { jobId: job._id, checkpoint: job.checkpoint });
 } });
+
+/** Opt-in must catch up emergencies published before consent. Bounded resumable scan. */
+export const demoCatchup = internalMutation({args:{userId:v.id('users'),cursor:v.union(v.string(),v.null())},handler:async(ctx,args):Promise<void>=>{
+ const profile=await ctx.db.query('profiles').withIndex('by_user',q=>q.eq('userId',args.userId)).unique();if(!profile?.demoEnabled)return;
+ const alerts=await ctx.db.query('alerts').withIndex('by_lifecycle',q=>q.eq('lifecycle','ACTIVE')).paginate({numItems:20,cursor:args.cursor});
+ for(const alert of alerts.page){
+  if(alert.audience!=='DEMO')continue;
+  const job=await ctx.db.query('jobs').withIndex('by_key',q=>q.eq('key',`${alert._id}:${alert.currentRevision}`)).unique();
+  if(!job || job.kind!=='ALERT_EXPANSION')continue;
+  const checkpoint=job.checkpoint+1;
+  await ctx.db.patch(job._id,{status:'PENDING',checkpoint,cellIndex:0,cursor:null,dueAt:Date.now()});
+  await ctx.scheduler.runAfter(0,internal.alertExpansion.page,{jobId:job._id,checkpoint});
+ }
+ if(!alerts.isDone)await ctx.scheduler.runAfter(0,internal.alertExpansion.demoCatchup,{...args,cursor:alerts.continueCursor});
+}});

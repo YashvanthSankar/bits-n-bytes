@@ -255,4 +255,10 @@ export const hi: Translation = {
   createNewIncident: "इसके बजाय एक नई घटना का उपयोग करें",
   noIncidentsInPage: "इस पृष्ठ पर कोई पात्र घटना नहीं है। यदि उपलब्ध हो तो अगला पृष्ठ देखें।",
   moreIncidents: "अगला पृष्ठ",
+  demoModeHelp: "स्पष्ट रूप से चिह्नित परीक्षण आपात स्थितियों और रिपोर्टों को शामिल करें। ये प्रदर्शन हैं, वास्तविक चेतावनी नहीं।",
+  enableDemoMode: "डेमो अलर्ट सक्षम करें",
+  disableDemoMode: "डेमो अलर्ट अक्षम करें",
+  emergencyMachineTranslation: "मशीन अनुवाद",
+  emergencyTranslationReview: "जारीकर्ता प्राधिकारी द्वारा समीक्षा नहीं की गई। मूल सूचना ऊपर प्रदर्शित है।",
+  emergencyTranslationUnavailable: "अनुवाद की पुष्टि नहीं हो सकी या वह उपलब्ध नहीं है। कृपया मूल सूचना देखें।",
 };

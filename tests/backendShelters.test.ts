@@ -14,7 +14,7 @@ const actor = (id: Id<'users'>) => t.withIdentity({ subject: `${id}|session` });
 function input(requestId = 'shelter-create-001') {
   return { requestId, expectedRevision: 0, jurisdictionId, name: 'Test shelter', point, address: 'Test-only address', status: 'OPEN' as const,
     capacity: 100, remaining: 40, accessibility: 'STEP_FREE' as const, facilities: ['Water', 'Toilets'], phone: '+919876543210',
-    accessInstruction: 'Use the east entrance', accessRestricted: false, confirmStatus: true, reason: 'Confirmed by test authority' };
+    accessInstruction: 'Use the east entrance', accessRestricted: false, confirmStatus: true };
 }
 beforeEach(async () => {
   t = convexTest(schema, modules);
@@ -74,7 +74,7 @@ it.each(['OPEN', 'CLOSED', 'FULL', 'UNKNOWN'] as const)('maintains %s explicitly
 });
 
 it('rejects contradictory capacity, malformed fields and locations outside the assigned area', async () => {
-  for (const changes of [{ capacity: -1 }, { remaining: 101 }, { capacity: 1.5 }, { status: 'FULL' as const, remaining: 2 }, { confirmStatus: false }, { name: '\u0000bad' }, { facilities: Array(21).fill('Water') }, { phone: 'unsafe link' }, { reason: 'no' }]) {
+  for (const changes of [{ capacity: -1 }, { remaining: 101 }, { capacity: 1.5 }, { status: 'FULL' as const, remaining: 2 }, { confirmStatus: false }, { name: '\u0000bad' }, { facilities: Array(21).fill('Water') }, { phone: 'unsafe link' }]) {
     await expect(actor(authority).mutation(api.shelters.save, { ...input(), ...changes })).rejects.toThrow('INVALID_INPUT');
   }
   await expect(actor(authority).mutation(api.shelters.save, { ...input(), point: { latitude: 13.5, longitude: 80.27 } })).rejects.toThrow('JURISDICTION_DENIED');

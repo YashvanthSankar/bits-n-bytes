@@ -65,7 +65,10 @@ export const detail = query({ args: { alertId: v.id('alerts') }, handler: async 
     const instruction = source.instructionVersionId ? await ctx.db.get(source.instructionVersionId) : null;
     const declaration = instruction ? await ctx.db.get(instruction.declarationId) : null;
     if (source.instructionVersionId && !instruction) return reject('CONFIGURATION_REQUIRED');
-    instructions.push({ sourceId: source.sourceId, issuer: source.issuerLabel, severity: source.severity, area: geometry.area,
+    const translation = instruction && profile && profile.language !== instruction.sourceLanguage
+      ? await ctx.db.query('instructionTranslations').withIndex('by_instruction_language', q => q.eq('instructionVersionId', instruction._id).eq('targetLanguage', profile.language)).unique() : null;
+    const validTranslation = translation && instruction && translation.originalHash === instruction.originalHash;
+    instructions.push({ translation: validTranslation ? { status: translation.status, language: translation.targetLanguage, text: translation.status === 'READY' ? translation.text ?? null : null, machineTranslated: true as const, reviewed: false as const } : null, sourceId: source.sourceId, issuer: source.issuerLabel, severity: source.severity, area: geometry.area,
       appliesToCurrentLocation: fresh ? overlapsArea(location, geometry.area) : null,
       originalText: instruction?.originalText ?? null, sourceLanguage: instruction?.sourceLanguage ?? null,
       actionKind: instruction?.actionKind ?? null, issuedAt: instruction?.issuedAt ?? revision.publishedAt,

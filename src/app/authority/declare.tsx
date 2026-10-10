@@ -33,7 +33,7 @@ function Editor() {
   const [hazard, setHazard] = useState<HazardCode>('FLASH_FLOOD'), [severity, setSeverity] = useState<Publish['severity']>('HIGH');
   const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>(language), [action, setAction] = useState<Publish['actionKind']>('STAY_PUT');
   const [locality, setLocality] = useState(''), [latitude, setLatitude] = useState(''), [longitude, setLongitude] = useState(''), [radius, setRadius] = useState('1000');
-  const [original, setOriginal] = useState(''), [reviewMinutes, setReviewMinutes] = useState('60'), [reason, setReason] = useState('');
+  const [original, setOriginal] = useState(''), [reviewMinutes, setReviewMinutes] = useState('60');
   const [review, setReview] = useState<Publish | null>(null), [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false), [saved, setSaved] = useState(false), [error, setError] = useState<string | null>(null);
   const running = useRef(false), pending = useRef<Publish | null>(null);
   const locked = busy || uncertain;
@@ -44,9 +44,9 @@ function Editor() {
     if (!scope || locked) return;
     const point = { latitude: Number(latitude), longitude: Number(longitude) }, radiusM = Number(radius), minutes = Number(reviewMinutes);
     if (!latitude.trim() || !longitude.trim() || !isValidPoint(point) || !Number.isFinite(radiusM) || radiusM <= 0 || radiusM > 200_000
-      || !Number.isInteger(minutes) || minutes < 1 || minutes > 1440 || !locality.trim() || !original.trim() || reason.trim().length < 5) { setError(!latitude.trim() || !longitude.trim() ? 'selectLocationRequired' : 'inputError'); return; }
+      || !Number.isInteger(minutes) || minutes < 1 || minutes > 1440 || !locality.trim() || !original.trim()) { setError(!latitude.trim() || !longitude.trim() ? 'selectLocationRequired' : 'inputError'); return; }
     setError(null); setReview({ requestId: randomUUID(), jurisdictionId: scope.id, expectedIncidentRevision: selectedIncident?.revision ?? 0, ...(selectedIncident ? {incidentId: selectedIncident.id} : {}), hazard, locality, area: { type: 'circle', center: point, radiusM }, severity,
-      originalText: original, sourceLanguage, actionKind: action, reviewDueAt: Date.now() + minutes * MINUTE, reason });
+      originalText: original, sourceLanguage, actionKind: action, reviewDueAt: Date.now() + minutes * MINUTE });
   }
   async function submit(args: Publish | null) {
     if (!args || running.current) return;
@@ -82,7 +82,6 @@ function Editor() {
     <AppText variant="heading">{t('declarationAction')}</AppText>
     {(['STAY_PUT','AVOID_TRAVEL','EVACUATE','OTHER'] as const).map(code => <Choice key={code} label={t(`action${code}`)} selected={action === code} disabled={locked} onPress={() => setAction(code)} />)}
     <Field label={t('declarationReview')} value={reviewMinutes} onChangeText={setReviewMinutes} keyboardType="numeric" editable={!locked} />
-    <Field label={t('changeReason')} value={reason} onChangeText={setReason} maxLength={500} editable={!locked} />
     {error && <AppText style={{color:theme.danger}}>{t(error)}</AppText>}
     <Modal visible={existingOpen} animationType="slide" onRequestClose={() => setExistingOpen(false)}>
       <View style={{flex:1,backgroundColor:theme.background,padding:20,paddingTop:safe.top+20,paddingBottom:safe.bottom+20,gap:16}}>

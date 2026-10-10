@@ -27,7 +27,7 @@ async function draft() {
   await act(async()=>button('selectAffectedLocation').props.onPress());
   await act(async()=>screen.root.findByType('map-picker' as React.ElementType).props.onSelect({latitude:13.0827,longitude:80.2707}));
   await act(async()=>button('useSelectedLocation').props.onPress());
-  for (const [label,value] of Object.entries({declarationLocality:'Test locality',declarationOriginal:'  Do not cross the bridge.  ',changeReason:'Verified test conditions'})) {
+  for (const [label,value] of Object.entries({declarationLocality:'Test locality',declarationOriginal:'  Do not cross the bridge.  '})) {
     await act(async()=>screen.root.findAllByType('input').find(f=>f.props.label===label)!.props.onChangeText(value));
   }
 }
@@ -68,7 +68,7 @@ it('requires explicit map selection and discards a cancelled location change', a
 it('selects an existing incident and publishes with its identity and revision rather than creating a duplicate',async()=>{
  await act(async()=>button('selectExistingIncident').props.onPress());
  await act(async()=>button('Reported flood · hazardFLASH_FLOOD').props.onPress());
- for (const [label,value] of Object.entries({declarationOriginal:'Avoid the flooded road',changeReason:'Official assessment completed'})) await act(async()=>screen.root.findAllByType('input').find(f=>f.props.label===label)!.props.onChangeText(value));
+ for (const [label,value] of Object.entries({declarationOriginal:'Avoid the flooded road'})) await act(async()=>screen.root.findAllByType('input').find(f=>f.props.label===label)!.props.onChangeText(value));
  await act(async()=>button('declarationReviewButton').props.onPress());
  state.publish.mockResolvedValue({revision:1});await act(async()=>button('declarationPublish').props.onPress());
  expect(state.publish.mock.calls[0]![0]).toMatchObject({incidentId:'incident-1',expectedIncidentRevision:7,locality:'Reported flood',hazard:'FLASH_FLOOD'});

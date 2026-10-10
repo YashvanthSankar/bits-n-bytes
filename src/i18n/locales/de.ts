@@ -255,4 +255,10 @@ export const de: Translation = {
   createNewIncident: "Erstellen Sie stattdessen einen neuen Vorfall.",
   noIncidentsInPage: "Auf dieser Seite sind keine entsprechenden Vorfälle aufgeführt. Prüfen Sie gegebenenfalls die nächste Seite.",
   moreIncidents: "Nächste Seite",
+  demoModeHelp: "Fügen Sie klar gekennzeichnete Testnotfälle und -berichte hinzu. Dies sind Demonstrationen, keine echten Warnungen.",
+  enableDemoMode: "DEMO-Benachrichtigungen aktivieren",
+  disableDemoMode: "DEMO-Benachrichtigungen deaktivieren",
+  emergencyMachineTranslation: "Maschinelle Übersetzung",
+  emergencyTranslationReview: "Nicht von der ausstellenden Behörde geprüft. Die Originalmitteilung ist oben abgebildet.",
+  emergencyTranslationUnavailable: "Die Übersetzung konnte nicht verifiziert werden oder ist nicht verfügbar. Bitte beachten Sie die Originalmeldung.",
 };

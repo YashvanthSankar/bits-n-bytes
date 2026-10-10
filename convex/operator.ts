@@ -1,3 +1,4 @@
+import geohash from 'ngeohash';
 import { internalMutation, internalQuery } from './_generated/server';
 import { v } from 'convex/values';
 import { reject } from './lib/errors';
@@ -68,3 +69,11 @@ export const authorityConfigurationStatus = internalQuery({ args: {}, handler: a
   }
   return { configuredCount: emails.size, matchedAccounts: results };
 } });
+
+export const repairOfficialMapIndex = internalMutation({args:{incidentId:v.id('incidents')},handler:async(ctx,args)=>{
+ const incident=await ctx.db.get(args.incidentId);if(!incident || incident.provenance!=='AUTHORITY')return reject('INVALID_INPUT');
+ const geometry=await ctx.db.get(incident.geometryId);if(!geometry || geometry.area.type!=='circle')return reject('INVALID_INPUT');
+ const entries=await ctx.db.query('geoPoints').withIndex('by_kind_entity',q=>q.eq('kind','INCIDENT').eq('entityId',incident._id)).take(3);
+ for(const precision of [4,5])if(!entries.some(e=>e.precision===precision))await ctx.db.insert('geoPoints',{kind:'INCIDENT',entityId:incident._id,precision,cell:geohash.encode(geometry.area.center.latitude,geometry.area.center.longitude,precision),point:geometry.area.center,active:incident.lifecycle==='ACTIVE',observedAt:incident.lastObservedAt});
+ return {indexed:true};
+}});

@@ -1,3 +1,5 @@
+import geohash from 'ngeohash';
+import { enqueueTranslations } from './translations';
 import { internal } from './_generated/api';
 import { mutation } from './_generated/server';
 import { v } from 'convex/values';
@@ -14,7 +16,7 @@ export const publish = mutation({ args: {
   requestId: v.string(), jurisdictionId: v.id('jurisdictions'), incidentId: v.optional(v.id('incidents')),
   expectedIncidentRevision: v.number(), hazard, locality: v.string(), area: geometry, severity,
   originalText: v.string(), sourceLanguage: language, actionKind, namedShelterId: v.optional(v.id('shelters')),
-  deadlineAt: v.optional(v.number()), reviewDueAt: v.number(), reason: v.string(),
+  deadlineAt: v.optional(v.number()), reviewDueAt: v.number(), reason: v.optional(v.string()),
 }, handler: async (ctx, args): Promise<{ incidentId: Id<'incidents'>; declarationId: Id<'authorityDeclarations'>; alertId: Id<'alerts'>; revision: number; instructionVersionId: Id<'instructionVersions'>; publishedAt: number }> => {
   const userId = await requireUser(ctx);
   return command(ctx, userId, 'DECLARATION_PUBLISH', args.requestId, args, async () => {
@@ -24,7 +26,7 @@ export const publish = mutation({ args: {
     const now = Date.now();
     if (!args.originalText.trim() || args.originalText.length > 8000 || /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(args.originalText)
       || args.locality.trim().length < 1 || args.locality.length > 160 || /[\u0000-\u001f]/.test(args.locality)
-      || args.reason.trim().length < 5 || args.reason.length > 500 || args.severity === 'UNKNOWN'
+      || (args.reason !== undefined && args.reason.length > 500) || args.severity === 'UNKNOWN'
       || !Number.isFinite(args.reviewDueAt) || args.reviewDueAt <= now || args.reviewDueAt > now + DAY
       || (args.deadlineAt !== undefined && (!Number.isFinite(args.deadlineAt) || args.deadlineAt <= now))) return reject('INVALID_INPUT');
     if ((args.actionKind === 'NAMED_SHELTER') !== Boolean(args.namedShelterId)) return reject('INVALID_INPUT');
@@ -49,6 +51,7 @@ export const publish = mutation({ args: {
       lastObservedAt: now, staleAt: args.reviewDueAt, revision: 1, evidenceGeneration: 1, controlRevision: 1,
       nextAssessmentAt: args.reviewDueAt, audience: scope.agency.audience, authorityAgencyId: scope.agency._id,
     });
+    if (!existing && args.area.type === 'circle') for (const precision of [4,5]) await ctx.db.insert('geoPoints',{kind:'INCIDENT',entityId:incidentId,precision,cell:geohash.encode(args.area.center.latitude,args.area.center.longitude,precision),point:args.area.center,active:true,observedAt:now});
     if (existing) await ctx.db.patch(incidentId, { verification: 'AUTHORITY_VERIFIED', lifecycle: 'ACTIVE', revision: existing.revision + 1, controlRevision: existing.controlRevision + 1 });
     const declarationId = await ctx.db.insert('authorityDeclarations', { incidentId, membershipId: scope.membership._id, agencyId: scope.agency._id,
       geometryId, severity: args.severity, reviewDueAt: args.reviewDueAt, active: true, revision: 1, audience: scope.agency.audience });
@@ -76,7 +79,8 @@ export const publish = mutation({ args: {
     const jobId = await ctx.db.insert('jobs', { kind: 'ALERT_EXPANSION', key: `${alertId}:${revision}`, status: 'PENDING', dueAt: now, createdAt: now, alertId, alertRevision: revision,
       geometryId, cells: [...cells].sort(), cellIndex: 0, childIndex: 0, cursor: null, checkpoint: 0 });
     await ctx.scheduler.runAfter(0, internal.alertExpansion.page, { jobId, checkpoint: 0 });
-    await ctx.db.insert('auditEvents', { actorId: userId, actorKind: 'AUTHORITY', objectKind: 'AUTHORITY_DECLARATION', objectId: declarationId, revision: 1, action: 'PUBLISH', reason: args.reason.trim(), createdAt: now });
+    await ctx.db.insert('auditEvents', { actorId: userId, actorKind: 'AUTHORITY', objectKind: 'AUTHORITY_DECLARATION', objectId: declarationId, revision: 1, action: 'PUBLISH', reason: args.reason?.trim() || 'Emergency declaration published', createdAt: now });
+    await enqueueTranslations(ctx, instructionVersionId);
     return { incidentId, declarationId, alertId, revision, instructionVersionId, publishedAt: now };
   });
 } });

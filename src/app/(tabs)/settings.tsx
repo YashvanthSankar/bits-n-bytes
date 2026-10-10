@@ -20,6 +20,7 @@ function Settings() {
   const { t, i18n }=useTranslation(); const theme=useTheme(); const { language,changeLanguage }=useLanguage();
   const { isAuthenticated }=useConvexAuth(); const { fix,setFix,setSignedOut }=useLocationSession(); const { signOut }=useAuthActions();
   const own=useQuery(api.profiles.me,isAuthenticated?{}:'skip'); const save=useMutation(api.profiles.setLanguage);
+  const setDemo=useMutation(api.profiles.setDemoEnabled);
   const syncAccess=useMutation(api.authorityAccess.sync);
   const [busy,setBusy]=useState(false); const [error,setError]=useState<string|null>(null); const running=useRef(false);
   const [uncertain,setUncertain]=useState(false);
@@ -39,6 +40,11 @@ function Settings() {
     try { await syncAccess({}); } catch(err) {setError(errorTranslationKey(err));}
     finally {running.current=false;setBusy(false);}
   }
+  async function toggleDemo() {
+    if(running.current || uncertain || !own?.profile)return;running.current=true;setBusy(true);setError(null);
+    try {await setDemo({enabled:!own.profile.demoEnabled});}catch(err){setError(errorTranslationKey(err));}
+    finally{running.current=false;setBusy(false);}
+  }
   async function logout() {
     if (running.current) return;
     running.current=true; setBusy(true); setError(null);
@@ -55,6 +61,9 @@ function Settings() {
         {own.role === 'AUTHORITY' && <AppText style={{color:theme.accent}}>{t('authorityReady')}</AppText>}
         {own.role === 'AUTHORITY' && <ActionButton title={t('authorityTitle')} variant="secondary" onPress={()=>router.push('/authority')} disabled={busy} />}
         <ActionButton title={t('refreshAccountAccess')} variant="secondary" onPress={()=>void refreshAccess()} disabled={busy || uncertain} />
+      </View>
+      <View style={{gap:8}}><AppText variant="heading">DEMO</AppText><AppText>{t('demoModeHelp')}</AppText>
+        <ActionButton title={t(own.profile?.demoEnabled ? 'disableDemoMode' : 'enableDemoMode')} variant="secondary" disabled={busy || uncertain} onPress={()=>void toggleDemo()} />
       </View>
       <View style={{gap:8}}><AppText variant="heading">{t('languageTitle')}</AppText>
         {LANGUAGE_CODES.map(code=><Choice key={code} label={`${languageNames[code].native} · ${languageNames[code].english}`} selected={language===code} disabled={busy || uncertain} onPress={()=>void select(code)} />)}

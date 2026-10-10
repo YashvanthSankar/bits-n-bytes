@@ -45,7 +45,7 @@ async function field(label: string, value: string, last = false) {
 }
 
 it('saves a metadata edit with its original revision, without local fields or automatic reconfirmation', async () => {
-  await render(); await field('shelterName', 'Updated name'); await field('changeReason', 'Correct public name'); await press('saveShelter');
+  await render(); await field('shelterName', 'Updated name'); await press('saveShelter');
   expect(state.save).toHaveBeenCalledTimes(1);
   expect(state.save.mock.calls[0]![0]).toMatchObject({ shelterId: initial.id, expectedRevision: 4, name: 'Updated name', confirmStatus: false, point: initial.point });
   expect(state.save.mock.calls[0]![0]).not.toHaveProperty('latitude');
@@ -54,7 +54,7 @@ it('saves a metadata edit with its original revision, without local fields or au
 });
 
 it('requires an actual confirmation when changing availability', async () => {
-  await render(); await field('changeReason', 'Current site count'); await field('shelterRemaining', '30'); await press('saveShelter');
+  await render(); await field('shelterRemaining', '30'); await press('saveShelter');
   expect(state.save).not.toHaveBeenCalled(); expect(JSON.stringify(screen.toJSON())).toContain('confirmStatusRequired');
   await act(async () => screen.root.findAllByType('Switch' as React.ElementType).find(item => item.props.accessibilityLabel === 'confirmShelterStatus')!.props.onValueChange(true));
   await press('saveShelter'); expect(state.save.mock.calls[0]![0]).toMatchObject({ remaining: 30, confirmStatus: true });
@@ -62,7 +62,7 @@ it('requires an actual confirmation when changing availability', async () => {
 
 it('freezes an uncertain command and retries the exact body rather than inventing a second write', async () => {
   state.save.mockRejectedValueOnce(new Error('Transport unavailable'));
-  await render(); await field('changeReason', 'Correct public name'); await press('saveShelter');
+  await render(); await press('saveShelter');
   expect(state.replace).not.toHaveBeenCalled();
   expect(screen.root.findAllByType('input').every(input => input.props.editable === false)).toBe(true);
   const original = state.save.mock.calls[0]![0]; await press('retry');
@@ -72,7 +72,7 @@ it('freezes an uncertain command and retries the exact body rather than inventin
 
 it('preserves draft fields on a stale revision and requires reviewing the new server version', async () => {
   state.save.mockRejectedValueOnce(new ConvexError({ code: 'REVISION_CONFLICT' }));
-  await render(); await field('shelterName', 'My draft name'); await field('changeReason', 'Correct public name'); await press('saveShelter');
+  await render(); await field('shelterName', 'My draft name'); await press('saveShelter');
   expect(state.replace).not.toHaveBeenCalled();
   await act(async () => screen.update(<ShelterForm {...props} initial={{ ...initial, name: 'Other authority edit', revision: 5 }} />));
   expect(screen.root.findAllByType('input').find(input => input.props.label === 'shelterName')!.props.value).toBe('My draft name');
@@ -86,10 +86,9 @@ it('opens an archive confirmation, preserves the listing on cancel and navigates
   await act(async () => screen.root.findAllByType('button').filter(button => button.props.title === 'cancel')[0]!.props.onPress());
   expect(state.archive).not.toHaveBeenCalled(); expect(state.replace).not.toHaveBeenCalled();
   await press('archiveShelter');
-  await field('changeReason', 'Site permanently closed', true);
   // The first archive button is behind the modal; press its explicit confirmation action.
   await act(async () => screen.root.findAllByType('button').filter(button => button.props.title === 'archiveShelter')[1]!.props.onPress());
-  expect(state.archive).toHaveBeenCalledExactlyOnceWith({ requestId: 'request-test-1', shelterId: initial.id, expectedRevision: 4, reason: 'Site permanently closed' });
+  expect(state.archive).toHaveBeenCalledExactlyOnceWith({ requestId: 'request-test-1', shelterId: initial.id, expectedRevision: 4 });
   expect(state.replace).toHaveBeenCalledWith({ pathname: '/authority/shelters', params: { jurisdictionId, archived: '1' } });
 });
 
@@ -102,7 +101,7 @@ it('uses a map-selected entrance without coordinate fields, and cancellation pre
   await press('cancel');await press('selectShelterLocation');
   expect(screen.root.findByType('map-picker' as React.ElementType).props.selected).toEqual(initial.point);
   await act(async()=>screen.root.findByType('map-picker' as React.ElementType).props.onSelect({latitude:13.09,longitude:80.28}));
-  await press('useSelectedLocation');await field('changeReason','Correct entrance location');await press('saveShelter');
+  await press('useSelectedLocation');await press('saveShelter');
   expect(state.save).not.toHaveBeenCalled(); // Moving the entrance still requires real status confirmation.
   await act(async()=>screen.root.findAllByType('Switch' as React.ElementType).find(s=>s.props.accessibilityLabel==='confirmShelterStatus')!.props.onValueChange(true));
   await press('saveShelter');expect(state.save.mock.calls[0]![0].point).toEqual({latitude:13.09,longitude:80.28});
@@ -114,3 +113,5 @@ it('uses a map-selected entrance without coordinate fields, and cancellation pre
   await field('shelterName', 'Valid shelter'); await field('shelterAddress', ' '); await press('saveShelter');
   expect(state.save).not.toHaveBeenCalled(); expect(JSON.stringify(screen.toJSON())).toContain('shelterFieldMinimum');
 });
+
+it('has no change reason input for saving or archiving',async()=>{await render();expect(screen.root.findAllByType('input').some(f=>f.props.label==='changeReason')).toBe(false);await press('archiveShelter');expect(screen.root.findAllByType('input').some(f=>f.props.label==='changeReason')).toBe(false);});

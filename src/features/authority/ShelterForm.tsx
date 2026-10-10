@@ -40,10 +40,10 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
     longitude: initial ? String(initial.point.longitude) : '', status: initial?.status ?? 'UNKNOWN', capacity: initial?.capacity == null ? '' : String(initial.capacity),
     remaining: initial?.remaining == null ? '' : String(initial.remaining), accessibility: initial?.accessibility ?? 'UNKNOWN',
     facilities: initial?.facilities.join(', ') ?? '', phone: initial?.phone ?? '', accessInstruction: initial?.accessInstruction ?? '',
-    accessRestricted: initial?.accessRestricted ?? false, confirmStatus: false, reason: '' }));
+    accessRestricted: initial?.accessRestricted ?? false, confirmStatus: false }));
   const [revision, setRevision] = useState(initial?.revision ?? 0);
   const [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false), [error, setError] = useState<string | null>(null);
-  const [archiveOpen, setArchiveOpen] = useState(false), [archiveReason, setArchiveReason] = useState('');
+  const [archiveOpen, setArchiveOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const pending = useRef<Pending | null>(null), running = useRef(false);
   const locked = busy || uncertain;
@@ -79,7 +79,6 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
     }
     if (!latitude.trim() || !longitude.trim() || !isValidPoint(point) || capacity === undefined || remaining === undefined) { setError('inputError'); return; }
     if (!details.confirmStatus && (!initial || details.status !== initial.status || capacity !== initial.capacity || remaining !== initial.remaining || point.latitude !== initial.point.latitude || point.longitude !== initial.point.longitude)) { setError('confirmStatusRequired'); return; }
-    if (details.reason.trim().length < 5) { setError('changeReason'); return; }
     void execute({ kind: 'SAVE', args: { ...details, requestId: randomUUID(), expectedRevision: revision, jurisdictionId,
       ...(initial ? { shelterId: initial.id } : {}), point, capacity, remaining, facilities: details.facilities.split(',').map(value => value.trim()).filter(Boolean) } });
   }
@@ -117,7 +116,6 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
     <View style={{ gap: 8 }}><View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}><AppText style={{ flex: 1 }}>{t('confirmShelterStatus')}</AppText>
       <Switch accessibilityLabel={t('confirmShelterStatus')} value={form.confirmStatus} onValueChange={value => update('confirmStatus', value)} disabled={locked} />
     </View><AppText variant="caption">{t('confirmShelterHelp')}</AppText></View>
-    <Field label={t('changeReason')} value={form.reason} onChangeText={value => update('reason', value)} maxLength={500} multiline editable={!locked} />
     {initial && <ActionButton title={t('archiveShelter')} variant="secondary" disabled={locked} onPress={() => { setError(null); setArchiveOpen(true); }} />}
     <Modal visible={pickerOpen} animationType="slide" onRequestClose={() => setPickerOpen(false)}>
       <View style={{flex:1,backgroundColor:theme.background,paddingTop:safe.top}}>
@@ -135,12 +133,11 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
           <AppText variant="heading">{t('archiveShelter')}</AppText>
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ gap: 16 }}>
             <AppText>{t('archiveShelterHelp')}</AppText><AppText>{initial?.name}</AppText>
-            <Field label={t('changeReason')} value={archiveReason} onChangeText={setArchiveReason} editable={!locked} maxLength={500} multiline />
             {error && <AppText style={{ color: theme.danger }} accessibilityLiveRegion="polite">{t(error)}</AppText>}
           </ScrollView>
           <ActionButton title={t(uncertain ? 'retry' : 'archiveShelter')} busy={busy} onPress={() => {
             if (uncertain) void execute(pending.current);
-            else if (initial) void execute({ kind: 'ARCHIVE', args: { requestId: randomUUID(), shelterId: initial.id, expectedRevision: revision, reason: archiveReason } });
+            else if (initial) void execute({ kind: 'ARCHIVE', args: { requestId: randomUUID(), shelterId: initial.id, expectedRevision: revision } });
           }} />
           <ActionButton title={t('cancel')} variant="secondary" disabled={locked} onPress={() => setArchiveOpen(false)} />
         </View>

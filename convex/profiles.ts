@@ -1,3 +1,4 @@
+import { internal } from './_generated/api';
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
 import { activeMemberships, requireIndiaAccess, requireUser } from './lib/authorization';
@@ -48,4 +49,14 @@ export const save = mutation({ args: {
     else await ctx.db.insert('profiles', { userId, name, language: args.language, ...(args.bloodGroup === undefined ? {} : { bloodGroup: args.bloodGroup }), ...(args.emergencyContact === undefined ? {} : { emergencyContact: args.emergencyContact }), stepFreeNeeded: args.stepFreeNeeded, revision, alias: 'Traveler ' + payloadHash(userId).slice(0, 8).toUpperCase(), demoEnabled: false, onboardingCompletedAt: Date.now() });
     return { revision };
   });
+} });
+
+/** Explicit per-account test-data consent; never changes LIVE records. */
+export const setDemoEnabled = mutation({ args: { enabled: v.boolean() }, handler: async (ctx,args) => {
+ const {userId} = await requireIndiaAccess(ctx);
+ const profile = await ctx.db.query('profiles').withIndex('by_user',q=>q.eq('userId',userId)).unique();
+ if (!profile) return reject('NOT_FOUND');
+ await ctx.db.patch(profile._id,{demoEnabled:args.enabled,revision:profile.revision+1});
+ if(args.enabled) await ctx.scheduler.runAfter(0,internal.alertExpansion.demoCatchup,{userId,cursor:null});
+ return {enabled:args.enabled};
 } });

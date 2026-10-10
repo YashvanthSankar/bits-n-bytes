@@ -29,7 +29,9 @@ import type * as locations from "../locations.js";
 import type * as observations from "../observations.js";
 import type * as operator from "../operator.js";
 import type * as profiles from "../profiles.js";
+import type * as providers_googleTranslation from "../providers/googleTranslation.js";
 import type * as shelters from "../shelters.js";
+import type * as translations from "../translations.js";
 
 import type {
   ApiFromModules,
@@ -59,7 +61,9 @@ declare const fullApi: ApiFromModules<{
   observations: typeof observations;
   operator: typeof operator;
   profiles: typeof profiles;
+  "providers/googleTranslation": typeof providers_googleTranslation;
   shelters: typeof shelters;
+  translations: typeof translations;
 }>;
 
 /**

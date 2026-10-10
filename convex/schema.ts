@@ -56,6 +56,11 @@ export default defineSchema({
     declarationId: v.id('authorityDeclarations'), revision: v.number(), originalText: v.string(), sourceLanguage: types.language, originalHash: v.string(),
     actionKind: types.actionKind, namedShelterId: v.optional(v.id('shelters')), issuedAt: v.number(), deadlineAt: v.optional(v.number()),
   }).index('by_declaration_revision', ['declarationId', 'revision']),
+  instructionTranslations: defineTable({
+    instructionVersionId: v.id('instructionVersions'), originalHash: v.string(), targetLanguage: types.language,
+    status: v.union(v.literal('PENDING'), v.literal('RUNNING'), v.literal('READY'), v.literal('FLAGGED'), v.literal('FAILED'), v.literal('OBSOLETE')),
+    attempts: v.number(), dueAt: v.number(), text: v.optional(v.string()), issues: v.array(v.string()), lastError: v.optional(v.string()), updatedAt: v.number(),
+  }).index('by_instruction_language', ['instructionVersionId', 'targetLanguage']).index('by_status_dueAt', ['status', 'dueAt']),
   alerts: defineTable({ incidentId: v.id('incidents'), lifecycle: v.union(v.literal('ACTIVE'), v.literal('ENDED')), currentRevision: v.number(), createdAt: v.number(), updatedAt: v.number(), audience: types.audience }).index('by_incident', ['incidentId']).index('by_lifecycle', ['lifecycle']),
   alertSources: defineTable({
     alertId: v.id('alerts'), kind: types.provenance, declarationId: v.optional(v.id('authorityDeclarations')), instructionVersionId: v.optional(v.id('instructionVersions')),

@@ -73,7 +73,7 @@ export const save = mutation({ args: {
   requestId: v.string(), expectedRevision: v.number(), shelterId: v.optional(v.id('shelters')), jurisdictionId: v.id('jurisdictions'),
   name: v.string(), point, address: v.string(), status: shelterStatus, capacity: v.union(v.number(), v.null()), remaining: v.union(v.number(), v.null()),
   accessibility, facilities: v.array(v.string()), phone: v.string(), accessInstruction: v.string(), accessRestricted: v.boolean(),
-  confirmStatus: v.boolean(), reason: v.string(),
+  confirmStatus: v.boolean(), reason: v.optional(v.string()),
 }, handler: async (ctx, args) => {
   const userId = await requireUser(ctx);
   return command(ctx, userId, 'SHELTER_SAVE', args.requestId, args, async () => {
@@ -92,7 +92,7 @@ export const save = mutation({ args: {
     const availabilityChanged = !current || current.status !== args.status || current.capacity !== capacity || current.remaining !== remaining
       || current.point.latitude !== args.point.latitude || current.point.longitude !== args.point.longitude;
     if (availabilityChanged && !args.confirmStatus) return reject('INVALID_INPUT');
-    const reason = text(args.reason, 5, 500, true), now = Date.now(), revision = (current?.revision ?? 0) + 1;
+    const reason = text(args.reason ?? 'Shelter information saved', 0, 500, true), now = Date.now(), revision = (current?.revision ?? 0) + 1;
     const value = { agencyId: agency._id, jurisdictionId: args.jurisdictionId, audience: agency.audience, name: text(args.name, 2, 120),
       point: args.point, address: text(args.address, 3, 500, true), status: args.status, capacity, remaining,
       accessibility: args.accessibility, facilities: [...new Set(args.facilities.map(f => text(f, 1, 50)))], phone: args.phone.trim(),
@@ -109,7 +109,7 @@ export const save = mutation({ args: {
   });
 } });
 
-export const archive = mutation({ args: { requestId: v.string(), shelterId: v.id('shelters'), expectedRevision: v.number(), reason: v.string() }, handler: async (ctx, args) => {
+export const archive = mutation({ args: { requestId: v.string(), shelterId: v.id('shelters'), expectedRevision: v.number(), reason: v.optional(v.string()) }, handler: async (ctx, args) => {
   const userId = await requireUser(ctx);
   return command(ctx, userId, 'SHELTER_ARCHIVE', args.requestId, args, async () => {
     const current = await ctx.db.get(args.shelterId);
@@ -117,7 +117,7 @@ export const archive = mutation({ args: { requestId: v.string(), shelterId: v.id
     const { agency } = await requireAssignedJurisdiction(ctx, current.jurisdictionId);
     if (agency._id !== current.agencyId || agency.audience !== current.audience) return reject('JURISDICTION_DENIED');
     if (args.expectedRevision !== current.revision) return reject('REVISION_CONFLICT', { currentRevision: current.revision });
-    const reason = text(args.reason, 5, 500, true), revision = current.revision + 1, now = Date.now();
+    const reason = text(args.reason ?? 'Shelter archived', 0, 500, true), revision = current.revision + 1, now = Date.now();
     await ctx.db.patch(current._id, { archivedAt: now, revision });
     await removeIndex(ctx, current._id);
     await ctx.db.insert('auditEvents', { actorId: userId, actorKind: 'AUTHORITY', objectKind: 'SHELTER', objectId: current._id, revision, action: 'ARCHIVE', reason, createdAt: now });
