@@ -39,7 +39,7 @@ it('requires review before publishing and finishes without offering another subm
   await act(async()=>button('declarationPublish').props.onPress());
   expect(state.publish).toHaveBeenCalledTimes(1);
   expect(state.publish.mock.calls[0]![0]).toMatchObject({jurisdictionId:'scope-1',originalText:'  Do not cross the bridge.  ',expectedIncidentRevision:0});
-  expect(screen.root.findAllByType('button').map(b=>b.props.title)).toEqual(['authorityTitle']);
+  expect(screen.root.findAllByType('button').map(b=>b.props.title)).toEqual(['manageEmergencies','authorityTitle']);
   expect(JSON.stringify(screen.toJSON())).toContain('declarationPublished');
 });
 it('holds an uncertain publication for an exact retry without creating a new command', async () => {
@@ -63,6 +63,16 @@ it('requires explicit map selection and discards a cancelled location change', a
   await act(async()=>button('selectAffectedLocation').props.onPress());
   expect(screen.root.findByType('map-picker' as React.ElementType).props.selected).toBeNull();
   expect(state.publish).not.toHaveBeenCalled();
+});
+
+it('keeps specialist controls collapsed and shows field-level guidance before review', async () => {
+  expect(screen.root.findAllByType('input').some(field => field.props.label === 'declarationReview')).toBe(false);
+  await act(async()=>button('declarationReviewButton').props.onPress());
+  expect(JSON.stringify(screen.toJSON())).toContain('declarationLocalityRequired');
+  expect(JSON.stringify(screen.toJSON())).toContain('declarationInstructionsRequired');
+  expect(JSON.stringify(screen.toJSON())).toContain('selectLocationRequired');
+  await act(async()=>button('declarationMoreOptions').props.onPress());
+  expect(screen.root.findAllByType('input').some(field => field.props.label === 'declarationReview')).toBe(true);
 });
 
 it('selects an existing incident and publishes with its identity and revision rather than creating a duplicate',async()=>{

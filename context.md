@@ -1,5 +1,10 @@
 # Latest handoff — 2026-10-10
 
+## 2026-10-10 — streamlined DEMO authority workflow
+- The authority workspace now explains the two DEMO paths before a user starts: **Publish DEMO emergency now** immediately creates an authorized DEMO emergency and bypasses Jev; **Add DEMO Jev test evidence** adds only evidence for a later, geographically overlapping DEMO tourist report and can never publish an emergency directly.
+- Both forms now foreground essential public information, selected map circle, radius presets and clear review. Existing server authorization, jurisdiction/containment, audit, expiry, idempotency and publication safeguards are unchanged. Source language, action/review timing and DEMO urgency/certainty remain available under More options.
+- DEMO notice wording moved into the shared localization resources. New-label fallback is English until six-language review; no credentials or backend deployment changed. The full suite (282 tests/47 files), strict TypeScript and lint pass. Physical two-account DEMO validation remains required before calling device acceptance complete.
+
 ## 2026-10-10 — emergency instructions in the first message
 - User requested the first emergency popup show the actual notice immediately. Removed Read emergency instructions/View notice navigation actions and the generic nearby/alert-remains messages. Popup and persistent warning cards now fetch and render attributed instructions, localized severity, active/ended state, DEMO label and authority inline, with the same content shared by the alert detail screen.
 - Nearest listed shelter details render in the first emergency message: name, status, distance, issuer, address, access instruction, phone, last confirmation, stale/restricted warnings and route limitations. No shelter detail click is required in this inline view. Official instructions remain above shelter guidance; raw nearest ordering is unchanged.

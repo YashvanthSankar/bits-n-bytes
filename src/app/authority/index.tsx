@@ -23,12 +23,16 @@ function Overview() {
         <View style={{flex:1,gap:4}}><AppText style={{fontWeight:'600'}}>{scope.name}</AppText><AppText variant="caption" style={{color:theme.secondary}}>{scope.agencyName}</AppText></View>
         {scope.audience === 'DEMO' && <View style={{paddingHorizontal:10,paddingVertical:6,borderRadius:10,backgroundColor:theme.muted}}><AppText variant="caption" style={{color:theme.secondary,fontWeight:'600'}}>DEMO</AppText></View>}
       </View>
-      <Pressable accessibilityRole="button" accessibilityLabel={t('declareEmergency')} onPress={() => router.push({pathname:'/authority/declare',params:{jurisdictionId:scope.id}})}
+      <Pressable accessibilityRole="button" accessibilityLabel={t('authorityPublishEmergency')} onPress={() => router.push({pathname:'/authority/declare',params:{jurisdictionId:scope.id}})}
         style={({pressed})=>({padding:20,borderRadius:22,backgroundColor:theme.accent,opacity:pressed ? 0.85 : 1,gap:18})}>
         <TriangleAlert size={26} color={theme.onAccent} />
-        <View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="heading" style={{color:theme.onAccent,flex:1}}>{t('declareEmergency')}</AppText><ChevronRight size={22} color={theme.onAccent} /></View>
+        <View style={{gap:6}}><View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="heading" style={{color:theme.onAccent,flex:1}}>{scope.audience === 'DEMO' ? t('authorityPublishDemoEmergency') : t('declareEmergency')}</AppText><ChevronRight size={22} color={theme.onAccent} /></View><AppText style={{color:theme.onAccent}}>{t('authorityPublishEmergencyHelp')}</AppText></View>
       </Pressable>
-      {scope.audience === 'DEMO' && <ActionButton title="Create DEMO test notice" variant="secondary" onPress={() => router.push({pathname:'/authority/demo-notices',params:{jurisdictionId:scope.id}})} />}
+      {scope.audience === 'DEMO' && <Pressable accessibilityRole="button" accessibilityLabel={t('authorityCreateDemoEvidence')} onPress={() => router.push({pathname:'/authority/demo-notices',params:{jurisdictionId:scope.id}})}
+        style={({pressed})=>({padding:20,borderRadius:22,borderWidth:1,borderColor:theme.border,backgroundColor:pressed?theme.muted:theme.surface,gap:10})}>
+        <View style={{flexDirection:'row',alignItems:'center',gap:12}}><ShieldCheck size={24} color={theme.accent} /><AppText variant="heading" style={{flex:1}}>{t('authorityCreateDemoEvidence')}</AppText><ChevronRight size={22} color={theme.secondary} /></View>
+        <AppText style={{color:theme.secondary}}>{t('authorityCreateDemoEvidenceHelp')}</AppText>
+      </Pressable>}
       <ActionButton title={t('viewReports')} variant="secondary" onPress={()=>router.push({pathname:'/authority/reports',params:{jurisdictionId:scope.id}})} />
       <ActionButton title={t('manageEmergencies')} variant="secondary" onPress={()=>router.push({pathname:'/authority/emergencies',params:{jurisdictionId:scope.id}})} />
       <Pressable accessibilityRole="button" accessibilityLabel={t('manageShelters')} onPress={() => router.push({pathname:'/authority/shelters',params:{jurisdictionId:scope.id}})}

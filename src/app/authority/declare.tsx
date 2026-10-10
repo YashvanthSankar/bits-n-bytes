@@ -33,8 +33,9 @@ function Editor() {
   const [hazard, setHazard] = useState<HazardCode>('FLASH_FLOOD'), [severity, setSeverity] = useState<Publish['severity']>('HIGH');
   const [sourceLanguage, setSourceLanguage] = useState<LanguageCode>(language), [action, setAction] = useState<Publish['actionKind']>('STAY_PUT');
   const [locality, setLocality] = useState(''), [latitude, setLatitude] = useState(''), [longitude, setLongitude] = useState(''), [radius, setRadius] = useState('1000');
-  const [original, setOriginal] = useState(''), [reviewMinutes, setReviewMinutes] = useState('60');
+  const [original, setOriginal] = useState(''), [reviewMinutes, setReviewMinutes] = useState('60'), [advancedOpen, setAdvancedOpen] = useState(false);
   const [review, setReview] = useState<Publish | null>(null), [busy, setBusy] = useState(false), [uncertain, setUncertain] = useState(false), [saved, setSaved] = useState(false), [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const running = useRef(false), pending = useRef<Publish | null>(null);
   const locked = busy || uncertain;
   const [existingOpen, setExistingOpen] = useState(false), [cursor, setCursor] = useState<string | null>(null);
@@ -43,9 +44,15 @@ function Editor() {
   function prepare() {
     if (!scope || locked) return;
     const point = { latitude: Number(latitude), longitude: Number(longitude) }, radiusM = Number(radius), minutes = Number(reviewMinutes);
-    if (!latitude.trim() || !longitude.trim() || !isValidPoint(point) || !Number.isFinite(radiusM) || radiusM <= 0 || radiusM > 200_000
-      || !Number.isInteger(minutes) || minutes < 1 || minutes > 1440 || !locality.trim() || !original.trim()) { setError(!latitude.trim() || !longitude.trim() ? 'selectLocationRequired' : 'inputError'); return; }
-    setError(null); setReview({ requestId: randomUUID(), jurisdictionId: scope.id, expectedIncidentRevision: selectedIncident?.revision ?? 0, ...(selectedIncident ? {incidentId: selectedIncident.id} : {}), hazard, locality, area: { type: 'circle', center: point, radiusM }, severity,
+    const nextErrors: Record<string, string> = {};
+    if (!latitude.trim() || !longitude.trim() || !isValidPoint(point)) nextErrors.area = 'selectLocationRequired';
+    if (!Number.isFinite(radiusM) || radiusM <= 0 || radiusM > 200_000) nextErrors.radius = 'declarationRadiusError';
+    if (!locality.trim()) nextErrors.locality = 'declarationLocalityRequired';
+    if (!original.trim()) nextErrors.instructions = 'declarationInstructionsRequired';
+    if (!Number.isInteger(minutes) || minutes < 1 || minutes > 1440) nextErrors.review = 'declarationReviewError';
+    setFieldErrors(nextErrors);
+    if (Object.keys(nextErrors).length) { setError('inputError'); return; }
+    setError(null); setFieldErrors({}); setReview({ requestId: randomUUID(), jurisdictionId: scope.id, expectedIncidentRevision: selectedIncident?.revision ?? 0, ...(selectedIncident ? {incidentId: selectedIncident.id} : {}), hazard, locality, area: { type: 'circle', center: point, radiusM }, severity,
       originalText: original, sourceLanguage, actionKind: action, reviewDueAt: Date.now() + minutes * MINUTE });
   }
   async function submit(args: Publish | null) {
@@ -62,26 +69,40 @@ function Editor() {
   }
   if (!scopes) return <Screen><LoadingState /></Screen>;
   if (!scope) return <Screen><AppText>{t('jurisdictionDenied')}</AppText></Screen>;
-  if (saved) return <Screen footer={<ActionButton title={t('authorityTitle')} onPress={() => router.replace('/authority')} />}><AppText variant="title">{t('declarationPublished')}</AppText><AppText>{t('declarationSavedHelp')}</AppText><AppText>{scope.issuer} · {scope.audience}</AppText></Screen>;
+  if (saved) return <Screen footer={<><ActionButton title={t('manageEmergencies')} onPress={() => router.replace({pathname:'/authority/emergencies',params:{jurisdictionId:scope.id}})} /><ActionButton title={t('authorityTitle')} variant="secondary" onPress={() => router.replace('/authority')} /></>}><AppText variant="title">{t('declarationPublished')}</AppText><AppText>{scope.audience === 'DEMO' ? t('demoEmergencySavedHelp') : t('declarationSavedHelp')}</AppText><AppText>{scope.issuer} · {scope.audience}</AppText></Screen>;
   return <Screen footer={<><ActionButton title={t('declarationReviewButton')} onPress={prepare} disabled={locked} /><ActionButton title={t('cancel')} variant="secondary" disabled={locked} onPress={() => router.replace('/authority')} /></>}>
-    <AppText variant="title">{t('declareEmergency')}</AppText><AppText>{scope.issuer} · {scope.name} · {scope.audience}</AppText>
+    <AppText variant="title">{scope.audience === 'DEMO' ? t('authorityPublishDemoEmergency') : t('declareEmergency')}</AppText><AppText>{scope.issuer} · {scope.name} · {scope.audience}</AppText>
+    {scope.audience === 'DEMO' && <View style={{padding:14,borderRadius:14,backgroundColor:theme.muted,gap:4}}><AppText style={{fontWeight:'700'}}>{t('demoOnly')}</AppText><AppText variant="caption">{t('authorityPublishEmergencyHelp')}</AppText></View>}
+    <AppText>{t('declarationEssentialHelp')}</AppText>
     <ActionButton title={t('selectExistingIncident')} variant="secondary" disabled={locked} onPress={() => { setCursor(null); setExistingOpen(true); }} />
     {selectedIncident && <><AppText>{t('promotingExistingIncident')}: {selectedIncident.locality}</AppText><ActionButton title={t('createNewIncident')} variant="secondary" disabled={locked} onPress={() => setSelectedIncident(null)} /></>}
     <AppText variant="heading">{t('hazardLabel')}</AppText>
     {HAZARD_CODES.map(code => <Choice key={code} label={t(`hazard${code}`)} selected={hazard === code} disabled={locked || !!selectedIncident} onPress={() => setHazard(code)} />)}
-    <Field label={t('declarationLocality')} value={locality} onChangeText={setLocality} maxLength={160} editable={!locked} />
+    <Field label={t('declarationLocality')} value={locality} onChangeText={value => { setLocality(value); setFieldErrors(current => ({...current, locality:''})); }} maxLength={160} editable={!locked} />
+    {fieldErrors.locality && <AppText style={{color:theme.danger}}>{t(fieldErrors.locality)}</AppText>}
     <ActionButton title={t('selectAffectedLocation')} variant="secondary" disabled={locked} onPress={() => { setPicked(latitude && longitude ? {latitude:Number(latitude),longitude:Number(longitude)} : null); setPickerOpen(true); }} />
     <ActionButton title={t('declarationUseLocation')} variant="secondary" disabled={locked} onPress={() => void capturePosition()} />
-    {latitude && longitude && <AppText variant="caption">{t('affectedLocationSelected')}</AppText>}
-    <Field label={t('declarationRadius')} value={radius} onChangeText={setRadius} keyboardType="numeric" editable={!locked} />
+    {latitude && longitude && <AppText variant="caption">{t('affectedLocationSelected')} · {radius} m</AppText>}
+    {fieldErrors.area && <AppText style={{color:theme.danger}}>{t(fieldErrors.area)}</AppText>}
+    <AppText variant="caption">{t('declarationRadiusPresets')}</AppText>
+    <View style={{flexDirection:'row',flexWrap:'wrap',gap:8}}>{[500,1000,5000].map(value => <ActionButton key={value} title={`${value >= 1000 ? value / 1000 : value}${value >= 1000 ? ' km' : ' m'}`} variant="secondary" disabled={locked} onPress={() => { setRadius(String(value)); setFieldErrors(current => ({...current, radius:''})); }} />)}</View>
+    <Field label={t('declarationRadius')} value={radius} onChangeText={value => { setRadius(value); setFieldErrors(current => ({...current, radius:''})); }} keyboardType="numeric" editable={!locked} />
+    {fieldErrors.radius && <AppText style={{color:theme.danger}}>{t(fieldErrors.radius)}</AppText>}
     <AppText variant="heading">{t('declarationSeverity')}</AppText>
     {(['CRITICAL','HIGH','MODERATE','LOW'] as const).map(code => <Choice key={code} label={t(`severity${code}`)} selected={severity === code} disabled={locked} onPress={() => setSeverity(code)} />)}
-    <AppText variant="heading">{t('declarationSourceLanguage')}</AppText>
-    {LANGUAGE_CODES.map(code => <Choice key={code} label={languageNames[code].native} selected={sourceLanguage === code} disabled={locked} onPress={() => setSourceLanguage(code)} />)}
-    <Field label={t('declarationOriginal')} value={original} onChangeText={setOriginal} multiline maxLength={8000} editable={!locked} />
-    <AppText variant="heading">{t('declarationAction')}</AppText>
-    {(['STAY_PUT','AVOID_TRAVEL','EVACUATE','OTHER'] as const).map(code => <Choice key={code} label={t(`action${code}`)} selected={action === code} disabled={locked} onPress={() => setAction(code)} />)}
-    <Field label={t('declarationReview')} value={reviewMinutes} onChangeText={setReviewMinutes} keyboardType="numeric" editable={!locked} />
+    <Field label={t('declarationOriginal')} value={original} onChangeText={value => { setOriginal(value); setFieldErrors(current => ({...current, instructions:''})); }} multiline maxLength={8000} editable={!locked} />
+    {fieldErrors.instructions && <AppText style={{color:theme.danger}}>{t(fieldErrors.instructions)}</AppText>}
+    <ActionButton title={t(advancedOpen ? 'declarationHideOptions' : 'declarationMoreOptions')} variant="secondary" disabled={locked} onPress={() => setAdvancedOpen(value => !value)} />
+    {advancedOpen && <View style={{gap:16,padding:16,borderRadius:16,borderWidth:1,borderColor:theme.border}}>
+      <AppText variant="heading">{t('declarationMoreOptions')}</AppText>
+      <AppText variant="caption">{t('declarationDefaultsHelp')}</AppText>
+      <AppText variant="heading">{t('declarationSourceLanguage')}</AppText>
+      {LANGUAGE_CODES.map(code => <Choice key={code} label={languageNames[code].native} selected={sourceLanguage === code} disabled={locked} onPress={() => setSourceLanguage(code)} />)}
+      <AppText variant="heading">{t('declarationAction')}</AppText>
+      {(['STAY_PUT','AVOID_TRAVEL','EVACUATE','OTHER'] as const).map(code => <Choice key={code} label={t(`action${code}`)} selected={action === code} disabled={locked} onPress={() => setAction(code)} />)}
+      <Field label={t('declarationReview')} value={reviewMinutes} onChangeText={value => { setReviewMinutes(value); setFieldErrors(current => ({...current, review:''})); }} keyboardType="numeric" editable={!locked} />
+      {fieldErrors.review && <AppText style={{color:theme.danger}}>{t(fieldErrors.review)}</AppText>}
+    </View>}
     {error && <AppText style={{color:theme.danger}}>{t(error)}</AppText>}
     <Modal visible={existingOpen} animationType="slide" onRequestClose={() => setExistingOpen(false)}>
       <View style={{flex:1,backgroundColor:theme.background,padding:20,paddingTop:safe.top+20,paddingBottom:safe.bottom+20,gap:16}}>
