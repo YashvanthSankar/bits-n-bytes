@@ -17,8 +17,8 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 | Jev cadence/budget | Hourly periodic reassessment, immediate observation-triggered queue,2 calls/assessment,100/day default. Today's dev reset completed;3 blocked jobs finished. |
 | Android | rc.1 public but reported map initialization crash. rc.2 local production APK built/verified with fix, versionCode 4; physical retest pending. |
 | Distribution | rc.2 GitHub upload STOPPED by user; draft checksum only. No active upload/build. iOS simulator uses dev; APK uses prod. Physical iOS delivery pending. |
-| Not implemented | Nearby chat/moderation and full recovery/privacy/retention/deletion. Contacts explicitly deferred. |
-| Verification |280 tests / 46 files, strict TypeScript/lint and local release build pass. These do not establish full native acceptance. |
+| Not implemented | Full recovery/privacy/retention/deletion and chat authority announcements/mute follow-ups. Nearby community chat is implemented; moderation removed by user. Contacts deferred. |
+| Verification |293 tests / 49 files, strict TypeScript/lint; final release APK pending. These do not establish full native acceptance. |
 | DEMO Jev evidence notices | Implemented backend/UI test workflow: active DEMO authority creates a contained circle notice with a two-hour default/24-hour cap, review and early withdrawal. It is stored outside official SACHET records and enters only overlapping DEMO incident evidence. Physical two-account acceptance remains pending. |
 
 ### Requested UI checkpoint — 2026-10-10
@@ -33,13 +33,17 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 - [x] UI06 Display emergency notice, issuer, severity, DEMO and nearest shelter details in the first popup/card; remove read-step buttons and generic filler. TypeScript/lint and 280 tests/46 files pass; native first-popup acceptance pending.
 - [x] UI07 Simplify the DEMO authority workspace: keep immediate DEMO emergency publication as the only primary action; tuck optional test-notice tooling behind DEMO testing tools. Move specialist declaration controls behind More options, add radius presets/inline validation and localize the DEMO-notice workflow. Full suite (290 tests/48 files), strict TypeScript and lint pass; physical two-account DEMO acceptance remains pending.
 
+- [x] UI07 Group chat messages and provide a new-message control without reader scroll jumps; send captures location first. Chat UX/grouping regressions and293 tests pass.
+- [x] UI08 Default compact map location control, recenter/report hierarchy, concise incident cards/detail disclosure. TypeScript/lint, existing incident/alert tests and simulator map review pass; full populated device matrix remains pending.
+- [x] UI09 Compact Settings values/labels, brief DEMO disclaimer and SACHET back/XML cleanup. Six-language parity, logout and SACHET navigation regressions pass.
+
 ### Next executable work
 
 - [ ] NOW01 Retest local rc.2 location→map on the affected Android device; verify Google login/restore/sign-out and capture actual outcome.
 - [ ] NOW02 Run two-client inside/outside/stale-location emergency acceptance, translation fallback, dismissal/reopen and DEMO isolation (N10).
 - [ ] NOW03 Verify authority shelter/report/declaration/endings on native clients; then complete outstanding incident review/correction/merge controls (I08,A01–A06).
 - [ ] NOW04 Complete source urgent/advisory/geometry behavior and held-out Jev evaluation (E02/E03/P07).
-- [ ] NOW05 Implement chat/moderation (C01–C07), then recovery/privacy/retention (R01–R08).
+- [ ] NOW05 Finish recovery/privacy/retention (R01–R08); nearby community chat is implemented without moderation by user override.
 - [ ] NOW06 Finish physical iOS distribution, language review and submission artifacts (Q/S). rc.2 publication is paused; resume only on new user request.
 - [x] DEMO01 Add authority-created DEMO-only SACHET-style test evidence notices with assigned-jurisdiction containment, idempotent audited create/withdraw, explicit evidence label and no official/LIVE publication path. Automated backend/UI checks recorded; physical two-account test remains pending.
 
@@ -566,3 +570,12 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 2026-10-10 final frontend scope: original cobalt restored throughout chat send/sent bubbles; no dark decorative header cards. Removed SACHET detail's original CAP XML external button and redundant bottom list button; added visible44px top back control with router-back/list fallback and six localized accessible labels. Latest verification pending final check.
 
 2026-10-10 release checkpoint: strict TypeScript, Expo lint and288 tests/47files pass, including updated SACHET back/fallback and XML removal, GPS500m chat vs200m reporting, radius/privacy/expiry/auth/idempotency/burst+hour limits. User now explicitly requested releasing the new APK after building; this supersedes prior publication stop for this new combined snapshot only. Next build rc.5, verify signing/package/version/fonts/prodbackend/no configured secrets/ZIP/checksum, then publish GitHub testing prerelease. Physical Android, two-device chat, large text and six-language journeys remain unverified.
+
+
+## 2026-10-10 — Final requested layout pass
+- Chat: compact header, adjacent sender grouping within5min/same day, timestamps at group ends,44px inline send, near-limit counter, new-message control while reading older content, quieter offline/location recovery. No change to geographic/auth/rate/expiry enforcement.
+- Map: default collapsed location pill, separate recenter control, one report action and compact persistent emergency preview. Global first-attention popup still directly displays full instructions, issuer/severity/DEMO and nearest shelter details; incident and alert detail retain provenance.
+- Incident cards lead with hazard/locality, accessible activity dot, age and witness count; detailed assessment is on the detail screen. Detail leads with hazard/place, primary contribution action and icon map action; supporting witness/window/model detail stays in the evidence disclosure.
+- Settings: shorter six-language labels, language/current location age alongside rows, collapsed language options close only after successful save, brief explicit DEMO disclaimer. Original cobalt and icon-only navbar retained; no experimental dark hero blocks.
+- Verification: strict TypeScript, lint and293 tests/49files pass. Added grouping boundary/order and chat send/location-first/new-message-no-jump regressions. iOS simulator map/settings/chat screens inspected, including chat offline state; populated incident/alert, Android hardware, two-client chat and full accessibility/language matrix still need device acceptance.
+- Local rc.5 APK (versionCode7) completed, verified signature/ZIP/production-only bundle and delivered local link on request; not published. New final rc.6 APK will supersede it for publication under renewed user authorization.

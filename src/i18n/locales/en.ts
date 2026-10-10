@@ -1,4 +1,14 @@
 export const en = {
+  chatOffline: "Offline · sending paused",
+  chatConnect: "You’re offline",
+  chatConnectHelp: "Reconnect to see nearby messages.",
+
+  chatNewMessages: "New messages",
+  settingsProfile: "Profile",
+  settingsLanguage: "Language",
+  settingsLocation: "Location",
+  demoShortHelp: "Test alerts only. Not real emergencies.",
+
   sachetBack: "Back to alerts",
   navSachet: 'SACHET',
   chatNearby: "Within 15 km · disappears after 24h",

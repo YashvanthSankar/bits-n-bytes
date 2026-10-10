@@ -1,8 +1,8 @@
 import { EmergencyNotice } from './EmergencyNotice';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
-import { usePathname } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { Component, type PropsWithChildren, useEffect, useState } from 'react';
-import { AppState, Modal, ScrollView, View } from 'react-native';
+import { AppState, Modal, Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../convex/_generated/api';
@@ -13,7 +13,7 @@ import { compareAlerts } from '../../domain/alertOrder';
 import { POLICY } from '../../domain/policy';
 
 /** Mounted on a focused tourist page; dismissing attention never removes the warning. */
-export function EmergencyAlerts({ global = false }: { global?: boolean }) {
+export function EmergencyAlerts({ global = false, compact = false }: { global?: boolean; compact?: boolean }) {
   const { t } = useTranslation(), theme = useTheme(), safe = useSafeAreaInsets();
   const { isAuthenticated } = useConvexAuth(), { fix, signedOut } = useLocationSession();
   const result = useQuery(api.alerts.active, isAuthenticated && fix && !signedOut ? {} : 'skip');
@@ -39,7 +39,11 @@ export function EmergencyAlerts({ global = false }: { global?: boolean }) {
   }
   if (!isAuthenticated || signedOut || !fix) return null;
   return <>
-    {!global && items.map(item => <View key={item.id} style={{ padding: 14, gap: 8, borderRadius: 16, borderWidth: 1, borderColor: item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision) ? theme.danger : theme.warning, backgroundColor: theme.surface }}>
+    {!global && compact && items.map(item => <Pressable key={item.id} accessibilityRole="button" onPress={()=>router.push({pathname:'/alert/[id]',params:{id:item.id}})} style={{padding:12,gap:4,borderRadius:16,backgroundColor:theme.surface,borderLeftWidth:3,borderLeftColor:theme.danger}}>
+      <AppText variant="caption" style={{color:theme.danger,fontWeight:'700'}}>{item.audience==='DEMO'?'DEMO · ':''}{t('emergencyActive')} · {t(`severity${item.severity}`)}</AppText>
+      <AppText variant="caption">{item.locality}</AppText>
+    </Pressable>)}
+    {!global && !compact && items.map(item => <View key={item.id} style={{ padding: 14, gap: 8, borderRadius: 16, borderWidth: 1, borderColor: item.needsAttention && !hidden.has(item.exposureId + ':' + item.revision) ? theme.danger : theme.warning, backgroundColor: theme.surface }}>
       <AppText style={{ color: theme.danger, fontWeight: '700' }}>{item.audience === 'DEMO' ? 'DEMO · ' : ''}{t('emergencyActive')}</AppText>
       <EmergencyNotice alertId={item.id} revision={item.revision} now={now}/>
     </View>)}

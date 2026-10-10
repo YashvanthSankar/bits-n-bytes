@@ -6,7 +6,7 @@ Emergency UI (2026-10-10): first popup and persistent warning now display the no
 
 Latest UI/startup checkpoint (2026-10-10): compact collapsible map panel, SACHET tab in place of unimplemented Chat, icon controls, relative incident timestamps and expandable assessment details. Returning-user root startup remembers completed setup, restores authentication and quietly refreshes location before Map. Strict TypeScript/lint and 277 tests/46 files pass; authenticated native cold-start and populated UI/device matrix still require acceptance. Existing APK artifacts do not contain these source changes.
 
-Updated: 2026-10-10. Source checkpoint `0a3443d`; later documentation-only commits do not change the APK. This page supersedes older status summaries. PLAN.md remains the core product contract with its dated user overrides. Implementation, automated checks and physical-device acceptance are separate.
+Updated: 2026-10-10. Latest feature checkpoint `f7d0eaf`; final requested layout pass described at the end of this page supersedes older snapshot notes. Local rc.5 is verified; final rc.6 build/publication pending. This page supersedes older status summaries. PLAN.md remains the core product contract with its dated user overrides. Implementation, automated checks and physical-device acceptance are separate.
 
 ## Environments and artifacts
 
@@ -99,3 +99,12 @@ Use [TODO.md](../TODO.md) for task IDs, [acceptance-ledger.md](acceptance-ledger
 2026-10-10 final frontend scope: original cobalt restored throughout chat send/sent bubbles; no dark decorative header cards. Removed SACHET detail's original CAP XML external button and redundant bottom list button; added visible44px top back control with router-back/list fallback and six localized accessible labels. Latest verification pending final check.
 
 2026-10-10 release checkpoint: strict TypeScript, Expo lint and288 tests/47files pass, including updated SACHET back/fallback and XML removal, GPS500m chat vs200m reporting, radius/privacy/expiry/auth/idempotency/burst+hour limits. User now explicitly requested releasing the new APK after building; this supersedes prior publication stop for this new combined snapshot only. Next build rc.5, verify signing/package/version/fonts/prodbackend/no configured secrets/ZIP/checksum, then publish GitHub testing prerelease. Physical Android, two-device chat, large text and six-language journeys remain unverified.
+
+
+## 2026-10-10 — Final requested layout pass
+- Chat: compact header, adjacent sender grouping within5min/same day, timestamps at group ends,44px inline send, near-limit counter, new-message control while reading older content, quieter offline/location recovery. No change to geographic/auth/rate/expiry enforcement.
+- Map: default collapsed location pill, separate recenter control, one report action and compact persistent emergency preview. Global first-attention popup still directly displays full instructions, issuer/severity/DEMO and nearest shelter details; incident and alert detail retain provenance.
+- Incident cards lead with hazard/locality, accessible activity dot, age and witness count; detailed assessment is on the detail screen. Detail leads with hazard/place, primary contribution action and icon map action; supporting witness/window/model detail stays in the evidence disclosure.
+- Settings: shorter six-language labels, language/current location age alongside rows, collapsed language options close only after successful save, brief explicit DEMO disclaimer. Original cobalt and icon-only navbar retained; no experimental dark hero blocks.
+- Verification: strict TypeScript, lint and293 tests/49files pass. Added grouping boundary/order and chat send/location-first/new-message-no-jump regressions. iOS simulator map/settings/chat screens inspected, including chat offline state; populated incident/alert, Android hardware, two-client chat and full accessibility/language matrix still need device acceptance.
+- Local rc.5 APK (versionCode7) completed, verified signature/ZIP/production-only bundle and delivered local link on request; not published. New final rc.6 APK will supersede it for publication under renewed user authorization.

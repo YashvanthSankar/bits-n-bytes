@@ -25,15 +25,15 @@ export function Screen({ children, footer }: PropsWithChildren<{ footer?: ReactN
     </View>
   </SafeAreaView>;
 }
-export function ActionButton({ title, onPress, disabled = false, busy = false, variant = 'primary', icon: Icon = ArrowRight }: {
-  icon?: LucideIcon; title: string; onPress: () => void; disabled?: boolean; busy?: boolean; variant?: 'primary' | 'secondary' | 'danger';
+export function ActionButton({ title, onPress, disabled = false, busy = false, variant = 'primary', icon: Icon = ArrowRight, iconOnly = false }: {
+  iconOnly?: boolean; icon?: LucideIcon; title: string; onPress: () => void; disabled?: boolean; busy?: boolean; variant?: 'primary' | 'secondary' | 'danger';
 }) {
   const theme = useTheme();
-  return <Pressable onPress={onPress} disabled={disabled || busy} accessibilityRole="button" accessibilityState={{ disabled: disabled || busy, busy }}
-    style={({ pressed }) => ({ minHeight: 52, borderRadius: 16, padding: spacing.lg, borderWidth: variant === 'primary' ? 0 : 1, borderColor: theme.border, backgroundColor: variant === 'primary' ? theme.accent : theme.surface, opacity: disabled ? 0.55 : pressed ? 0.8 : 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm })}>
+  return <Pressable onPress={onPress} disabled={disabled || busy} accessibilityRole="button" accessibilityLabel={title} accessibilityState={{ disabled: disabled || busy, busy }}
+    style={({ pressed }) => ({ minHeight: 52, minWidth: 52, borderRadius: 16, padding: spacing.lg, borderWidth: variant === 'primary' ? 0 : 1, borderColor: theme.border, backgroundColor: variant === 'primary' ? theme.accent : theme.surface, opacity: disabled ? 0.55 : pressed ? 0.8 : 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm })}>
     {busy && <ActivityIndicator color={variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.accent} />}
     {!busy && <Icon size={20} accessible={false} color={variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.accent} />}
-    <AppText style={{ color: variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.text, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}>{title}</AppText>
+    {!iconOnly && <AppText style={{ color: variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.text, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}>{title}</AppText>}
   </Pressable>;
 }
 export function LoadingState() {

@@ -1,5 +1,15 @@
 import type { Translation } from './en';
 export const ta: Translation = {
+  chatOffline: "இணையமில்லை · அனுப்புதல் நிறுத்தப்பட்டது",
+  chatConnect: "இணைய இணைப்பு இல்லை",
+  chatConnectHelp: "அருகிலுள்ள செய்திகளைக் காண மீண்டும் இணைக்கவும்.",
+
+  chatNewMessages: "புதிய செய்திகள்",
+  settingsProfile: "சுயவிவரம்",
+  settingsLanguage: "மொழி",
+  settingsLocation: "இருப்பிடம்",
+  demoShortHelp: "சோதனை எச்சரிக்கைகள் மட்டுமே. உண்மையான அவசரநிலை அல்ல.",
+
   sachetBack: "எச்சரிக்கைகளுக்குத் திரும்பு",
   navSachet: 'SACHET',
   chatNearby: "15 கிமீ அருகில் · 24 மணிநேரத்தில் மறையும்",

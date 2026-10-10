@@ -1,5 +1,15 @@
 import type { Translation } from './en';
 export const hi: Translation = {
+  chatOffline: "ऑफ़लाइन · भेजना रुका है",
+  chatConnect: "आप ऑफ़लाइन हैं",
+  chatConnectHelp: "आसपास के संदेश देखने के लिए दोबारा कनेक्ट करें।",
+
+  chatNewMessages: "नए संदेश",
+  settingsProfile: "प्रोफ़ाइल",
+  settingsLanguage: "भाषा",
+  settingsLocation: "स्थान",
+  demoShortHelp: "केवल परीक्षण अलर्ट। वास्तविक आपातस्थिति नहीं।",
+
   sachetBack: "अलर्ट पर वापस जाएँ",
   navSachet: 'SACHET',
   chatNearby: "15 किमी के भीतर · 24 घंटे बाद हटेगा",

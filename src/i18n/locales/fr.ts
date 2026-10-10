@@ -1,5 +1,15 @@
 import type { Translation } from './en';
 export const fr: Translation = {
+  chatOffline: "Hors ligne · envoi suspendu",
+  chatConnect: "Vous êtes hors ligne",
+  chatConnectHelp: "Reconnectez-vous pour voir les messages à proximité.",
+
+  chatNewMessages: "Nouveaux messages",
+  settingsProfile: "Profil",
+  settingsLanguage: "Langue",
+  settingsLocation: "Position",
+  demoShortHelp: "Alertes de test uniquement. Pas de véritables urgences.",
+
   sachetBack: "Retour aux alertes",
   navSachet: 'SACHET',
   chatNearby: "À 15 km · disparaît après 24 h",

@@ -3,7 +3,7 @@ import { useAuthActions } from '@convex-dev/auth/react';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 import { randomUUID } from 'expo-crypto';
 import { router } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../convex/_generated/api';
@@ -34,7 +34,7 @@ function Settings() {
       pending.current??={requestId:randomUUID(),expectedRevision:own.profile.revision,language:code};
       const selected=pending.current.language;
       await save(pending.current); pending.current=null;setUncertain(false);
-      await changeLanguage(selected);
+      await changeLanguage(selected); setLanguagesOpen(false);
     } catch(err) {if(apiErrorCode(err)){pending.current=null;setUncertain(false);}else setUncertain(pending.current!==null);setError(errorTranslationKey(err));}
     finally {running.current=false;setBusy(false);}
   }
@@ -60,19 +60,18 @@ function Settings() {
     <AppText variant="title" accessibilityRole="header">{t('navSettings')}</AppText>
     {!isAuthenticated ? <ActionButton icon={LocateFixed} title={t('locationAction')} onPress={()=>router.replace('/location')} /> : own===undefined ? <LoadingState /> : <>
       <View style={{ gap: 4, backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden' }}>
-        <SettingsRow icon={UserRound} title={t('profileTitle')} detail={own.profile?.alias} onPress={()=>router.push('/profile')} disabled={busy} />
+        <SettingsRow icon={UserRound} title={t('settingsProfile')} detail={own.profile?.alias} onPress={()=>router.push('/profile')} disabled={busy} />
         {own.role === 'AUTHORITY' && <SettingsRow icon={ShieldCheck} title={t('authorityTitle')} onPress={()=>router.push('/authority')} disabled={busy} />}
         <SettingsRow icon={RefreshCw} title={t('refreshAccountAccess')} onPress={()=>void refreshAccess()} disabled={busy || uncertain} />
       </View>
       <View style={{ backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden' }}>
-        <SettingsRow icon={Languages} title={t('languageTitle')} detail={languageNames[language].native} expanded={languagesOpen} onPress={()=>setLanguagesOpen(value=>!value)} disabled={busy || uncertain} />
+        <SettingsRow icon={Languages} title={t('settingsLanguage')} value={languageNames[language].native} expanded={languagesOpen} onPress={()=>setLanguagesOpen(value=>!value)} disabled={busy || uncertain} />
         {languagesOpen && <View style={{ padding: 16, paddingTop: 0, gap: 8 }}>{LANGUAGE_CODES.map(code=><Choice key={code} label={languageNames[code].native} selected={language===code} disabled={busy || uncertain} onPress={()=>void select(code)} />)}</View>}
-        <SettingsRow icon={LocateFixed} title={t('locationCaptured')} onPress={()=>router.replace('/location')} disabled={busy} />
-        {fix && <View style={{ paddingHorizontal: 16, paddingBottom: 16 }}><RelativeTime timestamp={fix.observedAt}/></View>}
+        <SettingsRow icon={LocateFixed} title={t('settingsLocation')} accessory={fix ? <RelativeTime timestamp={fix.observedAt}/> : undefined} onPress={()=>router.replace('/location')} disabled={busy} />
       </View>
       <View style={{ backgroundColor: theme.surface, borderRadius: 20, overflow: 'hidden' }}>
         <SettingsRow icon={FlaskConical} title="DEMO" detail={t(own.profile?.demoEnabled ? 'disableDemoMode' : 'enableDemoMode')} onPress={()=>void toggleDemo()} disabled={busy || uncertain} />
-        <AppText variant="caption" style={{ paddingHorizontal: 16, paddingBottom: 16, color: theme.secondary }}>{t('demoModeHelp')}</AppText>
+        <AppText variant="caption" style={{ paddingHorizontal: 16, paddingBottom: 16, color: theme.secondary }}>{t('demoShortHelp')}</AppText>
       </View>
       {busy && <LoadingState />}
       {error && <AppText style={{color:theme.danger}} accessibilityLiveRegion="polite">{t(error)}</AppText>}
@@ -83,12 +82,14 @@ function Settings() {
 }
 export default function SettingsScreen() {return <ReadBoundary><Settings /></ReadBoundary>;}
 
-function SettingsRow({ icon: Icon, title, detail, onPress, disabled, danger = false, expanded }: { icon: LucideIcon; title: string; detail?: string | undefined; onPress: () => void; disabled?: boolean; danger?: boolean; expanded?: boolean }) {
+function SettingsRow({ icon: Icon, title, detail, value, accessory, onPress, disabled, danger = false, expanded }: { icon: LucideIcon; title: string; detail?: string | undefined; value?: string; accessory?: ReactNode; onPress: () => void; disabled?: boolean; danger?: boolean; expanded?: boolean }) {
   const theme = useTheme();
   return <Pressable accessibilityRole="button" accessibilityState={{ disabled: !!disabled, ...(expanded !== undefined ? { expanded } : {}) }} disabled={disabled} onPress={onPress}
     style={({pressed})=>({minHeight:60,padding:16,flexDirection:'row',alignItems:'center',gap:12,backgroundColor:pressed?theme.muted:'transparent',opacity:disabled ? .5 : 1})}>
     <Icon size={21} color={danger?theme.danger:theme.accent} accessible={false}/>
     <View style={{flex:1,gap:3}}><AppText style={{color:danger?theme.danger:theme.text,fontWeight:'500'}}>{title}</AppText>{detail && <AppText variant="caption" style={{color:theme.secondary}}>{detail}</AppText>}</View>
+    {value && <AppText variant="caption" style={{color:theme.secondary,maxWidth:'40%',textAlign:'right'}}>{value}</AppText>}
+    {accessory}
     {!danger && (expanded ? <ChevronDown size={18} color={theme.secondary}/> : <ChevronRight size={18} color={theme.secondary}/>)}
   </Pressable>;
 }
