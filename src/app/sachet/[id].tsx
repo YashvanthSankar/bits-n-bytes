@@ -1,21 +1,25 @@
 import { useConvexAuth, useQuery } from 'convex/react';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
-import { Linking, View } from 'react-native';
+import { ArrowLeft } from 'lucide-react-native';
+import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
-import { ActionButton, AppText, LoadingState, Screen } from '../../components/ui';
+import { AppText, LoadingState, Screen } from '../../components/ui';
 import { ReadBoundary } from '../../components/ReadBoundary';
 import { useTheme } from '../../theme/useTheme';
 import { isLanguageCode } from '../../i18n/resources';
 function Detail(){
  const {t,i18n}=useTranslation(),theme=useTheme(),{id}=useLocalSearchParams<{id:string}>(),{isAuthenticated}=useConvexAuth();
- const [error,setError]=useState(false);const language=isLanguageCode(i18n.language)?i18n.language:'en';
+ const language=isLanguageCode(i18n.language)?i18n.language:'en';
  const notice=useQuery(api.sachetPublic.detail,isAuthenticated&&id?{noticeId:id as Id<'officialNotices'>,language}:'skip');
  const date=(time:number)=>new Date(time).toLocaleString(i18n.language);
- async function source(){if(!notice?.sourceUrl)return;try{setError(false);await Linking.openURL(notice.sourceUrl);}catch{setError(true);}}
- return <Screen footer={<>{error&&<AppText>{t('destinationUnavailable')}</AppText>}{notice?.sourceUrl&&<ActionButton title={t('sachetOriginalXml')} variant="secondary" onPress={()=>void source()}/>}<ActionButton title={t('sachetTitle')} variant="secondary" onPress={()=>router.replace('/sachet')}/></>}>
+ return <Screen>
+  <View style={{flexDirection:'row',alignItems:'center',gap:12}}>
+   <Pressable accessibilityRole="button" accessibilityLabel={t('sachetBack')} onPress={()=>router.canGoBack()?router.back():router.replace('/sachet')}
+    style={({pressed})=>({minWidth:44,minHeight:44,borderRadius:22,backgroundColor:pressed?theme.selection:theme.surface,alignItems:'center',justifyContent:'center'})}><ArrowLeft size={22} color={theme.accent}/></Pressable>
+   <AppText style={{color:theme.secondary,fontWeight:'600'}}>SACHET</AppText>
+  </View>
   {!notice?<LoadingState/>:<><AppText variant="caption">NDMA · SACHET</AppText><AppText variant="title">{notice.headline||notice.event}</AppText><AppText>{notice.issuer}</AppText>
    <AppText style={{color:notice.expired||!notice.active?theme.secondary:theme.accent}}>{t(!notice.active?'sachetSuperseded':notice.expired?'sachetExpired':'sachetPublished')} · {notice.severity}</AppText>
    <AppText>{t('sachetUrgency')}: {notice.urgency} · {t('sachetCertainty')}: {notice.certainty}</AppText>

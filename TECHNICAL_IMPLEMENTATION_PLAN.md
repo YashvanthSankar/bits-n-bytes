@@ -1,3 +1,5 @@
+> User override — 2026-10-10: nearby community chat is now authorized without moderation, reports, appeals or restriction queues. First delivery is a live plain-text community stream using public aliases, fixed private message origins, exact 15 km radius, fresh India GPS and 24-hour expiry. Existing burst/hour limits remain. Authority announcements/incident cards and alias mute are follow-ups, not part of this community chat delivery. Chat has no automatic incident/evidence effects. Navigation now includes implemented Chat and SACHET, with icon-only controls and accessible labels (latest user override).
+
 > Implementation status: [docs/current-state.md](docs/current-state.md) distinguishes implemented functionality, acceptance gaps and deferred scope. This document includes planned features and is not proof they are complete.
 
 > Assessment cadence override — 2026-10-10: periodic Jev reassessment is now hourly (60 minutes). New/updated observations still queue immediately; outage retries remain 1/5/15 minutes.

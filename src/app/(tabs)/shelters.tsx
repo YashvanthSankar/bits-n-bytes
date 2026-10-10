@@ -13,7 +13,7 @@ import { useTheme } from '../../theme/useTheme';
 function Shelters() {
   const {t}=useTranslation();const theme=useTheme();const {isAuthenticated}=useConvexAuth();const {fix}=useLocationSession();
   const listed=useQuery(api.shelters.nearby,isAuthenticated && fix?{}:'skip');
-  return <Screen><AppText variant="title" accessibilityRole="header">{t('navShelters')}</AppText><AppText>{t('shelterListNotice')}</AppText>
+  return <Screen><AppText variant="title" accessibilityRole="header">{t('navShelters')}</AppText><AppText variant="caption" style={{ color: theme.secondary }}>{t('shelterListNotice')}</AppText>
     {!isAuthenticated || !fix ? <ActionButton title={t('locationAction')} onPress={()=>router.replace('/location')} /> : !listed ? <LoadingState /> : <>
       {listed.partial && <AppText>{t('matchesPartial')}</AppText>}
       {!listed.items.length && <EmptyState title={t('shelterEmpty')} message={t('shelterEmptyNotice')} />}

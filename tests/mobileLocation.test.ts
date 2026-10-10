@@ -53,3 +53,9 @@ it('records a newly established outside-country fix before rejecting admission',
   await expect(currentIndiaFix(record)).rejects.toMatchObject({reason:'outside'});
   expect(record).toHaveBeenCalledWith(expect.objectContaining({fix:expect.objectContaining({point:{latitude:1.3521,longitude:103.8198}})}));
 });
+
+it('allows chat accuracy up to 500 metres without weakening report admission', async () => {
+  mock.position.mockResolvedValue({ ...position(), coords: { ...position().coords, accuracy: 350 } });
+  await expect(currentIndiaFix()).rejects.toMatchObject({ reason: 'accuracy' });
+  await expect(currentIndiaFix(undefined, { maxAgeMs: 300_000, maxAccuracyM: 500 })).resolves.toMatchObject({ fix: { accuracyM: 350 } });
+});

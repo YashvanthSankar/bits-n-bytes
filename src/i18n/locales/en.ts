@@ -1,4 +1,17 @@
 export const en = {
+  sachetBack: "Back to alerts",
+  navSachet: 'SACHET',
+  chatNearby: "Within 15 km · disappears after 24h",
+  chatCommunity: "Community chat · unverified",
+  chatRefresh: "Refresh location",
+  chatEmpty: "Say hello nearby",
+  chatStart: "Be the first to start a conversation.",
+  chatLatest: "Showing the latest nearby messages",
+  chatYou: "You",
+  chatMessage: "Message",
+  chatPlaceholder: "What’s happening nearby?",
+  chatSend: "Send",
+
   relativeNow: "Just now",
   relativeMinutes: "{{count}} min ago",
   relativeHours: "{{count}} hr ago",

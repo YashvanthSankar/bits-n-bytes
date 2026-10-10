@@ -12,8 +12,8 @@ export const colors = {
 } as const;
 export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 24, section: 32, page: 40 } as const;
 export const typography = {
-  title: { fontSize: 32, lineHeight: 40, fontWeight: '700' as const },
-  heading: { fontSize: 22, lineHeight: 30, fontWeight: '600' as const },
+  title: { fontSize: 30, lineHeight: 38, fontWeight: '700' as const },
+  heading: { fontSize: 20, lineHeight: 28, fontWeight: '600' as const },
   body: { fontSize: 16, lineHeight: 24 },
-  caption: { fontSize: 14, lineHeight: 21 },
+  caption: { fontSize: 13, lineHeight: 20 },
 } as const;

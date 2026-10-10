@@ -7,6 +7,8 @@ import { weatherData } from './lib/weatherValidators';
 
 export default defineSchema({
   ...authTables,
+  chatMessages: defineTable({ userId: v.id('users'), alias: v.string(), body: v.string(), origin: types.point, cell: v.string(), createdAt: v.number(), expiresAt: v.number() })
+    .index('by_cell_createdAt', ['cell', 'createdAt']).index('by_user_createdAt', ['userId', 'createdAt']).index('by_expiresAt', ['expiresAt']),
   assessmentJobs: defineTable({ incidentId: v.id('incidents'), evidenceGeneration: v.number(), controlRevision: v.number(), status: v.union(v.literal('PENDING'), v.literal('RUNNING'), v.literal('DONE'), v.literal('FAILED'), v.literal('SUPERSEDED')), attempt: v.number(), runId: v.number(), dueAt: v.number(), leaseUntil: v.number(), snapshotId: v.optional(v.id('evidenceSnapshots')), lastError: v.optional(v.string()) }).index('by_incident', ['incidentId']).index('by_status_dueAt', ['status', 'dueAt']),
   assessments: defineTable({ incidentId: v.id('incidents'), snapshotId: v.id('evidenceSnapshots'), runId: v.number(), qualification: types.qualification, optionProbability: v.number(), confidence: v.number(), severity: types.severity, model: v.string(), rubric: v.string(), judgmentsJson: v.string(), inputTokens: v.number(), outputTokens: v.number(), latencyMs: v.number(), outcome: v.string(), createdAt: v.number() }).index('by_incident_createdAt', ['incidentId', 'createdAt']).index('by_snapshot_run', ['snapshotId', 'runId']),
   suppressionRules: defineTable({ incidentId: v.id('incidents'), agencyId: v.id('agencies'), endsAt: v.number(), createdAt: v.number() }).index('by_incident', ['incidentId']),

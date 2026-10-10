@@ -17,7 +17,7 @@ export function Screen({ children, footer }: PropsWithChildren<{ footer?: ReactN
   return <SafeAreaView edges={navigationInset === null ? ['top', 'bottom', 'left', 'right'] : ['top', 'left', 'right']} style={{ flex: 1, backgroundColor: theme.background }}>
     <View style={{flex:1,paddingBottom:navigationInset??0}}>
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, padding: spacing.xl, width: '100%', maxWidth: 640, alignSelf: 'center', gap: spacing.xxl }} keyboardShouldPersistTaps="handled">{children}</ScrollView>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, padding: spacing.xl, width: '100%', maxWidth: 640, alignSelf: 'center', gap: spacing.xl }} keyboardShouldPersistTaps="handled">{children}</ScrollView>
     {footer && <View style={{ borderTopWidth: 1, borderTopColor: theme.border, backgroundColor: theme.background }}>
       <View style={{ width: '100%', maxWidth: 640, alignSelf: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg, gap: spacing.md }}>{footer}</View>
     </View>}
@@ -30,7 +30,7 @@ export function ActionButton({ title, onPress, disabled = false, busy = false, v
 }) {
   const theme = useTheme();
   return <Pressable onPress={onPress} disabled={disabled || busy} accessibilityRole="button" accessibilityState={{ disabled: disabled || busy, busy }}
-    style={({ pressed }) => ({ minHeight: 52, borderRadius: 12, padding: spacing.lg, backgroundColor: variant === 'primary' ? theme.accent : theme.muted, opacity: disabled ? 0.55 : pressed ? 0.8 : 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm })}>
+    style={({ pressed }) => ({ minHeight: 52, borderRadius: 16, padding: spacing.lg, borderWidth: variant === 'primary' ? 0 : 1, borderColor: theme.border, backgroundColor: variant === 'primary' ? theme.accent : theme.surface, opacity: disabled ? 0.55 : pressed ? 0.8 : 1, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: spacing.sm })}>
     {busy && <ActivityIndicator color={variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.accent} />}
     {!busy && <Icon size={20} accessible={false} color={variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.accent} />}
     <AppText style={{ color: variant === 'primary' ? theme.onAccent : variant === 'danger' ? theme.danger : theme.text, fontWeight: '600', textAlign: 'center', flexShrink: 1 }}>{title}</AppText>

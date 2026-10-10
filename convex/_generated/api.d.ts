@@ -15,6 +15,7 @@ import type * as auth from "../auth.js";
 import type * as authority from "../authority.js";
 import type * as authorityAccess from "../authorityAccess.js";
 import type * as authorityReports from "../authorityReports.js";
+import type * as chat from "../chat.js";
 import type * as crons from "../crons.js";
 import type * as declarations from "../declarations.js";
 import type * as demoNotices from "../demoNotices.js";
@@ -62,6 +63,7 @@ declare const fullApi: ApiFromModules<{
   authority: typeof authority;
   authorityAccess: typeof authorityAccess;
   authorityReports: typeof authorityReports;
+  chat: typeof chat;
   crons: typeof crons;
   declarations: typeof declarations;
   demoNotices: typeof demoNotices;

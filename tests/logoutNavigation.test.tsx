@@ -3,9 +3,9 @@ import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { expect, it, vi } from 'vitest';
 const Focus = createContext(true);
 const state=vi.hoisted(()=>({authenticated:true,signOut:vi.fn(),signIn:vi.fn(),browser:vi.fn(),replace:vi.fn(),permission:vi.fn(),locate:vi.fn(),navigate:null as null | ((path:string)=>void)}));
-vi.mock('lucide-react-native', () => Object.fromEntries(['UserRound','ShieldCheck','RefreshCw','LocateFixed','LogOut','FlaskConical'].map(name => [name, () => null])));
+vi.mock('lucide-react-native', () => Object.fromEntries(['UserRound','ShieldCheck','RefreshCw','LocateFixed','LogOut','FlaskConical','Languages','ChevronRight','ChevronDown'].map(name => [name, () => null])));
 vi.mock('@convex-dev/auth/react',()=>({useAuthActions:()=>({signOut:state.signOut,signIn:state.signIn})}));
-vi.mock('react-native',()=>({View:'View',Platform:{OS:'ios'}}));
+vi.mock('react-native',()=>({View:'View',Pressable:'Pressable',Platform:{OS:'ios'}}));
 vi.mock('expo-router',()=>({useFocusEffect:(callback:()=>void)=>{const focused=React.useContext(Focus);React.useEffect(()=>focused?callback():undefined,[focused,callback]);},router:{replace:(path:string)=>{state.replace(path);state.navigate?.(path);},push:vi.fn()}}));
 vi.mock('expo-linking',()=>({createURL:()=> 'gudtour://auth/callback'}));
 vi.mock('expo-location',()=>({getForegroundPermissionsAsync:state.permission}));
@@ -28,7 +28,7 @@ it('stays on login after logout even while the server auth hook briefly reports 
  Object.assign(globalThis,{IS_REACT_ACT_ENVIRONMENT:true});vi.clearAllMocks();state.permission.mockResolvedValue({granted:true});state.authenticated=true;state.signOut.mockResolvedValue(undefined);let screen!:ReactTestRenderer;
  await act(async()=>{screen=create(<LocationSession><Routes/></LocationSession>);});
  try{
-  await act(async()=>screen.root.findAllByType('button').find(b=>b.props.title==='signOut')!.props.onPress());
+  await act(async()=>screen.root.findAll(node=>node.props.title==='signOut' && typeof node.props.onPress==='function')[0]!.props.onPress());
   expect(state.replace.mock.calls).toEqual([['/login']]);
   expect(state.permission).not.toHaveBeenCalled();expect(state.locate).not.toHaveBeenCalled();
   expect(JSON.stringify(screen.toJSON())).toContain('googleSignIn');
@@ -46,7 +46,7 @@ it('starts Google login directly after logout by capturing GPS without reopening
  let screen!:ReactTestRenderer;
  await act(async()=>{screen=create(<LocationSession><Routes/></LocationSession>);});
  try{
-  await act(async()=>screen.root.findAllByType('button').find(b=>b.props.title==='signOut')!.props.onPress());
+  await act(async()=>screen.root.findAll(node=>node.props.title==='signOut' && typeof node.props.onPress==='function')[0]!.props.onPress());
   state.authenticated=false;await act(async()=>screen.update(<LocationSession><Routes/></LocationSession>));
   await act(async()=>screen.root.findByType(Login).findAllByType('button').find(b=>b.props.title==='googleSignIn')!.props.onPress());
   expect(state.locate).toHaveBeenCalledTimes(1);expect(state.signIn).toHaveBeenCalledWith('google',expect.any(Object));expect(state.browser).toHaveBeenCalledTimes(1);

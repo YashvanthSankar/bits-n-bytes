@@ -246,7 +246,7 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 **Done when:** Inspect a real CAP notice/weather response and record a live Jev Choice assessment. Test all three normalized outcomes with appropriate labeled cases, independent/stale reports, malformed/late/outage responses and authority precedence. A qualifying current result reaches the same proven alert path; source cancellation never creates a false all-clear.
 
 
-## M7 — Make nearby chat usable and moderated
+## M7 — Nearby community chat (moderation removed by user on 2026-10-10)
 
 **Goal:** Tourists can exchange local plain-text information; location, expiry, restrictions and authority moderation are enforced.
 
@@ -254,11 +254,11 @@ Provider-specific P05/P06/P07 checks may remain open until M6, P09 gates M4, and
 
 **Design reference:** Technical plan §§6, 8–9, 19, 21.
 
-- [ ] C01 Geospatial stream anchored to message origin: 15 km, <=5-minute/<=500-metre fix, chronological order, 24-hour expiry. Owner A.
+- [x] C01 Geospatial stream anchored to message origin: 15 km, <=5-minute/<=500-metre fix, chronological order, 24-hour expiry. Owner A.
 - [ ] C02 Plain-text composer <=500 characters, alias/locality labels and authority announcement attribution. Owner B.
-- [ ] C03 Limits five messages/minute and 30/hour; no links/media/DMs/private profile or precise origin disclosure. Owner A.
-- [ ] C04 Structured incident links remain separate from unverified chat; chat does not count as witnesses or trigger Jev. Owners A/B.
-- [ ] C05 Message reports, authority moderation queue, hide reason/placeholder, 24-hour posting restriction and one appeal. Owners A/D.
+- [x] C03 Limits five messages/minute and 30/hour; no links/media/DMs/private profile or precise origin disclosure. Owner A.
+- [x] C04 Structured incident links remain separate from unverified chat; chat does not count as witnesses or trigger Jev. Owners A/B.
+- C05 Removed by explicit user override: no moderation, reporting, restrictions or appeals workflow.
 - [ ] C06 Local alias mute; official alerts remain visible. Disable fresh delivery/posting when chat fix expires. Owner B.
 - [ ] C07 Expire live/cached messages and retain moderation evidence for specified seven-day/active-appeal periods. Owner A.
 
@@ -551,3 +551,17 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 - Android shared text and inputs now use bundled Inter regular/medium/semibold/bold through the Expo 57 font plugin; iOS keeps native system typography. Inter by Rasmus Andersson is distributed under SIL OFL 1.1; license bundled with @expo-google-fonts/inter (LICENSE_FONT).
 - Verification: strict TypeScript, lint and 280 tests / 46 files pass. Local signed production APK build running (exec42630), ignored output tmp/release-artifacts/GudTour-0.1.0-rc.4.apk and private log tmp/inter-local-build.log. Prior no-font build exec67777 canceled. No GitHub publication authorized. Artifact verification pending.
 - User now explicitly authorizes nearby proximity chat without moderation. This overrides prior moderation/report/appeal requirements; implement authenticated geographic chat, not moderation machinery. Existing private profile/location and official-emergency boundaries remain.
+
+
+## 2026-10-10 — Nearby chat and Settings/navigation refinement
+- C01/C03/C04 verification: authenticated Convex geohash candidate queries with exact 15 km origin filtering; immutable origin, public alias DTO only, 500-character text, 5/min and 30/hour limits, idempotent sends and immediate 24h read expiry. Plain text has no link activation/media/DMs; no incident/evidence/assessment writes. Cleanup deletes expired message bodies and private origins in bounded batches. No moderation tables/functions/UI.
+- Native chat: realtime subscription, message bubbles, original relative send time, offline indicator and disabled sending, GPS refresh recovery and fresh capture before send. Stream limited to latest 100, with honest truncation indicator. Six translated UI dictionaries. Authority announcements, structured chat incident cards and alias mute remain follow-ups; no false completion claim for C02/C06/C07 legacy scopes.
+- Deployed dev basic-newt-690 and production jovial-eagle-875 successfully. iOS simulator chat empty state/composer/navigation rendered after reload; no two-physical-client chat claim. Settings grouped rows, collapsed language selection, quieter sign out and labelled navigation added from user review feedback; large text/narrow width uses expanded navigation menu.
+- Font-only rc.4 APK verified: versionCode6, expected release signing certificate, ZIP integrity, Inter400/500/600/700 font resources, production hostname and no development hostname/configured server credentials. SHA256 33ecea7dae74e699b2dfb093990c861ec8c70b2cefe968f8c0824f6f2e9dfa52. Delivered local link; no GitHub publication. Final combined APK pending.
+
+
+2026-10-10 latest design decision: user explicitly selected ORIGINAL BLUE with better layouts and spacing, rejecting turquoise and palette experiments. Restored original cobalt tokens; no experimental dark header blocks remain. Navbar icon-only per explicit request (accessible labels and full expanded menu retained). Chat composer now one multiline input with adjacent44px circular send button, count only near limit, centered empty state, and no forced scroll while reading old messages. Settings grouped rows/collapsed language and typography/spacing hierarchy retained. Combined localAPK build pending after final checks.
+
+2026-10-10 final frontend scope: original cobalt restored throughout chat send/sent bubbles; no dark decorative header cards. Removed SACHET detail's original CAP XML external button and redundant bottom list button; added visible44px top back control with router-back/list fallback and six localized accessible labels. Latest verification pending final check.
+
+2026-10-10 release checkpoint: strict TypeScript, Expo lint and288 tests/47files pass, including updated SACHET back/fallback and XML removal, GPS500m chat vs200m reporting, radius/privacy/expiry/auth/idempotency/burst+hour limits. User now explicitly requested releasing the new APK after building; this supersedes prior publication stop for this new combined snapshot only. Next build rc.5, verify signing/package/version/fonts/prodbackend/no configured secrets/ZIP/checksum, then publish GitHub testing prerelease. Physical Android, two-device chat, large text and six-language journeys remain unverified.

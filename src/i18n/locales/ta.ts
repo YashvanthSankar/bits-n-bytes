@@ -1,5 +1,18 @@
 import type { Translation } from './en';
 export const ta: Translation = {
+  sachetBack: "எச்சரிக்கைகளுக்குத் திரும்பு",
+  navSachet: 'SACHET',
+  chatNearby: "15 கிமீ அருகில் · 24 மணிநேரத்தில் மறையும்",
+  chatCommunity: "சமூக அரட்டை · உறுதிசெய்யப்படவில்லை",
+  chatRefresh: "இருப்பிடத்தைப் புதுப்பி",
+  chatEmpty: "அருகிலுள்ளவர்களுடன் பேசுங்கள்",
+  chatStart: "உரையாடலை முதலில் தொடங்குங்கள்.",
+  chatLatest: "சமீபத்திய அருகிலுள்ள செய்திகள்",
+  chatYou: "நீங்கள்",
+  chatMessage: "செய்தி",
+  chatPlaceholder: "அருகில் என்ன நடக்கிறது?",
+  chatSend: "அனுப்பு",
+
   relativeNow: "இப்போது",
   relativeMinutes: "{{count}} நிமிடம் முன்பு",
   relativeHours: "{{count}} மணி முன்பு",

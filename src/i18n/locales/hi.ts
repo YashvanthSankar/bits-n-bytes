@@ -1,5 +1,18 @@
 import type { Translation } from './en';
 export const hi: Translation = {
+  sachetBack: "अलर्ट पर वापस जाएँ",
+  navSachet: 'SACHET',
+  chatNearby: "15 किमी के भीतर · 24 घंटे बाद हटेगा",
+  chatCommunity: "समुदाय चैट · अपुष्ट",
+  chatRefresh: "स्थान अपडेट करें",
+  chatEmpty: "आसपास बातचीत करें",
+  chatStart: "बातचीत शुरू करने वाले पहले व्यक्ति बनें।",
+  chatLatest: "आसपास के नवीनतम संदेश",
+  chatYou: "आप",
+  chatMessage: "संदेश",
+  chatPlaceholder: "आसपास क्या हो रहा है?",
+  chatSend: "भेजें",
+
   relativeNow: "अभी",
   relativeMinutes: "{{count}} मिनट पहले",
   relativeHours: "{{count}} घंटे पहले",

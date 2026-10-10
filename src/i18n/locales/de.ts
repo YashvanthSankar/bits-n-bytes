@@ -1,5 +1,18 @@
 import type { Translation } from './en';
 export const de: Translation = {
+  sachetBack: "Zurück zu Warnungen",
+  navSachet: 'SACHET',
+  chatNearby: "Im Umkreis von 15 km · nach 24 Std. gelöscht",
+  chatCommunity: "Community-Chat · unbestätigt",
+  chatRefresh: "Standort aktualisieren",
+  chatEmpty: "Sag Hallo in der Nähe",
+  chatStart: "Starte das erste Gespräch.",
+  chatLatest: "Neueste Nachrichten in der Nähe",
+  chatYou: "Du",
+  chatMessage: "Nachricht",
+  chatPlaceholder: "Was passiert in der Nähe?",
+  chatSend: "Senden",
+
   relativeNow: "Gerade eben",
   relativeMinutes: "vor {{count}} Min.",
   relativeHours: "vor {{count}} Std.",

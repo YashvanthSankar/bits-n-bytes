@@ -3,9 +3,9 @@ import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 const state = vi.hoisted(() => ({ signOut: vi.fn(), setSignedOut: vi.fn(), setFix: vi.fn(), replace: vi.fn(), mutate: vi.fn() }));
 vi.mock('../src/services/onboarding', () => ({ rememberCompletedSetup: vi.fn().mockResolvedValue(undefined) }));
-vi.mock('lucide-react-native', () => Object.fromEntries(['UserRound','ShieldCheck','RefreshCw','LocateFixed','LogOut','FlaskConical'].map(name => [name, () => null])));
+vi.mock('lucide-react-native', () => Object.fromEntries(['UserRound','ShieldCheck','RefreshCw','LocateFixed','LogOut','FlaskConical','Languages','ChevronRight','ChevronDown'].map(name => [name, () => null])));
 vi.mock('@convex-dev/auth/react', () => ({ useAuthActions: () => ({ signOut: state.signOut }) }));
-vi.mock('react-native', () => ({ View: 'View', Switch: 'Switch' }));
+vi.mock('react-native', () => ({ View: 'View', Pressable: 'Pressable', Switch: 'Switch' }));
 vi.mock('expo-router', () => ({ useFocusEffect: (callback: () => void) => React.useEffect(callback, [callback]), router: { replace: state.replace, push: vi.fn() } }));
 vi.mock('expo-crypto', () => ({ randomUUID: () => 'test-request-001' }));
 vi.mock('convex/react', () => ({ useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }), useQuery: () => ({ role: 'TOURIST', profile: { name: 'Test', alias: 'Traveler', revision: 1, language: 'en', stepFreeNeeded: false } }), useMutation: () => state.mutate }));
@@ -26,12 +26,11 @@ it.each([['settings', Settings], ['profile', Profile]] as const)('%s waits for t
   let finish!: () => void;
   state.signOut.mockImplementation(() => new Promise<void>(resolve => { finish = resolve; }));
   await act(async () => { screen = create(<Component />); });
-  const logout = screen.root.findAllByType('button').find(b => b.props.title === 'signOut')!;
+  const logout = screen.root.findAll(node => node.props.title === 'signOut' && typeof node.props.onPress === 'function')[0]!;
   expect(logout).toBeDefined();
   if (_ === 'settings') {
-    expect(logout.props.variant).toBe('danger');
+    expect(logout.props.danger).toBe(true);
     expect(screen.root.findByType('footer').findAllByType('button')).toHaveLength(0);
-    expect(screen.root.findAllByType('button').at(-1)).toBe(logout);
   }
   await act(async () => { logout.props.onPress(); });
   expect(state.setFix).not.toHaveBeenCalled(); expect(state.replace).not.toHaveBeenCalled();
@@ -42,7 +41,7 @@ it.each([['settings', Settings], ['profile', Profile]] as const)('%s waits for t
 it('keeps location and displays failure if token removal fails', async () => {
   state.signOut.mockRejectedValue(new Error('storage failed'));
   await act(async () => { screen = create(<Settings />); });
-  await act(async () => screen.root.findAllByType('button').find(b => b.props.title === 'signOut')!.props.onPress());
+  await act(async () => screen.root.findAll(node => node.props.title === 'signOut' && typeof node.props.onPress === 'function')[0]!.props.onPress());
   expect(state.setFix).not.toHaveBeenCalled(); expect(state.replace).not.toHaveBeenCalled();
   expect(JSON.stringify(screen.toJSON())).toContain('serviceUnavailable');
 });

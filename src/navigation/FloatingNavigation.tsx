@@ -1,6 +1,6 @@
 import { BlurView } from 'expo-blur';
 import { TabTrigger, useTabTrigger, type TabTriggerSlotProps } from 'expo-router/ui';
-import { Map, List, House, BellRing, Settings, Menu, X, Check, type LucideIcon } from 'lucide-react-native';
+import { Map, List, House, BellRing, MessageCircle, Settings, Menu, X, Check, type LucideIcon } from 'lucide-react-native';
 import { useEffect, useState, type RefObject } from 'react';
 import { AccessibilityInfo, Keyboard, Modal, Platform, Pressable, ScrollView, StyleSheet, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -12,18 +12,20 @@ export const destinations = [
   { name: 'map', href: '/map', label: 'navMap', icon: Map },
   { name: 'incidents', href: '/incidents', label: 'navIncidents', icon: List },
   { name: 'shelters', href: '/shelters', label: 'navShelters', icon: House },
-  { name: 'sachet', href: '/sachet', label: 'sachetTitle', icon: BellRing },
+  { name: 'sachet', href: '/sachet', label: 'navSachet', icon: BellRing },
+  { name: 'chat', href: '/chat', label: 'navChat', icon: MessageCircle },
   { name: 'settings', href: '/settings', label: 'navSettings', icon: Settings },
 ] as const;
 
 function NavigationButton({ label, icon: Icon, isFocused, expanded = false, style, ...props }: TabTriggerSlotProps & { label: string; icon: LucideIcon; expanded?: boolean }) {
   const theme = useTheme();
-  const color = isFocused ? theme.onAccent : theme.text;
+  const color = isFocused ? (expanded ? theme.onAccent : theme.accent) : theme.secondary;
   return <Pressable {...props} accessibilityRole="tab" accessibilityLabel={label} accessibilityState={{ selected: !!isFocused }}
     style={state => [typeof style === 'function' ? style(state) : style, { flex: expanded ? undefined : 1, minHeight: 56, minWidth: 48, borderRadius: expanded ? 16 : 18, paddingVertical: 10, paddingHorizontal: expanded ? 16 : 4,
       flexDirection: expanded ? 'row' : 'column', justifyContent: 'center', alignItems: 'center', gap: expanded ? 16 : 0,
-      backgroundColor: isFocused ? theme.accent : state.pressed ? theme.muted : 'transparent', opacity: state.pressed ? .75 : 1 }]}>
+      backgroundColor: isFocused ? (expanded ? theme.accent : theme.selection) : state.pressed ? theme.muted : 'transparent', opacity: state.pressed ? .75 : 1 }]}>
     <Icon size={24} strokeWidth={2} color={color} accessible={false} />
+
     {expanded && <AppText style={{ color, fontWeight: isFocused ? '700' : '500', flex: 1, flexShrink: 1 }}>{label}</AppText>}
     {expanded && isFocused && <Check size={22} color={theme.onAccent} accessible={false} />}
   </Pressable>;
@@ -32,8 +34,8 @@ function NavigationButton({ label, icon: Icon, isFocused, expanded = false, styl
 /** Target contains only screen content: never blur the bar recursively on Android. */
 export function FloatingNavigation({ target, onInset }: { target: RefObject<View | null>; onInset: (height: number) => void }) {
   const theme = useTheme(); const scheme = useColorScheme(); const { t } = useTranslation();
-  const safe = useSafeAreaInsets(); const { width } = useWindowDimensions();
-  const compact = width - safe.left - safe.right < 316;
+  const safe = useSafeAreaInsets(); const { width, fontScale } = useWindowDimensions();
+  const compact = width - safe.left - safe.right < 380 || fontScale > 1.3;
   const [menuOpen, setMenuOpen] = useState(false); const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [opaque, setOpaque] = useState(Platform.OS === 'ios');
   const { getTrigger } = useTabTrigger({ name: 'map' });

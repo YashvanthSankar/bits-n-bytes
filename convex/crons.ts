@@ -6,4 +6,5 @@ crons.interval('resume instruction translation', { minutes: 1 }, internal.transl
 crons.interval('poll SACHET official feed', { minutes: 2 }, internal.sachet.poll, {});
 crons.interval('expire temporary weather cache', { minutes: 10 }, internal.weather.cleanup, {});
 crons.interval('resume incident assessments', { minutes: 1 }, internal.assessments.resume, {});
+crons.interval('expire nearby chat messages', { minutes: 10 }, internal.chat.cleanup, {});
 export default crons;
