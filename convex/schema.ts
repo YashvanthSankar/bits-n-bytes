@@ -25,6 +25,13 @@ export default defineSchema({
     infos: v.array(capInfo), updatedAt: v.number(),
   }).index('by_key', ['key']).index('by_active_sentAt', ['active', 'sentAt']),
   officialNoticeRevisions: defineTable({ noticeId: v.id('officialNotices'), revision: v.number(), hash: v.string(), xml: v.string(), fetchedAt: v.number() }).index('by_notice_revision', ['noticeId', 'revision']),
+  // Deliberately separate from officialNotices: these are DEMO-only authority test inputs, never NDMA/SACHET records.
+  demoEvidenceNotices: defineTable({
+    agencyId: v.id('agencies'), jurisdictionId: v.id('jurisdictions'), membershipId: v.id('authorityMemberships'), creatorId: v.id('users'), geometryId: v.id('geometries'),
+    title: v.string(), event: v.string(), description: v.string(), instruction: v.string(), locality: v.string(), severity: types.severity,
+    urgency: v.string(), certainty: v.string(), sourceLanguage: types.language, issuedAt: v.number(), expiresAt: v.number(), active: v.boolean(),
+    endedAt: v.optional(v.number()), revision: v.number(), audience: v.literal('DEMO'),
+  }).index('by_jurisdiction_active', ['jurisdictionId', 'active']).index('by_agency_active', ['agencyId', 'active']).index('by_active_expiresAt', ['active', 'expiresAt']),
   officialReferenceTombstones: defineTable({ key: v.string(), supersededBy: v.string(), msgType: v.string(), createdAt: v.number() }).index('by_key', ['key']),
   profiles: defineTable({
     userId: v.id('users'), name: v.string(), alias: v.string(), language: types.language,

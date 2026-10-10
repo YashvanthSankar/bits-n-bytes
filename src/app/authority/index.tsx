@@ -28,6 +28,7 @@ function Overview() {
         <TriangleAlert size={26} color={theme.onAccent} />
         <View style={{flexDirection:'row',alignItems:'center',gap:12}}><AppText variant="heading" style={{color:theme.onAccent,flex:1}}>{t('declareEmergency')}</AppText><ChevronRight size={22} color={theme.onAccent} /></View>
       </Pressable>
+      {scope.audience === 'DEMO' && <ActionButton title="Create DEMO test notice" variant="secondary" onPress={() => router.push({pathname:'/authority/demo-notices',params:{jurisdictionId:scope.id}})} />}
       <ActionButton title={t('viewReports')} variant="secondary" onPress={()=>router.push({pathname:'/authority/reports',params:{jurisdictionId:scope.id}})} />
       <ActionButton title={t('manageEmergencies')} variant="secondary" onPress={()=>router.push({pathname:'/authority/emergencies',params:{jurisdictionId:scope.id}})} />
       <Pressable accessibilityRole="button" accessibilityLabel={t('manageShelters')} onPress={() => router.push({pathname:'/authority/shelters',params:{jurisdictionId:scope.id}})}

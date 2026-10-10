@@ -60,6 +60,18 @@ Private .env.local is ignored, mode 600. Do not quote values. docs/api-setup.md 
 
 ## Git/checkpoints
 
+### 2026-10-10 DEMO authority test-evidence notices
+
+- Implemented a separate `demoEvidenceNotices` record and authority workspace flow. Only an active authority in a selected DEMO jurisdiction can create a circle fully contained in that jurisdiction, with idempotent/audited creation, manual withdrawal, two-hour UI default and 24-hour maximum expiry.
+- The record is explicitly DEMO authority-created evidence, not NDMA/SACHET. It stays out of `officialNotices`, source freshness and LIVE incidents/users, and cannot publish an alert itself. Evidence construction includes only active overlapping DEMO notices for DEMO incidents; Jev still applies its normal qualification rules.
+- Strict TypeScript/lint and 263 automated tests/43 files pass; Convex functions/schema were deployed to the selected development target. Physical two-account DEMO acceptance remains required before claiming device verification.
+
+### 2026-10-10 Android hotfix follow-up
+
+- Pulled `origin/main` through `c37efd0`. The included Android map fix gates native map padding and camera calls on `onMapReady`; 259 tests/42 files, strict TypeScript and lint passed after the pull.
+- A physical Expo Go SACHET screen found that the app-targeted Convex deployment lacked `sachetPublic.latest`. The local Convex deployment selector was aligned to the app's public Convex site and `npx convex dev --once` deployed the pulled functions successfully. Retry the device screen before claiming physical acceptance.
+- The saved local diagnostic stash `codex/android-map-crash-local-diagnosis` is superseded by the pulled readiness-gated map fix; it contains the earlier conservative map-padding removal and documentation notes only.
+
 Last fully reviewed/pushed HEAD at this handoff's initial creation: **c446eafc18008c899daf2549fda66268303bcccc**. Earlier checkpoints: b4e1c22 foundation, fb94df7 onboarding/provider setup, 2232fe9 incident backend. Verify current status/HEAD before committing; this file will be updated as work progresses.
 
 At initial context creation, working tree contains unfinished official-backend prep plus policy override and navigation/UI changes. These are shared files; do not revert or overwrite them blindly. All current changes are uncommitted.

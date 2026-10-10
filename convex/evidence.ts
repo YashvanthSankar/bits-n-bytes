@@ -42,6 +42,10 @@ export const build = internalAction({ args: { incidentId: v.id('incidents') }, h
   const input = await ctx.runQuery(internal.evidence.input, args); if (!input) return { snapshotId: null, outcome: 'NOT_ELIGIBLE' };
   const weather = await ctx.runAction(internal.weather.context, { point: input.point });
   const official = await ctx.runQuery(internal.sachet.relevant, { point: input.point, accuracyM: Math.min(1000, input.sourceAccuracyM ?? 0) });
+  // Custom test notices are never read for LIVE incidents and are stored separately from NDMA/SACHET records.
+  const demoAuthorityNotices = input.audience === 'DEMO'
+    ? await ctx.runQuery(internal.demoNotices.relevant, { point: input.point, accuracyM: Math.min(1000, input.sourceAccuracyM ?? 0), audience: 'DEMO' })
+    : { items: [], partial: false, checkedAt: Date.now() };
   const missingInputs = [];
   if (!weather.data || weather.data.stale) missingInputs.push('CURRENT_WEATHER_UNAVAILABLE_OR_STALE');
   if (!weather.data?.history.length) missingInputs.push('PAST_24H_WEATHER_UNAVAILABLE');
@@ -61,7 +65,9 @@ export const build = internalAction({ args: { incidentId: v.id('incidents') }, h
     officialSamples.push({ ...original, exactGeometryMatched: true }); sourceBytes += size;
   }
   if (officialSamples.length < preferred.size) missingInputs.push('OFFICIAL_TEXT_CONTEXT_TRUNCATED');
-  const json = JSON.stringify({ policyVersion: POLICY_VERSION, evaluatedAt: Math.floor(evaluatedAt / 300_000) * 300_000, incident: facts, weather, official: { ...official, items: officialSamples, samplesTruncated: officialSamples.length < preferred.size }, missingInputs });
+  const json = JSON.stringify({ policyVersion: POLICY_VERSION, evaluatedAt: Math.floor(evaluatedAt / 300_000) * 300_000, incident: facts, weather,
+    official: { ...official, items: officialSamples, samplesTruncated: officialSamples.length < preferred.size },
+    demoAuthorityNotices: { ...demoAuthorityNotices, evidenceLabel: 'DEMO authority-created test evidence; not an NDMA/SACHET source' }, missingInputs });
   const snapshotId = await ctx.runMutation(internal.evidence.store, { incidentId, incidentRevision, evidenceGeneration, controlRevision, json });
   return { snapshotId, outcome: snapshotId ? 'READY' : 'SUPERSEDED' };
 } });

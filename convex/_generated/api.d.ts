@@ -17,6 +17,7 @@ import type * as authorityAccess from "../authorityAccess.js";
 import type * as authorityReports from "../authorityReports.js";
 import type * as crons from "../crons.js";
 import type * as declarations from "../declarations.js";
+import type * as demoNotices from "../demoNotices.js";
 import type * as evidence from "../evidence.js";
 import type * as health from "../health.js";
 import type * as http from "../http.js";
@@ -63,6 +64,7 @@ declare const fullApi: ApiFromModules<{
   authorityReports: typeof authorityReports;
   crons: typeof crons;
   declarations: typeof declarations;
+  demoNotices: typeof demoNotices;
   evidence: typeof evidence;
   health: typeof health;
   http: typeof http;

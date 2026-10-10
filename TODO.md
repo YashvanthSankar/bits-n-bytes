@@ -18,7 +18,8 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 | Android | rc.1 public but reported map initialization crash. rc.2 local production APK built/verified with fix, versionCode 4; physical retest pending. |
 | Distribution | rc.2 GitHub upload STOPPED by user; draft checksum only. No active upload/build. iOS simulator uses dev; APK uses prod. Physical iOS delivery pending. |
 | Not implemented | Nearby chat/moderation and full recovery/privacy/retention/deletion. Contacts explicitly deferred. |
-| Verification |259 tests / 42 files, strictTypeScript/lint, Doctor 21/21 and local release build pass. These do not establish full native acceptance. |
+| Verification |263 tests / 43 files, strict TypeScript/lint and local release build pass. These do not establish full native acceptance. |
+| DEMO Jev evidence notices | Implemented backend/UI test workflow: active DEMO authority creates a contained circle notice with a two-hour default/24-hour cap, review and early withdrawal. It is stored outside official SACHET records and enters only overlapping DEMO incident evidence. Physical two-account acceptance remains pending. |
 
 ### Next executable work
 
@@ -28,6 +29,7 @@ Read [the current-state ledger](docs/current-state.md) first. Older dated entrie
 - [ ] NOW04 Complete source urgent/advisory/geometry behavior and held-out Jev evaluation (E02/E03/P07).
 - [ ] NOW05 Implement chat/moderation (C01–C07), then recovery/privacy/retention (R01–R08).
 - [ ] NOW06 Finish physical iOS distribution, language review and submission artifacts (Q/S). rc.2 publication is paused; resume only on new user request.
+- [x] DEMO01 Add authority-created DEMO-only SACHET-style test evidence notices with assigned-jurisdiction containment, idempotent audited create/withdraw, explicit evidence label and no official/LIVE publication path. Automated backend/UI checks recorded; physical two-account test remains pending.
 
 Historical checklist below preserves task IDs and acceptance requirements. Core features must not be reimplemented simply because a device-acceptance checkbox remains open. User overrides above supersede obsolete native-push, shelter-eligibility and contact requirements.
 

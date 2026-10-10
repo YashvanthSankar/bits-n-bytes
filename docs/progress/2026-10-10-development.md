@@ -1,5 +1,11 @@
 # 2026-10-10 — development progress
 
+## DEMO authority test-evidence notices
+
+Implemented a controlled custom-news substitute as DEMO-only evidence, not an official-looking NDMA/SACHET announcement. The dedicated record is separate from `officialNotices`; it never affects official feed freshness, LIVE incidents/users or direct emergency publication. An authenticated active DEMO authority must use an assigned jurisdiction and a fully contained map-picked circle. The command has audit and idempotency records, starts immediately, has a two-hour UI default/24-hour maximum, and supports issuer-only early withdrawal.
+
+Evidence construction now adds active geographically overlapping records only to DEMO incident snapshots with the explicit label “DEMO authority-created test evidence; not an NDMA/SACHET source.” The authority workspace includes create/review/save, active-notice summary and withdrawal confirmation. Automated checks cover valid lifecycle, command replay, tourist/LIVE/unassigned/revoked/out-of-bound rejection and overlapping/withdrawn evidence behavior. Final verification: strict TypeScript, lint and **263 tests / 43 files** pass; Convex functions/schema deployed to the selected development target. The physical two-account scenario remains pending: inject notice as DEMO authority, report in-circle as DEMO tourist, inspect Jev context, and confirm its outcome follows existing qualification—not a direct alert path.
+
 ## Batch 1: P03, P04, Q01
 
 User explicitly authorized application implementation and requested a review, commit and push after every three completed todos. The supplied organizer brief permits development from 2026-10-09 20:30 to 2026-10-10 20:30 Asia/Kolkata, with submission by 21:00. UTC clock 2026-10-10 01:43 corresponds to 07:13 IST inside that window.
