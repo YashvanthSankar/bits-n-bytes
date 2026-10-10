@@ -1,5 +1,7 @@
 # Latest handoff — 2026-10-10
 
+- Judge documentation: rewrote root README and added `docs/hackathon-submission.md` plus `docs/submission-links.md`; docs index linked. Covers statement, full flows, architecture/decision rationale, tools/AI assistance, 308 tests/54 files, final versionCode13 APK/source8059adf/checksum, Android installation and iOS simulator demo distinction. User requests detailed winning-quality documentation and commit. Fresh `npm run check` passes. Live website and downloads.js fetched: old landing still serves null Android/iOS links; local web/downloads.js android null too. Documented website as download entry point with final URL/video placeholders rather than claiming working public APK. No app/deploy/release changes made.
+
 - Recording icon: `ios.icon` now points to `assets/brand/gudtour-ios-icon.png`, a1024px black-on-warm-white derivative of existing logo (white road preserved). User explicitly requested black after first color build. Expo SDK57 config checked; prebuild and local iPhone17Pro simulator build/install completed successfully with black icon. Typecheck/lint passed for config; original splash/Android logo retained. Simulator bundle com.bitsnbytes.gudtour; Metro8081.
 
 - Recording polish: onboarding GudTour wordmark now uses title typography and explicit700 bold in `src/app/index.tsx`; TypeScript and lint pass. Prior simulator reset cleared only GudTour local container, scoped keychain entries and app permissions for first-launch recording.

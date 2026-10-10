@@ -1,5 +1,13 @@
 # GudTour — documentation index
 
+## For judges and reviewers
+
+- **[Project README](../README.md)** — product summary, Android installation, iOS demonstration, setup and verification.
+- **[Hackathon case study](hackathon-submission.md)** — detailed problem/solution mapping, architecture, decisions, tool disclosure, tests and demo walkthrough.
+- **[Final submission links](submission-links.md)** — website, public APK and video placeholders with artifact handoff instructions.
+
+The judge-facing documents reflect the 10 October final source review and 308-test check. Older checkpoint paragraphs below are historical; they are not a current public-release claim.
+
 **Current final product:** map-first TravelTech crisis communication with tourist/approved-authority login, incident reporting and evidence/model escalation, radius-targeted multilingual alerts, maintained shelters/contacts and consent-based location. **Platforms:** Android + iOS via Expo; public web landing page.
 
 The [detailed technical implementation plan](../TECHNICAL_IMPLEMENTATION_PLAN.md) specifies architecture, schema, provider contracts, delivery, tests and release gates. Latest user overrides and implementation order are in [tech-stack.md](../tech-stack.md) and [TODO.md](../TODO.md). Read [PLAN.md](../PLAN.md) for detailed behavior. The latest stack/scope updates override older pre-arrival, Supabase, news and full-offline proposals.
