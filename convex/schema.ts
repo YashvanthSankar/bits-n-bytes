@@ -3,9 +3,13 @@ import { defineSchema, defineTable } from 'convex/server';
 import { v } from 'convex/values';
 import * as types from './lib/validators';
 import { capInfo } from './lib/sachetValidators';
+import { weatherData } from './lib/weatherValidators';
 
 export default defineSchema({
   ...authTables,
+  evidenceSnapshots: defineTable({ incidentId: v.id('incidents'), incidentRevision: v.number(), evidenceGeneration: v.number(), controlRevision: v.number(), hash: v.string(), json: v.string(), createdAt: v.number(), policyVersion: v.string() }).index('by_incident_hash', ['incidentId', 'hash']).index('by_incident_createdAt', ['incidentId', 'createdAt']),
+  weatherCache: defineTable({ key: v.string(), requestedPoint: types.point, data: v.optional(weatherData), fetchedAt: v.optional(v.number()), expiresAt: v.number(), leaseUntil: v.number(), generation: v.number(), lastError: v.optional(v.string()), nextAttemptAt: v.number() }).index('by_key', ['key']).index('by_expiresAt', ['expiresAt']),
+  providerUsage: defineTable({ provider: v.string(), day: v.string(), calls: v.number() }).index('by_provider_day', ['provider', 'day']),
   feedDocuments: defineTable({
     url: v.string(), kind: v.union(v.literal('RSS'), v.literal('CAP'), v.literal('POLYGON')), xml: v.optional(v.string()), etag: v.optional(v.string()),
     hash: v.optional(v.string()), revision: v.number(), lastAttemptAt: v.optional(v.number()), lastSuccessAt: v.optional(v.number()), changedAt: v.optional(v.number()),

@@ -4,4 +4,5 @@ const crons = cronJobs();
 crons.interval('resume pending alert expansion', { minutes: 1 }, internal.alertExpansion.resume, {});
 crons.interval('resume instruction translation', { minutes: 1 }, internal.translations.resume, {});
 crons.interval('poll SACHET official feed', { minutes: 2 }, internal.sachet.poll, {});
+crons.interval('expire temporary weather cache', { minutes: 10 }, internal.weather.cleanup, {});
 export default crons;

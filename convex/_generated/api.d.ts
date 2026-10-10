@@ -15,6 +15,7 @@ import type * as authority from "../authority.js";
 import type * as authorityAccess from "../authorityAccess.js";
 import type * as crons from "../crons.js";
 import type * as declarations from "../declarations.js";
+import type * as evidence from "../evidence.js";
 import type * as health from "../health.js";
 import type * as http from "../http.js";
 import type * as incidents from "../incidents.js";
@@ -27,16 +28,20 @@ import type * as lib_publicModels from "../lib/publicModels.js";
 import type * as lib_sachetValidators from "../lib/sachetValidators.js";
 import type * as lib_targetRecipient from "../lib/targetRecipient.js";
 import type * as lib_validators from "../lib/validators.js";
+import type * as lib_weatherValidators from "../lib/weatherValidators.js";
 import type * as locationAlerts from "../locationAlerts.js";
 import type * as locations from "../locations.js";
 import type * as observations from "../observations.js";
 import type * as operator from "../operator.js";
 import type * as profiles from "../profiles.js";
+import type * as providers_accuWeather from "../providers/accuWeather.js";
 import type * as providers_googleTranslation from "../providers/googleTranslation.js";
+import type * as providers_jev from "../providers/jev.js";
 import type * as providers_sachet from "../providers/sachet.js";
 import type * as sachet from "../sachet.js";
 import type * as shelters from "../shelters.js";
 import type * as translations from "../translations.js";
+import type * as weather from "../weather.js";
 
 import type {
   ApiFromModules,
@@ -52,6 +57,7 @@ declare const fullApi: ApiFromModules<{
   authorityAccess: typeof authorityAccess;
   crons: typeof crons;
   declarations: typeof declarations;
+  evidence: typeof evidence;
   health: typeof health;
   http: typeof http;
   incidents: typeof incidents;
@@ -64,16 +70,20 @@ declare const fullApi: ApiFromModules<{
   "lib/sachetValidators": typeof lib_sachetValidators;
   "lib/targetRecipient": typeof lib_targetRecipient;
   "lib/validators": typeof lib_validators;
+  "lib/weatherValidators": typeof lib_weatherValidators;
   locationAlerts: typeof locationAlerts;
   locations: typeof locations;
   observations: typeof observations;
   operator: typeof operator;
   profiles: typeof profiles;
+  "providers/accuWeather": typeof providers_accuWeather;
   "providers/googleTranslation": typeof providers_googleTranslation;
+  "providers/jev": typeof providers_jev;
   "providers/sachet": typeof providers_sachet;
   sachet: typeof sachet;
   shelters: typeof shelters;
   translations: typeof translations;
+  weather: typeof weather;
 }>;
 
 /**
