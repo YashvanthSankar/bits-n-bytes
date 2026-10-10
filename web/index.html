@@ -20,8 +20,6 @@
       <symbol id="pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></symbol>
       <symbol id="language" viewBox="0 0 24 24"><path d="M3 5h12M9 3v2m-5 4 8 8m1-12c0 6-4 10-10 13m11 3 4-11 4 11m-7-3h6"/></symbol>
       <symbol id="shelter" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3Zm6 11v-8h6v8"/></symbol>
-      <symbol id="android" viewBox="0 0 24 24"><path d="m7 5-2-3m12 3 2-3M3 13a9 9 0 0 1 18 0v4H3Z"/><path d="M7 17v4m10-4v4"/><circle cx="8" cy="10" r=".75" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r=".75" fill="currentColor" stroke="none"/></symbol>
-      <symbol id="apple" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M16.7 3.1c-.9 1.1-2.3 1.8-3.6 1.7-.2-1.3.5-2.7 1.3-3.6C15.3.2 16.8-.4 18 0c.1 1.2-.5 2.3-1.3 3.1ZM20.5 17.4c-.6 1.3-.9 1.9-1.7 3.1-1.1 1.6-2.6 3.6-4.5 3.5-1.7 0-2.1-1.1-4.4-1.1-2.2 0-2.7 1.1-4.4 1.1-1.9.1-3.3-1.7-4.4-3.3C-2 16.2-.6 9.4 2.8 7.1c1.6-1.1 3.7-1.3 5.7-.5 1.5.6 2.4.6 3.9 0 1.9-.8 4.1-.6 5.6.5-4.5 2.5-3.8 8.9 2.5 10.3Z" transform="translate(3 2) scale(.8)"/></symbol>
     </defs>
   </svg>
 
@@ -31,7 +29,7 @@
         <span class="brand-mark"><img src="./assets/logo.png" width="44" height="44" alt=""></span>
         GudTour<span class="brand-period">.</span>
       </a>
-      <div class="header-right"><span class="edition">Made for your journey in India</span><a class="header-cta" href="#get-app">Get the app <svg class="line-icon" aria-hidden="true"><use href="#arrow"/></svg></a></div>
+      <div class="header-right"><span class="edition">Made for your journey in India</span><a class="header-cta" href="#get-app">Get Android app <svg class="line-icon" aria-hidden="true"><use href="#arrow"/></svg></a></div>
     </header>
 
     <main id="main">
@@ -43,14 +41,11 @@
 
           <div id="get-app" class="download-block">
             <div class="download-actions" aria-label="App downloads">
-              <a class="download download-primary" data-download="ios" role="link" aria-disabled="true" aria-describedby="release-note">
-                <svg class="platform-icon" aria-hidden="true"><use href="#apple"/></svg><span><span class="download-overline">iPhone · Release pending</span><span class="download-title">GudTour for iOS</span></span><svg class="line-icon download-arrow" aria-hidden="true"><use href="#arrow"/></svg>
-              </a>
-              <a class="download download-secondary" data-download="android" role="link" aria-disabled="true" aria-describedby="release-note">
-                <svg class="platform-icon" aria-hidden="true"><use href="#android"/></svg><span><span class="download-overline">Android · Release pending</span><span class="download-title">GudTour for Android</span></span><svg class="line-icon download-arrow" aria-hidden="true"><use href="#arrow"/></svg>
+              <a class="download download-primary" data-download="android" role="link" aria-disabled="true" aria-describedby="release-note">
+                <img class="android-logo" src="./assets/android.svg" width="36" height="22" alt=""><span><span class="download-overline">Android™ · APK</span><span class="download-title">Get GudTour for Android</span></span><svg class="line-icon download-arrow" aria-hidden="true"><use href="#arrow"/></svg>
               </a>
             </div>
-            <p id="release-note" class="release-note">In development. Download links will appear when builds are ready.</p>
+            <p id="release-note" class="release-note">Android early access. The download will appear when the release is published.</p>
           </div>
 
           <div class="language-note"><span class="language-dots" aria-hidden="true"><span>अ</span><span>அ</span><span>A</span></span><p>Local alerts. <strong>Your language.</strong><br><span>English · हिन्दी · தமிழ் · Français · Deutsch · Español</span></p></div>
@@ -63,10 +58,10 @@
           <div class="visual-label"><span class="label-dot" aria-hidden="true"></span> THE WORLD AROUND YOU, A LITTLE CLEARER</div>
           <div class="phone">
             <div class="phone-button phone-button-one" aria-hidden="true"></div><div class="phone-button phone-button-two" aria-hidden="true"></div>
-            <div class="phone-screen"><img src="./assets/app-preview.jpg" width="920" height="2000" fetchpriority="high" alt="GudTour iOS development screen: a Chennai map with an incident pin, black Report an incident button and floating navigation. Development preview with simulated location."><div class="dynamic-island" aria-hidden="true"></div></div>
+            <div class="phone-screen"><img src="./assets/app-preview.jpg" width="920" height="2000" fetchpriority="high" alt="GudTour interface preview showing nearby incidents on a Chennai map. Simulated location and data."></div>
           </div>
           <div class="floating-note" aria-hidden="true"><span class="note-icon"><svg class="line-icon"><use href="#pin"/></svg></span><span>Around you.<br><strong>Not everywhere.</strong></span><span class="note-arrow">↗</span></div>
-          <figcaption>Actual iOS development build <span>·</span> Simulated data</figcaption>
+          <figcaption>Interface preview <span>·</span> Simulated data</figcaption>
         </figure>
       </section>
 
@@ -78,6 +73,7 @@
     </main>
 
     <footer class="footer"><p><span translate="no">GudTour</span> <span class="footer-slash">/</span> Explore a little more informed.</p><p class="footer-fine">Development preview. Not an emergency service or a guarantee of safety.<br>No location, sign-in or tracking is collected on this page.</p><span class="footer-location"><span aria-hidden="true">↗</span> India, first.</span></footer>
+    <p class="brand-credit">Android is a trademark of Google LLC. The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons 3.0 Attribution License</a>.</p>
   </div>
 </body>
 </html>

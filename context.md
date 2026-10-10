@@ -575,3 +575,8 @@ Deployment verified: development basic-newt-690 ready14:52:42 IST; production jo
 - Built mobile snapshot8059adf: `tmp/release-artifacts/GudTour-0.1.0-final.apk`, version0.1.0/versionCode13/minSDK24. Updated launcher/adaptive and splash logo extracted from APK and visually verified.
 - Signaturev2 matches expected certificatea280f5b4f25df90198d303cf58848cfdefec8862921b3fc6eb99c27dda488527; ZIP integrity, production backend/no dev backend and no configured server credentials/env files pass. SHA256`b5d69141da4daeca32d869b048a1d694a9c578905e2f401627fb81315bb522d2`.308tests/54files+lint/typecheck pass before build.
 - Local APK delivery only; backend already deployed. Full physical-device and accessibility acceptance remain outstanding. Concurrent web work preserved outside this mobile snapshot.
+
+## 2026-10-10 — Android-only landing page
+- Removed Apple logo/iOS CTA and download configuration; one prominent Android APK action, refined typography/action spacing and platform-neutral preview frame. Existing screenshot remains honestly labeled interface preview with simulated data, not claimed Android capture.
+- Official Android asset downloaded unchanged from https://developer.android.com/static/images/brand/android-head_flat.svg; required Google/Creative Commons attribution displayed in footer. No Play Store badge or listing implied. Public Android URL remains null (local final APK is not a public URL).
+- Browser checks pass1440/768/390/320px, loaded images/no overflow/axe WCAG AA, keyboard skip link/reduced motion, configured HTTPS download and rejected unsafe/credential URLs. Mobile screenshot visually reviewed. npm run check passes308tests/54files, lint/TypeScript. Source update only, not web deployment.
