@@ -1,5 +1,5 @@
 import { expect, it, vi } from 'vitest';
-import { assessIncident, parseChoice, QUALIFICATIONS } from '../convex/providers/jev';
+import { assessIncident, decisionEvidence, parseChoice, QUALIFICATIONS } from '../convex/providers/jev';
 const answer=(options:readonly string[],choice:string,p=1,confidence=0.4)=>({type:'choice',choice,confidence,probabilities:Object.fromEntries(options.map(option=>[option,option===choice?p:(1-p)/(options.length-1)]))});
 it('reads selected option probability independently from confidence',()=>{
  expect(parseChoice(answer(QUALIFICATIONS,'NOTIFIABLE_EMERGENCY',0.91,0.2),QUALIFICATIONS)).toMatchObject({optionProbability:0.91,confidence:0.2});
@@ -27,4 +27,31 @@ it('does not send a previous assessment label or suppression control as model ev
  });
  await assessIncident({incident:{priorQualification:'NOT_QUALIFIED',suppressionUntil:123,counts:{recent:2},samples:[{description:'Current dangerous flood'}]}},{apiKey:'test-only',fetcher});
  for(const call of fetcher.mock.calls){const state=JSON.parse(JSON.parse(call[1].body as string).state);expect(state.evidence.incident).toEqual({counts:{recent:2},samples:[{description:'Current dangerous flood'}]});}
+});
+
+
+it('projects equivalent authority evidence identically regardless of operational audience, retaining source boundaries', () => {
+ const notice = { noticeId: 'notice-1', revision: 2, title: 'Flood warning', description: 'Water entering homes', instruction: 'Move to designated shelter', issuedAt: 100, expiresAt: 200, geometry: { type: 'circle', radiusM: 1000 }, urgency: 'Immediate', certainty: 'Observed' };
+ const incident = { hazard: 'FLOOD', samples: [{ description: 'Water entering homes now' }] };
+ const demo = { incident: { ...incident, audience: 'DEMO' }, demoAuthorityNotices: { evidenceLabel: 'DEMO test', partial: true, checkedAt: 150, items: [{ ...notice, issuer: 'DEMO authority', sourceKind: 'DEMO_AUTHORITY_TEST_NOTICE', evidenceLabel: 'DEMO test' }] } };
+ const live = { incident: { ...incident, audience: 'LIVE' }, authorityNotices: { partial: true, checkedAt: 150, items: [{ ...notice, issuer: 'Approved agency', sourceKind: 'AUTHORITY_NOTICE' }] } };
+ expect(decisionEvidence(demo)).toEqual(decisionEvidence(live));
+ expect(decisionEvidence(demo)).toMatchObject({ authorityNotices: { partial: true, items: [{ ...notice, sourceClass: 'APP_AUTHORITY_NOTICE' }] } });
+ expect(demo.incident.audience).toBe('DEMO'); // Original routing/provenance is untouched.
+});
+
+it('sends the neutral notice evidence in both Jev stages without promising verification', async () => {
+ const fetcher = vi.fn<(url: string, init: RequestInit) => Promise<Response>>().mockImplementation(async (_, init) => {
+  const body = JSON.parse(init.body as string);
+  const answers = Object.fromEntries(Object.entries(body.questions as Record<string, { criteria: Record<string, string> }>).map(([key, q]) => [key, answer(Object.keys(q.criteria), key === 'qualification' ? 'INSUFFICIENT_EVIDENCE' : 'UNKNOWN')]));
+  return new Response(JSON.stringify({ model: 'jev-1.13', answers }));
+ });
+ await assessIncident({ incident: { audience: 'DEMO', hazard: 'FLOOD' }, demoAuthorityNotices: { items: [{ title: 'Flood', issuer: 'DEMO authority', sourceKind: 'DEMO_AUTHORITY_TEST_NOTICE' }] } }, { apiKey: 'test-only', fetcher });
+ for (const call of fetcher.mock.calls) {
+  const body = JSON.parse(call[1].body as string), state = JSON.parse(body.state);
+  expect(state.evidence.authorityNotices.items).toEqual([{ title: 'Flood', sourceClass: 'APP_AUTHORITY_NOTICE' }]);
+  expect(body.state).not.toContain('DEMO');
+  expect(body.state).not.toContain('demoAuthorityNotices');
+  expect(JSON.stringify(body.questions)).toContain('not proof of SACHET origin');
+ }
 });
