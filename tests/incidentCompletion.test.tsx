@@ -9,7 +9,7 @@ const state = vi.hoisted(() => ({
   push: vi.fn(), replace: vi.fn(), eligibilityReads: 0,
 }));
 vi.mock('react-native', () => ({ View: 'View' }));
-vi.mock('expo-router', () => ({ useLocalSearchParams: () => state.params, router: { push: state.push, replace: state.replace } }));
+vi.mock('expo-router', () => ({ useFocusEffect: (callback: () => void) => React.useEffect(callback, [callback]), useLocalSearchParams: () => state.params, router: { push: state.push, replace: state.replace } }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }) }));
 vi.mock('convex/react', () => ({
   useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }),

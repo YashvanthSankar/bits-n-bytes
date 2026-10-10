@@ -1,8 +1,8 @@
 import { useAuthActions } from '@convex-dev/auth/react';
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
 import { randomUUID } from 'expo-crypto';
-import { router } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Switch, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { api } from '../../convex/_generated/api';
@@ -15,11 +15,11 @@ import { useLocationSession } from '../session/LocationSession';
 export default function ProfileScreen() {
   const { t } = useTranslation(); const { language } = useLanguage(); const { isAuthenticated, isLoading } = useConvexAuth();
   const own = useQuery(api.profiles.me, isAuthenticated ? {} : 'skip'); const save = useMutation(api.profiles.save);
-  const { signOut } = useAuthActions(); const { fix, setFix } = useLocationSession();
+  const { signOut } = useAuthActions(); const { fix, setFix, setSignedOut } = useLocationSession();
   const [name, setName] = useState(''); const [blood, setBlood] = useState('');
   const [contactName, setContactName] = useState(''); const [phone, setPhone] = useState(''); const [stepFree, setStepFree] = useState(false);
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null); const loaded = useRef(false);
-  useEffect(() => { if (!isLoading && !isAuthenticated) router.replace('/login'); }, [isLoading, isAuthenticated]);
+  useFocusEffect(useCallback(() => { if (!isLoading && !isAuthenticated) router.replace('/login'); }, [isLoading, isAuthenticated]));
   useEffect(() => { if (own?.profile && !loaded.current) {
     loaded.current = true; setName(own.profile.name); setBlood(own.profile.bloodGroup ?? '');
     setContactName(own.profile.emergencyContact?.name ?? ''); setPhone(own.profile.emergencyContact?.phone ?? ''); setStepFree(own.profile.stepFreeNeeded);
@@ -34,7 +34,8 @@ export default function ProfileScreen() {
   }
   async function logout() {
     setBusy(true); setError(null);
-    try { await signOut(); setFix(null); router.replace('/login'); } catch { setError('serviceUnavailable'); } finally { setBusy(false); }
+    setSignedOut(true);
+    try { await signOut(); setFix(null); router.replace('/login'); } catch { setSignedOut(false); setError('serviceUnavailable'); } finally { setBusy(false); }
   }
   if (isLoading || (isAuthenticated && own === undefined)) return <Screen><LoadingState /></Screen>;
   return <Screen footer={<>

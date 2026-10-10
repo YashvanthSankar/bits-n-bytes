@@ -1,5 +1,5 @@
 import { useConvexAuth, useMutation, useQuery } from 'convex/react';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Location from 'expo-location';
@@ -19,44 +19,47 @@ export default function LocationScreen() {
   const { isLoading, isAuthenticated } = useConvexAuth();
   const own = useQuery(api.profiles.me, isAuthenticated ? {} : 'skip');
   const saveProfile = useMutation(api.profiles.save); const { language } = useLanguage();
-  const update = useMutation(api.locations.update); const { setFix } = useLocationSession();
+  const update = useMutation(api.locations.update); const { setFix, signedOut } = useLocationSession();
   const [busy, setBusy] = useState(false); const [error, setError] = useState<string | null>(null);
   const [settings, setSettings] = useState(false);
-  const running = useRef(false);
+  const running = useRef(false), generation = useRef(0);
   const locate = useCallback(async () => {
     if (running.current) return;
+    const attempt = generation.current;
     running.current = true;
     setBusy(true); setError(null); setSettings(false); setFix(null);
     try {
-      const { fix } = await currentIndiaFix(isAuthenticated ? async ({ fix, backgroundPermission }) => {
+      const { fix } = await currentIndiaFix(isAuthenticated && !signedOut ? async ({ fix, backgroundPermission }) => {
+        if (attempt !== generation.current) return;
         await update({ requestId: randomUUID(), fix, foregroundPermission: 'granted', backgroundPermission, source: 'FOREGROUND' });
       } : undefined);
-      if (own?.profile && own.profile.language !== language) {
+      if (attempt !== generation.current) return;
+      if (!signedOut && own?.profile && own.profile.language !== language) {
         const profile = own.profile;
         await saveProfile({ requestId: randomUUID(), expectedRevision: profile.revision, name: profile.name, language, stepFreeNeeded: profile.stepFreeNeeded, ...(profile.bloodGroup === null ? {} : { bloodGroup: profile.bloodGroup }), ...(profile.emergencyContact === null ? {} : { emergencyContact: profile.emergencyContact }) });
       }
-      setFix(fix); router.replace(isAuthenticated ? own?.profile ? '/map' : '/profile' : '/login');
+      if (attempt !== generation.current) return;
+      setFix(fix); router.replace(isAuthenticated && !signedOut ? own?.profile ? own.role === 'AUTHORITY' ? '/authority' : '/map' : '/profile' : '/login');
     } catch (err) {
       if (err instanceof LocationFailure) {
         setSettings(err.settings);
         setError(({ disabled: 'locationDisabled', denied: 'permissionDenied', accuracy: 'inaccurateLocation', outside: 'outsideIndia', uncertain: 'uncertainLocation', unavailable: 'serviceUnavailable' })[err.reason]);
       } else setError(errorTranslationKey(err));
     } finally { running.current = false; setBusy(false); }
-  }, [isAuthenticated, setFix, update, own, language, saveProfile]);
+  }, [isAuthenticated, signedOut, setFix, update, own, language, saveProfile]);
   const locateRef = useRef(locate);
   useEffect(() => { locateRef.current = locate; }, [locate]);
   const ready = !isLoading && (!isAuthenticated || own !== undefined);
-  useEffect(() => {
-    if (!ready) return;
+  useFocusEffect(useCallback(() => {
     let active = true;
     // Profile/location mutations update reactive queries. They must not restart GPS/navigation.
-    void Location.getForegroundPermissionsAsync().then(permission => {
+    if (ready && !signedOut) void Location.getForegroundPermissionsAsync().then(permission => {
       if (active && permission.granted) return locateRef.current();
     }).catch(() => { if (active) setError('serviceUnavailable'); });
-    return () => { active = false; };
-  }, [ready]);
+    return () => { active = false; generation.current++; };
+  }, [ready, signedOut]));
   return <Screen footer={<>
-    <ActionButton title={t('locationAction')} busy={busy} disabled={isLoading || (isAuthenticated && own === undefined)} onPress={() => void locate()} />
+    <ActionButton title={t('locationAction')} busy={busy} disabled={isLoading || (!signedOut && isAuthenticated && own === undefined)} onPress={() => void locate()} />
     <ActionButton title={t('languageTitle')} variant="secondary" disabled={busy} onPress={() => router.replace('/')} />
   </>}><View style={{ paddingTop: spacing.page, gap: spacing.lg }}>
     <AppText variant="title" accessibilityRole="header">{t('locationTitle')}</AppText>

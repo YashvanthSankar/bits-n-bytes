@@ -8,9 +8,12 @@
  * @module
  */
 
+import type * as alertExpansion from "../alertExpansion.js";
+import type * as alerts from "../alerts.js";
 import type * as auth from "../auth.js";
 import type * as authority from "../authority.js";
 import type * as authorityAccess from "../authorityAccess.js";
+import type * as crons from "../crons.js";
 import type * as declarations from "../declarations.js";
 import type * as health from "../health.js";
 import type * as http from "../http.js";
@@ -35,9 +38,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  alertExpansion: typeof alertExpansion;
+  alerts: typeof alerts;
   auth: typeof auth;
   authority: typeof authority;
   authorityAccess: typeof authorityAccess;
+  crons: typeof crons;
   declarations: typeof declarations;
   health: typeof health;
   http: typeof http;

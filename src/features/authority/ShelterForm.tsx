@@ -10,6 +10,9 @@ import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { ActionButton, AppText, Screen } from '../../components/ui';
 import { Field } from '../../components/Field';
+import { AreaPicker } from '../../components/AreaPicker';
+import { useLocationSession } from '../../session/LocationSession';
+import type { Point } from '../../contracts/domain';
 import { Choice } from '../../components/Choice';
 import { apiErrorCode, errorTranslationKey } from '../../domain/apiError';
 import { isValidPoint } from '../../domain/eligibility';
@@ -30,6 +33,8 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
   jurisdictionId: Id<'jurisdictions'>; jurisdictionName: string; issuer: string; audience: 'LIVE' | 'DEMO'; initial: Initial | null;
 }) {
   const { t } = useTranslation(); const theme = useTheme(); const safe = useSafeAreaInsets();
+  const { fix } = useLocationSession();
+  const [pickerOpen, setPickerOpen] = useState(false), [picked, setPicked] = useState<Point | null>(null);
   const save = useMutation(api.shelters.save), archive = useMutation(api.shelters.archive), locate = useReportLocation();
   const [form, setForm] = useState(() => ({ name: initial?.name ?? '', address: initial?.address ?? '', latitude: initial ? String(initial.point.latitude) : '',
     longitude: initial ? String(initial.point.longitude) : '', status: initial?.status ?? 'UNKNOWN', capacity: initial?.capacity == null ? '' : String(initial.capacity),
@@ -69,6 +74,9 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
     const { latitude, longitude, ...details } = form;
     const capacity = count(details.capacity), remaining = count(details.remaining);
     const point = { latitude: Number(latitude), longitude: Number(longitude) };
+    for (const [field, value, minimum] of [['shelterName', details.name, 2], ['shelterAddress', details.address, 3]] as const) {
+      if (value.trim().length < minimum) { setError(t('shelterFieldMinimum', { field: t(field), count: minimum })); return; }
+    }
     if (!latitude.trim() || !longitude.trim() || !isValidPoint(point) || capacity === undefined || remaining === undefined) { setError('inputError'); return; }
     if (!details.confirmStatus && (!initial || details.status !== initial.status || capacity !== initial.capacity || remaining !== initial.remaining || point.latitude !== initial.point.latitude || point.longitude !== initial.point.longitude)) { setError('confirmStatusRequired'); return; }
     if (details.reason.trim().length < 5) { setError('changeReason'); return; }
@@ -88,8 +96,8 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
     <Field label={t('shelterName')} value={form.name} onChangeText={value => update('name', value)} maxLength={120} editable={!locked} />
     <Field label={t('shelterAddress')} value={form.address} onChangeText={value => update('address', value)} maxLength={500} multiline editable={!locked} />
     <AppText>{t('shelterPointHelp')}</AppText>
-    <Field label={t('latitude')} value={form.latitude} onChangeText={value => update('latitude', value)} keyboardType="numbers-and-punctuation" editable={!locked} />
-    <Field label={t('longitude')} value={form.longitude} onChangeText={value => update('longitude', value)} keyboardType="numbers-and-punctuation" editable={!locked} />
+    <ActionButton title={t('selectShelterLocation')} variant="secondary" disabled={locked} onPress={() => { setPicked(form.latitude && form.longitude ? {latitude:Number(form.latitude),longitude:Number(form.longitude)} : null); setPickerOpen(true); }} />
+    {form.latitude && form.longitude && <AppText variant="caption">{t('shelterLocationSelected')}</AppText>}
     <ActionButton title={t('shelterUseLocation')} variant="secondary" disabled={locked} onPress={() => void captureShelterPoint()} />
     <View style={{ gap: 8 }}><AppText variant="heading">{t('shelterStatusLabel')}</AppText>
       {(['OPEN', 'CLOSED', 'FULL', 'UNKNOWN'] as const).map(value => <Choice key={value} label={t(`shelter${value}`)} selected={form.status === value} disabled={locked} onPress={() => update('status', value)} />)}
@@ -111,6 +119,16 @@ export function ShelterForm({ jurisdictionId, jurisdictionName, issuer, audience
     </View><AppText variant="caption">{t('confirmShelterHelp')}</AppText></View>
     <Field label={t('changeReason')} value={form.reason} onChangeText={value => update('reason', value)} maxLength={500} multiline editable={!locked} />
     {initial && <ActionButton title={t('archiveShelter')} variant="secondary" disabled={locked} onPress={() => { setError(null); setArchiveOpen(true); }} />}
+    <Modal visible={pickerOpen} animationType="slide" onRequestClose={() => setPickerOpen(false)}>
+      <View style={{flex:1,backgroundColor:theme.background,paddingTop:safe.top}}>
+        <View style={{padding:20,gap:8}}><AppText variant="heading">{t('selectShelterLocation')}</AppText><AppText>{t('tapShelterLocation')}</AppText></View>
+        <AreaPicker center={fix?.point ?? null} selected={picked} radiusM={0} onSelect={setPicked} />
+        <View style={{padding:20,paddingBottom:safe.bottom+20,gap:12}}>
+          <ActionButton title={t('useSelectedLocation')} disabled={!picked} onPress={() => { if (picked) { setForm(previous=>({...previous,latitude:String(picked.latitude),longitude:String(picked.longitude)})); setPickerOpen(false); } }} />
+          <ActionButton title={t('cancel')} variant="secondary" onPress={() => setPickerOpen(false)} />
+        </View>
+      </View>
+    </Modal>
     <Modal visible={archiveOpen} transparent animationType="none" onRequestClose={() => { if (!locked) setArchiveOpen(false); }}>
       <View style={{ flex: 1, justifyContent: 'center', backgroundColor: theme.scrim, padding: 20, paddingTop: safe.top + 20, paddingBottom: safe.bottom + 20 }}>
         <View accessibilityViewIsModal style={{ width: '100%', maxWidth: 600, maxHeight: '90%', alignSelf: 'center', borderRadius: 24, backgroundColor: theme.surface, padding: 20, gap: 16 }}>

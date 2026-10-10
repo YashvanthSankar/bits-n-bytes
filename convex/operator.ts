@@ -1,6 +1,7 @@
-import { internalMutation } from './_generated/server';
+import { internalMutation, internalQuery } from './_generated/server';
 import { v } from 'convex/values';
 import { reject } from './lib/errors';
+import { authorityEmails } from './lib/authorityAllowlist';
 
 /** Operator-only provisioning: never exported as a public client mutation. */
 export const approveAuthority = internalMutation({ args: {
@@ -51,4 +52,19 @@ export const ensureDemoAuthorityScope = internalMutation({ args: {}, handler: as
   }
   if (!jurisdiction.active || jurisdiction.agencyId !== agency._id) return reject('CONFIGURATION_REQUIRED');
   return { agencyId: agency._id, jurisdictionIds: [jurisdiction._id], audience: 'DEMO' as const };
+} });
+
+/** Operator-only diagnostics; never returns email addresses, tokens or private profile fields. */
+export const authorityConfigurationStatus = internalQuery({ args: {}, handler: async ctx => {
+  const emails = authorityEmails(process.env.AUTHORITY_EMAILS);
+  const results = [];
+  for (const email of emails) {
+    const users = await ctx.db.query('users').withIndex('email', q => q.eq('email', email)).take(3);
+    for (const user of users) {
+      const accounts = await ctx.db.query('authAccounts').withIndex('userIdAndProvider', q => q.eq('userId', user._id).eq('provider', 'google')).take(11);
+      const members = await ctx.db.query('authorityMemberships').withIndex('by_user_status', q => q.eq('userId', user._id).eq('status', 'ACTIVE')).take(21);
+      results.push({ googleAccount: accounts.length > 0, verifiedGoogleEmail: accounts.some(a => a.emailVerified?.toLowerCase() === email), activeMemberships: members.length });
+    }
+  }
+  return { configuredCount: emails.size, matchedAccounts: results };
 } });

@@ -328,3 +328,36 @@ Do not commit keys, .env.local or private tourist data. Do not lower the Jev thr
 - [x] F11 Stop reactive profile updates from restarting “Stay informed nearby” GPS/navigation. Two component regression checks cover repeated query updates and explicit permission action.
 - [x] F12 Complete sign-out before clearing in-memory location; route to login without onboarding bounce. Settings ends with a red scrolling Sign out button (not pinned), retaining shared measured navbar clearance. Three component checks cover both logout entry points, ordering and storage failure. Actual user-device interaction remains to be rechecked.
 - A04/N04 backend publication progress: declarations.publish atomically stores original instruction/hash, attributed source, immutable revision and bounded union-area targeting job, bypassing Jev. Four backend tests cover exact retries, forbidden/invalid publication, concurrent sources and revision conflict. UI, updates/withdrawal and recipient worker remain unfinished; these composite tasks stay open.
+
+### Authority workspace continuation — 2026-10-10 10:25 IST
+
+- Authority access diagnosis: backend verified one configured account has verified Google email and an active scoped membership. The perceived tourist-only UI was discoverability: added map workspace entry, visible Settings role and authority-first location-completion routing.
+- A01 in progress: clean scoped dashboard now matches tourist palette/default typography/cards and exposes declaration/shelter actions; emergency/review queues still pending.
+- A03 in progress: circular-area emergency form plus explicit review modal and saved completion screen; original language/action/severity/review time supported, exact retry on uncertain transport. Named shelter/deadline and polygon editor still pending. Two component tests cover review-before-publication and frozen exact retry; dashboard and role-routing tests added.
+- Native screenshot tmp/ios-authority-workspace.png confirms authenticated declaration form rendering (user was interacting; no automated publication claimed). No backend incident was fabricated.
+
+### Affected-location picker and targeting progress — 2026-10-10 10:29 IST
+
+- A03 user UX override implemented: no editable latitude/longitude fields in declaration form. Select affected location opens a native map modal; tap/drag pin, preview radius, confirm selection or cancel without overwriting. Current location is a separate explicit action. Component tests cover selection, cancellation and exact publication retry.
+- N04 now has checkpointed 25-recipient pages, indexed geographic-prefix candidates, fresh exact geometry/uncertainty checks, DEMO isolation, deduplicated private exposure/userAlert writes, supersession and scheduled recovery. Eight worker tests include >one-page recipients. Push jobs/device delivery, movement-entry checks, merges and full sound policy remain unfinished; N04 stays open.
+
+### Logout regression follow-up — 2026-10-10 10:35 IST
+
+- User reported the location-page loop persisted; F12 reopened for actual native confirmation. The earlier ordering-only fix was insufficient.
+- Added explicit session logout intent suppressing login/location auto-entry until successful deliberate Google sign-in. Navigation guards run only while their screen is focused; signed-out guards point to login, not the location prompt. GPS requests carry a focus generation and cannot restore location or navigate after blur/unmount.
+- New integrated Settings→Login test retains real LocationSession state while server auth is deliberately still true; it proves no redirect back to location, including subsequent signed-out rerender. Location tests cover late completion after unmount and no auto GPS after explicit logout.173 tests/26files plus typecheck/lint pass. User-device logout interaction still requires confirmation before F12 can be checked.
+
+### 2026-10-10 shelter location and validation checkpoint
+- User confirmed logout stays on login; F12 native confirmation obtained, superseding earlier pending notes.
+- Shelter entrance map picker added: tap/drag pin, current location, explicit apply/cancel, no coordinate inputs. Existing location preserved on cancel. A07 remains partial until complete native shelter acceptance.
+- Shelter save log identified name text validation failure. Added field-specific minimum-length validation for name (2) and address (3), preserving the draft instead of making a rejected server request.
+
+## Tourist alert read/UI checkpoint — 2026-10-10 10:48 IST
+- Convex dev --once completed successfully at10:48:05 against denoise-labs:gudtour basic-newt-690. Includes alerts.active, alerts.detail and alerts.dismiss plus targeting worker/recovery cron. No LIVE/DEMO disaster fabricated in shared backend.
+- Tourist map/incidents now render private exact-location alerts, focused attention modal, persistent warning after dismissal, and /alert/[id] separately attributed exact original instructions/deadlines/review-overdue notices. Translation explicitly pending. Client timer expires location-based banners after30min. Full-screen severity ordering/yellow dismissed styling, sound, movement entry and actualpush remain unfinished; N02/N07/N09 remain partial.
+-179tests/27files, strict TS/lint pass; backend tests prove session isolation, currentrevision acknowledgement, original preservation, DEMO gate and changed geographic relevance. Component test proves popup dismissal retains instruction access. iOSexport tmp/ios-emergency-export completed exit0. Native alert interaction not yet verified. New backend reads/UI uncommitted; preserve independentweb/.
+
+## Existing-incident emergency promotion — 2026-10-10
+- Declare emergency now offers Select existing incident with bounded paginated candidates from the exact assigned jurisdiction/audience, active circular incident areas only. Selection seeds hazard/locality/affected center/radius; hazard locked for existing event, emergency radius remains editable with backend containment enforcement. Explicit new-incident option retained. Reviewed command carries selected incidentId and expectedIncidentRevision; stale edits rejected, uncertain retries retain exact body.
+- Backend authority.declarationCandidates deployed to basic-newt-690. Form regression proves existing identity/revision; isolated backend test proves promotion leaves one incident/one alert and excludes resolved incidents.182tests/28files and strictTS/lint pass. New labels machine-translated six languages, human review pending. Native picker interaction not yet verified.
+- Alert review also added deterministic critical-first order, full-screen attention modal, warning-colored dismissed banner and client ticking detail freshness/review deadlines. Full delivery/sound/translation remain pending; do not mark complete.

@@ -18,7 +18,7 @@ import { useLocationSession } from '../../session/LocationSession';
 
 function Settings() {
   const { t, i18n }=useTranslation(); const theme=useTheme(); const { language,changeLanguage }=useLanguage();
-  const { isAuthenticated }=useConvexAuth(); const { fix,setFix }=useLocationSession(); const { signOut }=useAuthActions();
+  const { isAuthenticated }=useConvexAuth(); const { fix,setFix,setSignedOut }=useLocationSession(); const { signOut }=useAuthActions();
   const own=useQuery(api.profiles.me,isAuthenticated?{}:'skip'); const save=useMutation(api.profiles.setLanguage);
   const syncAccess=useMutation(api.authorityAccess.sync);
   const [busy,setBusy]=useState(false); const [error,setError]=useState<string|null>(null); const running=useRef(false);
@@ -42,8 +42,9 @@ function Settings() {
   async function logout() {
     if (running.current) return;
     running.current=true; setBusy(true); setError(null);
+    setSignedOut(true);
     try { await signOut(); setFix(null); router.replace('/login'); }
-    catch { setError('serviceUnavailable'); }
+    catch { setSignedOut(false); setError('serviceUnavailable'); }
     finally { running.current=false; setBusy(false); }
   }
   return <Screen>
@@ -51,6 +52,7 @@ function Settings() {
     {!isAuthenticated ? <ActionButton title={t('locationAction')} onPress={()=>router.replace('/location')} /> : own===undefined ? <LoadingState /> : <>
       <View style={{gap:8}}><AppText variant="heading">{t('profileTitle')}</AppText><AppText>{own.profile?.alias}</AppText><AppText variant="caption">{t('profilePrivacy')}</AppText>
         <ActionButton title={t('profileTitle')} variant="secondary" onPress={()=>router.push('/profile')} disabled={busy} />
+        {own.role === 'AUTHORITY' && <AppText style={{color:theme.accent}}>{t('authorityReady')}</AppText>}
         {own.role === 'AUTHORITY' && <ActionButton title={t('authorityTitle')} variant="secondary" onPress={()=>router.push('/authority')} disabled={busy} />}
         <ActionButton title={t('refreshAccountAccess')} variant="secondary" onPress={()=>void refreshAccess()} disabled={busy || uncertain} />
       </View>

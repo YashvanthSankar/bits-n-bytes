@@ -1,6 +1,7 @@
+import { paginationOptsValidator } from 'convex/server';
 import { query } from './_generated/server';
 import { v } from 'convex/values';
-import { activeMemberships, requireAuthorityForCircle, requireIndiaAccess, requireUser } from './lib/authorization';
+import { containsCircle, requireAssignedJurisdiction, activeMemberships, requireAuthorityForCircle, requireIndiaAccess, requireUser } from './lib/authorization';
 import { reject } from './lib/errors';
 import { freshIncidentDTO } from './lib/publicModels';
 
@@ -29,4 +30,18 @@ export const reviewIncident = query({ args: { incidentId: v.id('incidents') }, h
   if (!geometry || geometry.area.type !== 'circle') return reject('CONFIGURATION_REQUIRED');
   await requireAuthorityForCircle(ctx, geometry.area, incident.audience);
   return freshIncidentDTO(ctx, incident, geometry);
+} });
+
+/** Bounded pages scoped to the selected assigned jurisdiction; never witness identities. */
+export const declarationCandidates = query({ args: { jurisdictionId: v.id('jurisdictions'), paginationOpts: paginationOptsValidator }, handler: async (ctx, args) => {
+  const { agency, area } = await requireAssignedJurisdiction(ctx, args.jurisdictionId);
+  if (args.paginationOpts.numItems < 1 || args.paginationOpts.numItems > 30) return reject('INVALID_INPUT');
+  const result = await ctx.db.query('incidents').withIndex('by_audience_lifecycle', q => q.eq('audience', agency.audience).eq('lifecycle', 'ACTIVE')).order('desc').paginate(args.paginationOpts);
+  const page = [];
+  for (const incident of result.page) {
+    const geometry = await ctx.db.get(incident.geometryId);
+    if (!geometry || geometry.area.type !== 'circle' || !containsCircle(area, geometry.area)) continue;
+    page.push({ id: incident._id, revision: incident.revision, hazard: incident.hazard, locality: incident.locality, area: geometry.area, verification: incident.verification });
+  }
+  return { ...result, page };
 } });

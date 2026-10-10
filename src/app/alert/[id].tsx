@@ -1,0 +1,40 @@
+import { useConvexAuth, useQuery } from 'convex/react';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { POLICY } from '../../domain/policy';
+import { View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { api } from '../../../convex/_generated/api';
+import type { Id } from '../../../convex/_generated/dataModel';
+import { ActionButton, AppText, LoadingState, Screen } from '../../components/ui';
+import { ReadBoundary } from '../../components/ReadBoundary';
+import { useLocationSession } from '../../session/LocationSession';
+import { useTheme } from '../../theme/useTheme';
+
+function Detail() {
+  const { id } = useLocalSearchParams<{ id: string }>(), { t, i18n } = useTranslation(), theme = useTheme();
+  const { isAuthenticated } = useConvexAuth(), { fix, signedOut } = useLocationSession();
+  const value = useQuery(api.alerts.detail, isAuthenticated && fix && !signedOut && typeof id === 'string' ? { alertId: id as Id<'alerts'> } : 'skip');
+  const [now, setNow] = useState(Date.now);
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 15_000); return () => clearInterval(timer); }, []);
+  const fresh = value?.locationFresh && now - value.locationObservedAt <= POLICY.alertFix.maxAgeMs;
+  const date = (time: number) => new Date(time).toLocaleString(i18n.language);
+  return <Screen footer={<ActionButton title={t('backToMap')} variant="secondary" onPress={() => router.replace('/map')} />}>
+    {!value ? <LoadingState /> : <>
+      <AppText variant="title">{value.audience === 'DEMO' ? 'DEMO · ' : ''}{t(value.lifecycle === 'ACTIVE' ? 'emergencyActive' : 'emergencyOriginal')}</AppText>
+      <AppText variant="heading">{value.locality}</AppText><AppText>{value.severity} · {value.lifecycle}</AppText>
+      {!fresh && <AppText style={{ color: theme.warning }}>{t('emergencyLocationOld')}</AppText>}
+      {value.proximity === 'OUTSIDE' && <AppText>{t('emergencyOutside')}</AppText>}
+      {value.instructions.map(source => <View key={source.sourceId} style={{ padding: 16, gap: 12, borderRadius: 20, backgroundColor: theme.surface, borderWidth: 1, borderColor: theme.border }}>
+        <AppText variant="heading">{source.issuer}</AppText><AppText variant="caption">{t('emergencyIssued')}: {date(source.issuedAt)}</AppText>
+        {(source.reviewOverdue || (source.reviewDueAt !== null && source.reviewDueAt < now)) && <AppText style={{ color: theme.warning }}>{t('emergencyReviewOverdue')}</AppText>}
+        {source.appliesToCurrentLocation === false && <AppText>{t('emergencyOutside')}</AppText>}
+        {source.deadlineAt !== null && <AppText style={{ fontWeight: '700' }}>{t('emergencyDeadline')}: {date(source.deadlineAt)}</AppText>}
+        <AppText variant="heading">{t('emergencyOriginal')} · {source.sourceLanguage ?? '—'}</AppText>
+        <AppText selectable>{source.originalText ?? t('emergencyNoOriginal')}</AppText>
+        {source.sourceLanguage !== i18n.language && <AppText variant="caption">{t('emergencyTranslationPending')}</AppText>}
+      </View>)}
+    </>}
+  </Screen>;
+}
+export default function AlertDetail() { return <ReadBoundary><Detail /></ReadBoundary>; }

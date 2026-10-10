@@ -1,8 +1,8 @@
 import { useConvexAuth, useQuery } from 'convex/react';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 import { api } from '../../../convex/_generated/api';
 import type { Id } from '../../../convex/_generated/dataModel';
 import { ActionButton, AppText, LoadingState, Screen } from '../../components/ui';
@@ -13,7 +13,7 @@ function Detail() {
   const { t, i18n } = useTranslation(); const { id, accepted } = useLocalSearchParams<{ id: string; accepted?: string }>();
   const saved = accepted === '1';
   const { isAuthenticated, isLoading } = useConvexAuth();
-  useEffect(()=>{if(!isLoading && !isAuthenticated) router.replace('/location');},[isLoading,isAuthenticated]);
+  useFocusEffect(useCallback(()=>{if(!isLoading && !isAuthenticated) router.replace('/login');},[isLoading,isAuthenticated]));
   const incident = useQuery(api.incidents.detail, isAuthenticated && id ? { incidentId:id as Id<'incidents'> } : 'skip');
   const eligibility = useQuery(api.observations.eligibility, isAuthenticated && id && !saved ? { incidentId:id as Id<'incidents'> } : 'skip');
   const eligibilityLabel = eligibility?.reason === 'OBSERVATION_TOO_FAR' ? 'observationTooFar' : eligibility?.reason === 'INCIDENT_CLOSED' ? 'incidentClosed' : 'locationAction';

@@ -1,7 +1,7 @@
 import { useConvex, useConvexAuth, useMutation } from 'convex/react';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { randomUUID } from 'expo-crypto';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import type { FunctionArgs } from 'convex/server';
@@ -34,7 +34,7 @@ export default function ReportScreen() {
   const pending = useRef<Submission | null>(null); const running = useRef(false);
   const convex = useConvex(); const submit = useMutation(api.observations.submit); const locate = useReportLocation();
   const audience = suggestedAudience === 'DEMO' ? 'DEMO' as const : 'LIVE' as const;
-  useEffect(() => { if (!isLoading && !isAuthenticated) router.replace('/location'); }, [isLoading, isAuthenticated]);
+  useFocusEffect(useCallback(() => { if (!isLoading && !isAuthenticated) router.replace('/login'); }, [isLoading, isAuthenticated]));
   const failed = (err: unknown) => {
     if (err instanceof LocationFailure) setError(({ disabled:'locationDisabled',denied:'permissionDenied',accuracy:'inaccurateLocation',outside:'outsideIndia',uncertain:'uncertainLocation',unavailable:'serviceUnavailable' })[err.reason]);
     else setError(errorTranslationKey(err));

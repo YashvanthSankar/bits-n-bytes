@@ -31,7 +31,7 @@ export default defineSchema({
     revision: v.number(), evidenceGeneration: v.number(), controlRevision: v.number(), nextAssessmentAt: v.number(), audience: types.audience,
     mergedInto: v.optional(v.id('incidents')),
     authorityAgencyId: v.optional(v.id('agencies')),
-  }).index('by_lifecycle_nextAssessmentAt', ['lifecycle', 'nextAssessmentAt']).index('by_hazard_lastObservedAt', ['hazard', 'lastObservedAt']).index('by_mergedInto', ['mergedInto']),
+  }).index('by_audience_lifecycle', ['audience', 'lifecycle']).index('by_lifecycle_nextAssessmentAt', ['lifecycle', 'nextAssessmentAt']).index('by_hazard_lastObservedAt', ['hazard', 'lastObservedAt']).index('by_mergedInto', ['mergedInto']),
   observations: defineTable({
     incidentId: v.id('incidents'), authorId: v.optional(v.id('users')), alias: v.string(), capturedPoint: types.point,
     fixObservedAt: v.number(), accuracyM: v.number(), observedAt: v.number(), receivedAt: v.number(), description: v.string(),
@@ -81,7 +81,7 @@ export default defineSchema({
     dueAt: v.number(), createdAt: v.number(), alertId: v.optional(v.id('alerts')), alertRevision: v.optional(v.number()), geometryId: v.optional(v.id('geometries')),
     userId: v.optional(v.id('users')), locationRevision: v.optional(v.number()), cells: v.array(v.string()), cellIndex: v.number(), childIndex: v.number(), cursor: v.union(v.string(), v.null()), checkpoint: v.number(),
     lastErrorCode: v.optional(v.string()),
-  }).index('by_key', ['key']).index('by_status_dueAt', ['status', 'dueAt']),
+  }).index('by_key', ['key']).index('by_status_dueAt', ['status', 'dueAt']).index('by_kind_status_dueAt', ['kind', 'status', 'dueAt']),
   devices: defineTable({
     userId: v.id('users'), installationId: v.string(), registrationHash: v.string(), expoPushToken: v.optional(v.string()),
     platform: v.union(v.literal('ios'), v.literal('android')), permission: types.permission, active: v.boolean(), revision: v.number(), lastRegisteredAt: v.number(),

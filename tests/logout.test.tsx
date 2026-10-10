@@ -1,14 +1,14 @@
 import React, { type PropsWithChildren, type ReactNode } from 'react';
 import { act, create, type ReactTestRenderer } from 'react-test-renderer';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-const state = vi.hoisted(() => ({ signOut: vi.fn(), setFix: vi.fn(), replace: vi.fn(), mutate: vi.fn() }));
+const state = vi.hoisted(() => ({ signOut: vi.fn(), setSignedOut: vi.fn(), setFix: vi.fn(), replace: vi.fn(), mutate: vi.fn() }));
 vi.mock('@convex-dev/auth/react', () => ({ useAuthActions: () => ({ signOut: state.signOut }) }));
 vi.mock('react-native', () => ({ View: 'View', Switch: 'Switch' }));
-vi.mock('expo-router', () => ({ router: { replace: state.replace, push: vi.fn() } }));
+vi.mock('expo-router', () => ({ useFocusEffect: (callback: () => void) => React.useEffect(callback, [callback]), router: { replace: state.replace, push: vi.fn() } }));
 vi.mock('expo-crypto', () => ({ randomUUID: () => 'test-request-001' }));
 vi.mock('convex/react', () => ({ useConvexAuth: () => ({ isAuthenticated: true, isLoading: false }), useQuery: () => ({ role: 'TOURIST', profile: { name: 'Test', alias: 'Traveler', revision: 1, language: 'en', stepFreeNeeded: false } }), useMutation: () => state.mutate }));
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key, i18n: { language: 'en' } }) }));
-vi.mock('../src/session/LocationSession', () => ({ useLocationSession: () => ({ fix: null, setFix: state.setFix }) }));
+vi.mock('../src/session/LocationSession', () => ({ useLocationSession: () => ({ fix: null, setFix: state.setFix, setSignedOut: state.setSignedOut }) }));
 vi.mock('../src/i18n/LanguageProvider', () => ({ useLanguage: () => ({ language: 'en', changeLanguage: vi.fn() }) }));
 vi.mock('../src/theme/useTheme', () => ({ useTheme: () => ({ danger: '#f00' }) }));
 vi.mock('../src/components/ReadBoundary', () => ({ ReadBoundary: ({ children }: PropsWithChildren) => <>{children}</> }));

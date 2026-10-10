@@ -1,3 +1,4 @@
+import { internal } from './_generated/api';
 import { mutation } from './_generated/server';
 import { v } from 'convex/values';
 import { requireAssignedJurisdiction, requireUser } from './lib/authorization';
@@ -5,6 +6,7 @@ import { containsArea, coveringCells, validateArea } from './lib/areas';
 import { command, payloadHash } from './lib/idempotency';
 import { reject } from './lib/errors';
 import { actionKind, geometry, hazard, language, severity } from './lib/validators';
+import type { Id } from './_generated/dataModel';
 import { DAY, POLICY_VERSION } from '../src/domain/policy';
 
 /** Canonical publication only; provider calls and delivery happen after this transaction. */
@@ -13,7 +15,7 @@ export const publish = mutation({ args: {
   expectedIncidentRevision: v.number(), hazard, locality: v.string(), area: geometry, severity,
   originalText: v.string(), sourceLanguage: language, actionKind, namedShelterId: v.optional(v.id('shelters')),
   deadlineAt: v.optional(v.number()), reviewDueAt: v.number(), reason: v.string(),
-}, handler: async (ctx, args) => {
+}, handler: async (ctx, args): Promise<{ incidentId: Id<'incidents'>; declarationId: Id<'authorityDeclarations'>; alertId: Id<'alerts'>; revision: number; instructionVersionId: Id<'instructionVersions'>; publishedAt: number }> => {
   const userId = await requireUser(ctx);
   return command(ctx, userId, 'DECLARATION_PUBLISH', args.requestId, args, async () => {
     const scope = await requireAssignedJurisdiction(ctx, args.jurisdictionId);
@@ -71,8 +73,9 @@ export const publish = mutation({ args: {
     const strongest = sources.reduce<typeof sources[number]['severity']>((best, source) => ranks.indexOf(source.severity) < ranks.indexOf(best) ? source.severity : best, args.severity);
     await ctx.db.insert('alertRevisions', { alertId, revision, sources: sources.map(s => ({ sourceId: s._id, geometryId: s.geometryId, ...(s.instructionVersionId ? { instructionVersionId: s.instructionVersionId } : {}), severity: s.severity, issuerLabel: s.issuerLabel, active: s.active })),
       severity: strongest, materialReason: previousAlert ? 'SOURCE' : 'FIRST', urgency: previousAlert ? 'MATERIAL' : 'FIRST', criticalInstruction: true, publishedAt: now, policyVersion: POLICY_VERSION });
-    await ctx.db.insert('jobs', { kind: 'ALERT_EXPANSION', key: `${alertId}:${revision}`, status: 'PENDING', dueAt: now, createdAt: now, alertId, alertRevision: revision,
+    const jobId = await ctx.db.insert('jobs', { kind: 'ALERT_EXPANSION', key: `${alertId}:${revision}`, status: 'PENDING', dueAt: now, createdAt: now, alertId, alertRevision: revision,
       geometryId, cells: [...cells].sort(), cellIndex: 0, childIndex: 0, cursor: null, checkpoint: 0 });
+    await ctx.scheduler.runAfter(0, internal.alertExpansion.page, { jobId, checkpoint: 0 });
     await ctx.db.insert('auditEvents', { actorId: userId, actorKind: 'AUTHORITY', objectKind: 'AUTHORITY_DECLARATION', objectId: declarationId, revision: 1, action: 'PUBLISH', reason: args.reason.trim(), createdAt: now });
     return { incidentId, declarationId, alertId, revision, instructionVersionId, publishedAt: now };
   });

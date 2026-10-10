@@ -20,6 +20,8 @@ vi.mock('../src/components/ui', () => ({
   ActionButton: (props: { title: string; onPress: () => void }) => React.createElement('button', props),
 }));
 vi.mock('../src/components/Field', () => ({ Field: (props: { label: string; value: string; onChangeText: (text: string) => void }) => React.createElement('input', props) }));
+vi.mock('../src/session/LocationSession', () => ({ useLocationSession: () => ({ fix: null }) }));
+vi.mock('../src/components/AreaPicker', () => ({ AreaPicker: (props: object) => React.createElement('map-picker', props) }));
 vi.mock('../src/components/Choice', () => ({ Choice: (props: { label: string; onPress: () => void }) => React.createElement('choice', props) }));
 
 import { ShelterForm } from '../src/features/authority/ShelterForm';
@@ -89,4 +91,26 @@ it('opens an archive confirmation, preserves the listing on cancel and navigates
   await act(async () => screen.root.findAllByType('button').filter(button => button.props.title === 'archiveShelter')[1]!.props.onPress());
   expect(state.archive).toHaveBeenCalledExactlyOnceWith({ requestId: 'request-test-1', shelterId: initial.id, expectedRevision: 4, reason: 'Site permanently closed' });
   expect(state.replace).toHaveBeenCalledWith({ pathname: '/authority/shelters', params: { jurisdictionId, archived: '1' } });
+});
+
+it('uses a map-selected entrance without coordinate fields, and cancellation preserves the previous entrance', async () => {
+  await render();
+  expect(screen.root.findAllByType('input').some(f=>['latitude','longitude'].includes(f.props.label))).toBe(false);
+  await press('selectShelterLocation');
+  expect(screen.root.findByType('map-picker' as React.ElementType).props.selected).toEqual(initial.point);
+  await act(async()=>screen.root.findByType('map-picker' as React.ElementType).props.onSelect({latitude:13.09,longitude:80.28}));
+  await press('cancel');await press('selectShelterLocation');
+  expect(screen.root.findByType('map-picker' as React.ElementType).props.selected).toEqual(initial.point);
+  await act(async()=>screen.root.findByType('map-picker' as React.ElementType).props.onSelect({latitude:13.09,longitude:80.28}));
+  await press('useSelectedLocation');await field('changeReason','Correct entrance location');await press('saveShelter');
+  expect(state.save).not.toHaveBeenCalled(); // Moving the entrance still requires real status confirmation.
+  await act(async()=>screen.root.findAllByType('Switch' as React.ElementType).find(s=>s.props.accessibilityLabel==='confirmShelterStatus')!.props.onValueChange(true));
+  await press('saveShelter');expect(state.save.mock.calls[0]![0].point).toEqual({latitude:13.09,longitude:80.28});
+});
+
+ it('identifies a too-short name or address before sending a save', async () => {
+  await render(); await field('shelterName', ' '); await press('saveShelter');
+  expect(state.save).not.toHaveBeenCalled(); expect(JSON.stringify(screen.toJSON())).toContain('shelterFieldMinimum');
+  await field('shelterName', 'Valid shelter'); await field('shelterAddress', ' '); await press('saveShelter');
+  expect(state.save).not.toHaveBeenCalled(); expect(JSON.stringify(screen.toJSON())).toContain('shelterFieldMinimum');
 });

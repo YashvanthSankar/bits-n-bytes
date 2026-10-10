@@ -7,11 +7,14 @@ import { IncidentCard } from '../../components/IncidentCard';
 import { ReadBoundary } from '../../components/ReadBoundary';
 import { useLocationSession } from '../../session/LocationSession';
 
+import { EmergencyAlerts } from '../../features/alerts/EmergencyAlerts';
+
 function Incidents() {
   const { t } = useTranslation(); const { isAuthenticated } = useConvexAuth(); const { fix } = useLocationSession();
   const nearby = useQuery(api.incidents.nearby, isAuthenticated && fix ? {} : 'skip');
   return <Screen footer={<ActionButton title={t('reportTitle')} onPress={() => router.push('/report')} disabled={!isAuthenticated || !fix} />}>
     <AppText variant="title" accessibilityRole="header">{t('navIncidents')}</AppText>
+    <EmergencyAlerts />
     <AppText>{t('nearbyReports')} · 5 km</AppText>
     {!isAuthenticated || !fix ? <ActionButton title={t('locationAction')} onPress={() => router.replace('/location')} /> : !nearby ? <LoadingState /> : <>
       {nearby.partial && <AppText>{t('matchesPartial')}</AppText>}
